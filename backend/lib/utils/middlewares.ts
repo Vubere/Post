@@ -4,7 +4,6 @@ import dayjs from "dayjs";
 import { NextFunction, Request, Response } from "express";
 
 const logger = function (req: Request, res: Response, next: NextFunction) {
-  console.log("custom middleware called");
   next();
 };
 const addRequestTime = function (

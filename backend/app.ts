@@ -1,62 +1,61 @@
 import express, { Express } from "express";
-import { logger, addRequestTime } from "./utils/middlewares";
+import { logger, addRequestTime } from "./lib/utils/middlewares";
 import morgan from "morgan";
 
+import userRouter from "./routers/user";
+import authRouter from "./routers/auth";
+import blogRouter from "./routers/post";
+import commentRouter from "./routers/comment";
+import authController from "./controllers/auth";
+import rateLimit from "express-rate-limit";
+
+import CustomError from "./lib/utils/custom-error";
+import errorController from "./controllers/error";
+import dotenv from "dotenv";
+import helmet from "helmet";
+//@ts-ignore
+import xss from "xss-clean";
+import hpp from "hpp";
+import { STATUS_CODES } from "./lib/utils";
+
+dotenv.config();
+
 const app: Express = express();
+const limiter = rateLimit({
+  max: 3000,
+  windowMs: 60 * 60 * 1000,
+  message:
+    "you have exceeded the amount of allowed request, try again in an hour!",
+});
 app.use(express.json());
 app.use(logger);
 app.use(addRequestTime);
 app.use(morgan("dev"));
-//static files can't be defaultly accessed by the browser in nodejs, we need the express.static() middleware, it takes the path where the public files can be found, the public path won't need to be added in the url
 app.use(express.static("./public"));
+app.use(helmet());
+app.use(express.json({ limit: "20mb" }));
+app.use(limiter);
+app.use(xss());
+app.use(hpp({ whitelist: [] }));
+
+//console.log(process.argv);
+
+const baseRootUsers = "/api/users";
+const baseRootPosts = "/api/posts";
+const baseRootComments = "/api/comments";
+
+app.use(baseRootUsers, authRouter);
+app.use(baseRootUsers, authController.ProtectRoutes, userRouter);
+app.use(baseRootPosts, authController.ProtectRoutes, blogRouter);
+app.use(baseRootComments, authController.ProtectRoutes, commentRouter);
+app.all("*", (...args) => {
+  const next = args[2];
+  const error = new CustomError(
+    "not found",
+    STATUS_CODES.clientError.Not_Found
+  );
+  next(error);
+});
+app.use(errorController);
 
 export default app;
-
-/* 
-vanilla node.js implementation of server
-const server = http.createServer((req, res) => {
-  const url = URL.parse(req.url);
-  const path = url.pathname;
-  if (path === "/" || path === "/home") {
-    res.writeHead(200, {
-      "Content-Type": "text/plain",
-      "access-control-allow-origin": "*",
-    });
-    res.end("home");
-  } else if (path === "/html-page") {
-    const json_text = fs.readFileSync("./files/products.json", "utf-8");
-    const file = fs.readFileSync("./files/index.html", "utf-8");
-    const array = JSON.parse(json_text);
-    const products = array.map((item) => item.here);
-    res.writeHead(200, {
-      "Content-Type": "text/html",
-      "access-control-allow-origin": "*",
-    });
-    res.end(replaceHTML(file, products));
-  } else if (path === "/json") {
-    const json_text = fs.readFileSync("./files/products.json", "utf-8");
-    res.writeHead(200, {
-      "Content-Type": "application/json",
-      "access-control-allow-origin": "*",
-    });
-    res.end(json_text);
-  } else if (path === "/stream") {
-    const rs = fs.createReadStream("./files/products.json", "utf-8");
-    rs.on("data", (chunk) => {
-      if (res.writable) res.write(chunk);
-    });
-    res.on("end", () => res.end);
-    res.on("error", () => res.end("an error occured"));
-
-    //shorter way to do this is:
-    //rs.pipe(res)
-    //
-  } else {
-    res.end("page not found");
-  }
-});
-
-server.listen(port, "localhost", () => {
-  console.log("server started");
-});
- */

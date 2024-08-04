@@ -1,4 +1,4 @@
-# Blog Application Built by Victor Ubere
+# post Application Built by Victor Ubere
 
 this is built using Nextjs for the frontent and expressjs for the backend.
 

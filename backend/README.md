@@ -1,4 +1,4 @@
-# Backend Repository for Blog App by Victor Ubere
+# Backend Repository for post App by Victor Ubere
 
 ## Tools
 

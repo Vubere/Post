@@ -1,16 +1,16 @@
 {
-  "name": "blog",
+  "name": "post",
   "version": "1.0.0",
-  "description": "APIs for a blog build by Victor Ubere",
-  "main": "server.js",
+  "description": "APIs for a post build by Victor Ubere",
+  "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon ./server.ts"
+    "dev": "nodemon"
   },
   "keywords": [
-    "blog",
+    "post",
     "nodejs",
     "expressjs",
     "api"
@@ -18,18 +18,34 @@
   "author": "Victor Ubere",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "concurrently": "^8.2.2",
     "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.3.1",
+    "helmet": "^7.1.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
     "mongoose": "^8.4.4",
     "morgan": "^1.10.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "validator": "^13.12.0",
+    "xss-clean": "^0.1.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.8",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express-rate-limit": "^6.0.0",
+    "@types/helmet": "^4.0.0",
+    "@types/hpp": "^0.2.6",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/lodash": "^4.17.6",
+    "@types/validator": "^13.12.0"
   }
 }
