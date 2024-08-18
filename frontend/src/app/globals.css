@@ -31,3 +31,34 @@ body {
     text-wrap: balance;
   }
 }
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #0000 inset;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: #000;
+  background-color: transparent;
+}
+
+input:-webkit-autofill:focus {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+input:-webkit-autofill:hover {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+}
+
+input:-webkit-autofill:active {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+.success {
+  background-color: #33a;
+}

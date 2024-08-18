@@ -23,7 +23,6 @@ export const userSlice = createSlice({
     },
   },
 });
-
 export const { updateUserInfo, updateToken, destroyUserState } =
   userSlice.actions;
 

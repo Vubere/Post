@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 import User from "./user";
 
 interface IPost extends Document {
+  type: "post";
   createdAt: Date;
   updatedAt: Date;
   author: ObjectId;
@@ -31,8 +32,34 @@ interface IPost extends Document {
   deleted?: boolean;
 }
 
-const postSchema = new mongoose.Schema<IPost>(
+interface IReshare extends Document {
+  type: "reshare";
+  createdAt: Date;
+  updatedAt: Date;
+  author: ObjectId;
+  status: "0" | "1"; //"Draft"|"Published"
+  edited: boolean;
+  content: string;
+  likes?: Array<ObjectId>;
+  views?: Array<ObjectId>;
+  clicks?: Array<ObjectId>;
+  reads?: Array<ObjectId>;
+  userAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
+  comments?: Array<{ id: ObjectId; userId: ObjectId }>;
+  tips?: Array<{ userId: ObjectId; amount: Number }>;
+  notifications?: boolean;
+  resharedBy?: Array<ObjectId>;
+  bookmarkedBy?: Array<ObjectId>;
+  version?: number;
+  deleted?: boolean;
+}
+
+const postSchema = new mongoose.Schema<IPost | IReshare>(
   {
+    type: {
+      type: String,
+      default: "post",
+    },
     createdAt: {
       type: Date,
       default: Date.now(),

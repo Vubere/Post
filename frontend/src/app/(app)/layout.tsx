@@ -33,6 +33,7 @@ export default function RootLayout({
             </ul>
           </header>
           <MobileHeader />
+
           <main className="h-auto min-h-screen ">
             {children}
           </main>

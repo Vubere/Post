@@ -6,6 +6,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   //@ts-ignore
   middleware: (getDefaultMiddleware) =>

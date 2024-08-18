@@ -13,10 +13,10 @@ import { BlogConfirmRequest } from "../lib/types";
 import CustomError from "../lib/utils/custom-error";
 import User from "../models/user";
 
-const blogApiFeatures = (query: Record<any, any>) => {
+const postApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(Post.find(), query);
 };
-const blogApiFeaturesAggregation = (
+const postApiFeaturesAggregation = (
   query: Record<any, any>,
   authorQuery?: Record<string, any>
 ) => {
@@ -52,16 +52,12 @@ async function getAllPosts(
   res: Response,
   next: NextFunction
 ) {
-  const blogQuery = blogApiFeatures(req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .pagination();
+  const blogQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
 
-  const post = await blogQuery.query;
+  const post = await blogQuery;
   res.status(STATUS_CODES.success.OK).json(
     jsend("success!", post, "successfully fetched posts!", {
-      count: post.length,
+      count: post?.length,
     })
   );
 }
@@ -70,11 +66,9 @@ async function getPostFromFollowings(
   res: Response,
   next: NextFunction
 ) {
-  const blogQuery = blogApiFeaturesAggregation(req.query, {
-    match: {
-      authorDetails: {
-        $or: [{ followers: req.requesterId }, { _id: req.requesterId }],
-      },
+  const blogQuery = postApiFeaturesAggregation(req.query, {
+    authorDetails: {
+      $or: [{ followers: req.requesterId }, { _id: req.requesterId }],
     },
   }).aggregate();
 

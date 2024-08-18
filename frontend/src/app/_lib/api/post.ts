@@ -1,6 +1,7 @@
+"use client";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { Post } from "../type";
-import { RootState, getState } from "../store";
+import { RootState } from "../store";
 
 export const postApi = createApi({
   reducerPath: "postApi",

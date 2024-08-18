@@ -1,12 +1,20 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { User } from "../type";
-import { RootState, getState } from "../store";
+import { RootState } from "../store";
+import axiosBaseQuery from "./axios-config";
+import { PayloadAction, Action } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+
+function isHydrateAction(action: Action): action is PayloadAction<RootState> {
+  return action.type === HYDRATE;
+}
 
 export const userApi = createApi({
   reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.BASE_URL}/users`,
+  baseQuery: axiosBaseQuery({
+    baseUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/users`,
     prepareHeaders: (headers, { getState }) => {
+      //@ts-ignore
       const token = (getState() as RootState).user?.token;
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
@@ -108,18 +116,18 @@ export const userApi = createApi({
       providesTags: ["Users"],
     }),
     getUser: builder.query<"User", string>({
-      query: (id) => `/${id}`,
+      query: (id) => ({ url: `/${id}` }),
       providesTags: (result, err, id) => [{ type: "User", id }],
     }),
     getUserAnalytics: builder.query<"User", string>({
-      query: (id) => `/${id}`,
+      query: (id) => ({ url: `/${id}` }),
     }),
     getProfile: builder.query<"Profile", string>({
-      query: () => `/profile`,
+      query: () => ({ url: `/profile` }),
       providesTags: (result, err, id) => [{ type: "Profile" }],
     }),
     getBlockedUsers: builder.query({
-      query: () => "/blocked-users",
+      query: () => ({ url: "/blocked-users" }),
       providesTags: ["Blocked"],
     }),
     blockUser: builder.mutation<"Blocked", string>({
@@ -137,11 +145,11 @@ export const userApi = createApi({
       invalidatesTags: ["Blocked"],
     }),
     getFollowers: builder.query({
-      query: () => "/followers",
+      query: () => ({ url: "/followers" }),
       providesTags: ["Followers"],
     }),
     getFollowing: builder.query({
-      query: () => "/following",
+      query: () => ({ url: "/following" }),
       providesTags: ["Following"],
     }),
     followUser: builder.mutation<"Following", string>({
@@ -159,11 +167,11 @@ export const userApi = createApi({
       invalidatesTags: ["Following"],
     }),
     getSubscribers: builder.query({
-      query: () => "/subscribers",
+      query: () => ({ url: "/subscribers" }),
       providesTags: ["Subscribers"],
     }),
     getSubscriptions: builder.query({
-      query: () => "/subscriptions",
+      query: () => ({ url: "/subscriptions" }),
       providesTags: ["Subscriptions"],
     }),
     subscribe: builder.mutation<"Subscriptions", string>({
@@ -184,6 +192,33 @@ export const userApi = createApi({
 });
 
 export const {
+  useSignUpMutation,
+  useLoginMutation,
+  useUpdateInterestMutation,
+  useUpdatePrivacySettingsMutation,
+  useUpdateSectionsMutation,
+  useUpdateUserMutation,
+  useUpdateUserPasswordMutation,
+  useDeleteUserMutation,
+  useUnblockUserMutation,
+  useUnfollowUserMutation,
+  useUnsubscribeMutation,
+  useBlockUserMutation,
+  useFollowUserMutation,
+  useSubscribeMutation,
+  useGetSubscribersQuery,
+  useGetSubscriptionsQuery,
+  useGetUserAnalyticsQuery,
+  useGetUserQuery,
+  useGetAllUsersQuery,
+  useGetBlockedUsersQuery,
+  useGetFollowersQuery,
+  useGetFollowingQuery,
+  useGetProfileQuery,
+  util: { getRunningQueriesThunk },
+} = userApi;
+
+export const {
   signUp,
   login,
   updateInterest,
@@ -192,19 +227,19 @@ export const {
   updateUser,
   updateUserPassword,
   deleteUser,
-  getAllUsers,
+  unblockUser,
+  unfollowUser,
+  unsubscribe,
+  blockUser,
+  followUser,
+  subscribe,
+  getSubscribers,
+  getSubscriptions,
+  getUserAnalytics,
   getUser,
+  getAllUsers,
   getBlockedUsers,
   getFollowers,
   getFollowing,
   getProfile,
-  getSubscribers,
-  getSubscriptions,
-  getUserAnalytics,
-  blockUser,
-  unblockUser,
-  followUser,
-  unfollowUser,
-  subscribe,
-  unsubscribe,
 } = userApi.endpoints;
