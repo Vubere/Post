@@ -1,14 +1,18 @@
 "use client";
 import Button from "@/app/_components/general/button";
-import Input from "@/app/_components/input";
-import { useSignUpMutation } from "@/app/_lib/api/user";
+import Input from "@/app/input";
+import { useGetAllUsersQuery, useGoogleSignInMutation, useSignUpMutation } from "@/app/_lib/api/user";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Form } from "antd";
+import { Form, notification } from "antd";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
+import GoogleAuth from "@/app/_components/google-auth";
+import { useAppDispatch } from "@/app/_lib/store/hooks";
+import { useRouter } from "next/navigation";
+import { updateToken, updateUserInfo } from "@/app/_lib/store/user";
 
 const schema = yup.object({
   firstName: yup.string().required().trim().label("First Name"),
@@ -35,21 +39,55 @@ const schema = yup.object({
 })
 
 export default function SignupForm() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [signUp, {
-    data,
     isLoading,
-    error,
-    isSuccess,
-    isError,
-    reset,
-    isUninitialized
   }] = useSignUpMutation();
+  const [googleSignIn, { isLoading: googleLoading }] = useGoogleSignInMutation();
+  useGetAllUsersQuery({})
+  const onGoogleSuccess = async (cred: any) => {
+    try {
+      const data = await googleSignIn({ token: cred.access_token });
+      if (data?.data) {
+        localStorage.setItem("collections-user-token", data.data.token);
+        dispatch(updateToken(data.data.token));
+        dispatch(updateUserInfo(data.data.data));
+        toast.success(data.data.message || "success!");
+        setTimeout(() => {
+          router.push(ROUTES.dashboard);
+        }, 2000);
+      } else {
+        toast.error("could not find user data!");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("failed to get user info, retry!")
+    }
+  }
+
+  const onGoogleError = () => {
+    toast.error("google authentication failed, try again!");
+  }
   const { handleSubmit, ...rest } = useForm({
     resolver: yupResolver(schema)
   });
 
   const onSubmit = async (vals: any) => {
-    signUp(vals)
+    try {
+      const data = await signUp(vals)
+      if (data?.data) {
+        localStorage.setItem("collections-user-token", data.data.token);
+        dispatch(updateToken(data.data.token));
+        dispatch(updateUserInfo(data.data.data));
+        toast.success(data.data.message || "success!");
+        setTimeout(() => {
+          router.push(ROUTES.dashboard);
+        }, 2000);
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
@@ -64,8 +102,15 @@ export default function SignupForm() {
         <Input label="Date of Birth" placeholder="Date of Birth" type="date" name="dateOfBirth" state={rest} required />
         <Input label="Password" placeholder="********" name="password" state={rest} required />
         <Input label="Confirm Password" name="confirmPassword" placeholder="********" required state={rest} />
-        <Button type="submit" loading={isLoading}>Submit</Button>
+        <Button type="submit" loading={isLoading || googleLoading} disabled={isLoading || googleLoading}>Submit</Button>
       </Form>
+      <div className="relative w-full flex justify-center ">
+        <span className="block bg-[#fff] p-1 relative z-[1] text-black font-medium">
+          OR
+        </span>
+        <hr className=" block h-[2px] w-full bg-[#0003] bg-opacity-40 absolute z-[0] left-0 top-[50%] " />
+      </div>
+      <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} loading={isLoading || googleLoading} className="mb-1" />
       <div className="mt-4 w-full max-w-[400px]">
         <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Already have an account? <Link className="hover:underline hover:text-blue-300" href={ROUTES.signup}>Login</Link></p>
       </div>

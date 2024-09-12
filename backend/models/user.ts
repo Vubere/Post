@@ -17,6 +17,7 @@ interface IUser extends Document {
   biography: string;
   location: string;
   interest?: Array<string>;
+  signUpMethod?: "google-auth" | "signup-form";
   coverPhoto: string;
   profilePhoto: string;
   active: boolean;
@@ -58,7 +59,6 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "password is Required"],
       minLength: 6,
       select: false,
     },
@@ -124,6 +124,11 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Array,
       default: [],
     },
+    signUpMethod: {
+      type: String,
+      default: "signup-form",
+      select: false,
+    },
     viewedProfiles: {
       type: Array,
       default: [],
@@ -164,7 +169,6 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     dateOfBirth: {
       type: Date,
-      required: [true, "Date of birth is required"],
     },
     passwordChangedAt: {
       type: Date,

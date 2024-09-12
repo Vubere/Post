@@ -1,12 +1,12 @@
 "use client";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Post } from "../type";
 import { RootState } from "../store";
 
-export const postApi = createApi({
+const post = createApi({
   reducerPath: "postApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.BASE_URL}/posts`,
+    baseUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/posts`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).user?.token;
       if (token) {
@@ -145,7 +145,28 @@ export const postApi = createApi({
     }),
   }),
 });
-
+export default post;
+export const {
+  useGetAllPostsQuery,
+  useGetBookmarksQuery,
+  useGetLikesQuery,
+  useGetPostFromFollowingsQuery,
+  useGetPostFromInterestQuery,
+  useGetPostQuery,
+  useGetPostsFeedQuery,
+  useGetPostsPopularQuery,
+  useCreateMutation,
+  useLikePostMutation,
+  useBookmarkPostMutation,
+  useClickPostMutation,
+  useDeletePostMutation,
+  usePaywallPostMutation,
+  useReadPostMutation,
+  useViewPostMutation,
+  useUpdatePostMutation,
+  useUnlikePostMutation,
+  useUnBookmarkPostMutation,
+} = post;
 export const {
   create,
   updatePost,
@@ -166,4 +187,4 @@ export const {
   clickPost,
   readPost,
   paywallPost,
-} = postApi.endpoints;
+} = post.endpoints;

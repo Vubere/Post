@@ -13,6 +13,7 @@ import CustomError from "./lib/utils/custom-error";
 import errorController from "./controllers/error";
 import dotenv from "dotenv";
 import helmet from "helmet";
+import cors from "cors";
 //@ts-ignore
 import xss from "xss-clean";
 import hpp from "hpp";
@@ -37,6 +38,7 @@ app.use(express.json({ limit: "20mb" }));
 app.use(limiter);
 app.use(xss());
 app.use(hpp({ whitelist: [] }));
+app.use(cors());
 
 //console.log(process.argv);
 

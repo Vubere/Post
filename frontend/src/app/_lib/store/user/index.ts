@@ -13,7 +13,7 @@ export const userSlice = createSlice({
       state.info = payload;
     },
     updateToken: (state, { payload }) => {
-      state.token = payload.token;
+      state.token = payload;
     },
     destroyUserState: (state) => {
       state = {

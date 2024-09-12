@@ -1,4 +1,4 @@
-import heroImage from "@/assets/backgrounds/hero.jpeg";
+import heroImage from "@/assets/backgrounds/hero.png";
 import Image from "next/image";
 
 export default function Home() {

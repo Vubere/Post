@@ -4,6 +4,7 @@ import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import axios from "axios";
 import type { AxiosRequestConfig, AxiosError, AxiosHeaders } from "axios";
 import { toast } from "react-toastify";
+import { store } from "../store";
 
 const axiosBaseQuery =
   (
@@ -31,10 +32,8 @@ const axiosBaseQuery =
   > =>
   async ({ url, method, data, body, params, headers }) => {
     try {
-      if (prepareHeaders && headers !== undefined) {
-        /* headers = prepareHeaders(headers, {
-          getState,
-        }); */
+      if (prepareHeaders && headers === undefined) {
+        headers = prepareHeaders(headers, { getState: store.getState });
       }
       const result = await axios({
         url: baseUrl + url,
@@ -58,8 +57,13 @@ const axiosBaseQuery =
             );
             break;
           }
+          case "ERR_BAD_RESPONSE": {
+            //@ts-ignore
+            toast.error(err.response?.data?.message || "an error occurred!");
+          }
           default: {
-            toast.error("an error occured!");
+            //@ts-ignore
+            toast.error(err.response?.data?.message || "an error occurred!");
           }
         }
       }

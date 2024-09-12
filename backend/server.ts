@@ -9,7 +9,7 @@ process.on("uncaughtException", (err: Error) => {
   });
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const mongodbConStr = process.env.MONGODB_CONNECTION || "localhost:8080";
 
 mongoose.connect(mongodbConStr).then((con) => {
@@ -17,7 +17,7 @@ mongoose.connect(mongodbConStr).then((con) => {
 });
 
 const server = app.listen(port, () => {
-  console.log("server has started!");
+  console.log(`server is running on ${port}!`);
 });
 
 process.on("unhandledRejection", (err: Error) => {

@@ -9,15 +9,16 @@ function isHydrateAction(action: Action): action is PayloadAction<RootState> {
   return action.type === HYDRATE;
 }
 
-export const userApi = createApi({
+const user = createApi({
   reducerPath: "userApi",
   baseQuery: axiosBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/users`,
     prepareHeaders: (headers, { getState }) => {
       //@ts-ignore
       const token = (getState() as RootState).user?.token;
+
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+        return { authorization: `Bearer ${token}` };
       }
       return headers;
     },
@@ -37,6 +38,14 @@ export const userApi = createApi({
     signUp: builder.mutation({
       query: (data: User) => ({
         url: "/sign-up",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Token", "Profile"],
+    }),
+    googleSignIn: builder.mutation({
+      query: (data: { token: string }) => ({
+        url: "/google-auth",
         method: "POST",
         body: data,
       }),
@@ -123,7 +132,10 @@ export const userApi = createApi({
       query: (id) => ({ url: `/${id}` }),
     }),
     getProfile: builder.query<"Profile", string>({
-      query: () => ({ url: `/profile` }),
+      query: (token?: string) => ({
+        url: `/profile`,
+        ...(token ? { headers: { authorization: `Bearer ${token}` } } : {}),
+      }),
       providesTags: (result, err, id) => [{ type: "Profile" }],
     }),
     getBlockedUsers: builder.query({
@@ -190,10 +202,11 @@ export const userApi = createApi({
     }),
   }),
 });
-
+export default user;
 export const {
   useSignUpMutation,
   useLoginMutation,
+  useGoogleSignInMutation,
   useUpdateInterestMutation,
   useUpdatePrivacySettingsMutation,
   useUpdateSectionsMutation,
@@ -215,8 +228,9 @@ export const {
   useGetFollowersQuery,
   useGetFollowingQuery,
   useGetProfileQuery,
+  useLazyGetProfileQuery,
   util: { getRunningQueriesThunk },
-} = userApi;
+} = user;
 
 export const {
   signUp,
@@ -242,4 +256,4 @@ export const {
   getFollowers,
   getFollowing,
   getProfile,
-} = userApi.endpoints;
+} = user.endpoints;

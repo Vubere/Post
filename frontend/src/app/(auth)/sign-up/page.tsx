@@ -1,6 +1,6 @@
 import { Form } from "antd";
 import { useForm } from "react-hook-form";
-import sideImage from "@/assets/backgrounds/bookStack.jpeg"
+import sideImage from "@/assets/backgrounds/bookStack.png"
 import dynamic from "next/dynamic";
 import Image from "next/image";
 

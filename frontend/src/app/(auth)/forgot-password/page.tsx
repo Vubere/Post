@@ -1,6 +1,6 @@
 import { Form } from "antd";
 import { useForm } from "react-hook-form";
-import sideImage from "@/assets/backgrounds/pageText.jpeg";
+import sideImage from "@/assets/backgrounds/pageText.png";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 

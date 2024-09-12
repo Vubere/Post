@@ -6,4 +6,13 @@ export enum ROUTES {
   forgotPassword = "/forgot-password",
   resetPassword = "/reset-password",
   setup = "/set-up",
+  dashboard = "/dashboard",
+  profile = "/profile",
+  settings = "/settings",
+  notifications = "/notifications",
+  bookmarks = "/bookmarks",
+  drafts = "/drafts",
+  analytics = "/analytics",
+  account = "/account",
+  create_post = "/create-post",
 }

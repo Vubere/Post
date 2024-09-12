@@ -5,19 +5,36 @@ import { wrapModuleFunctionsInAsyncErrorHandler } from "../lib/utils/aynsc-error
 import CustomError from "../lib/utils/custom-error";
 import jwt from "jsonwebtoken";
 import { signToken, verifyToken } from "../lib/utils/token";
-import { promisify } from "util";
 import { UserConfirmRequest } from "../lib/types";
-import bcrypt from "bcryptjs";
 import { hashPassword } from "../lib/helpers";
+//import fetch from "node-fetch";
 
 interface payload extends jwt.JwtPayload {
   id: string;
   iat: number;
   exp: number;
 }
+function validateRequestBody(
+  body: Record<string, any>,
+  arrayOfValues: string[]
+) {
+  const bodyKeys = Object.keys(body);
+  const arr = [];
+  for (let value of arrayOfValues) {
+    if (!bodyKeys.includes(value)) {
+      arr.push(value);
+    }
+  }
+  return arr.length ? arr : true;
+}
 
 async function SignUp(req: Request, res: Response, next: NextFunction) {
   const { confirmPassword, ...user } = req.body;
+  const errorVal = validateRequestBody(user, ["dateOfBirth", "password"]);
+  if (errorVal !== true) {
+    next(new CustomError(errorVal.join(", ") + " is required!", 400));
+    return;
+  }
   if (user.password !== confirmPassword) {
     next(
       new CustomError(
@@ -34,6 +51,40 @@ async function SignUp(req: Request, res: Response, next: NextFunction) {
   res
     .status(STATUS_CODES.success.Created)
     .json(jsend("success", newUser, "registration successful!", { token }));
+}
+async function GoogleSignIn(req: Request, res: Response, next: NextFunction) {
+  const response = await fetch(
+    `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${req.body.token}`
+  );
+
+  const info: any = await response.json();
+  const userInfo = {
+    email: info.email,
+    firstName: info.given_name,
+    lastName: info.family_name,
+    profilePhoto: info.picture,
+    signUpMethod: "google-auth",
+  };
+  const userCheck = await User.findOne({ email: userInfo.email }).select(
+    "signUpMethod"
+  );
+  if (userCheck) {
+    if (userCheck.signUpMethod === "google-auth") {
+      const userDetails = await User.findById(userCheck._id);
+      const token = signToken(userDetails._id);
+      res
+        .status(STATUS_CODES.success.OK)
+        .json(jsend("success", userDetails, "login successful!", { token }));
+    } else {
+      next(new CustomError("user signed up using form", 400));
+    }
+  } else {
+    const newUser = await User.create(userInfo);
+    const token = signToken(newUser._id);
+    res
+      .status(STATUS_CODES.success.Created)
+      .json(jsend("success", newUser, "registration successful!", { token }));
+  }
 }
 async function Login(req: Request, res: Response, next: NextFunction) {
   const { email, password } = req.body;
@@ -65,17 +116,10 @@ async function Login(req: Request, res: Response, next: NextFunction) {
     );
   }
   const token = signToken(user._id);
-  const returnData = {
-    username: user.username,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    id: user._id,
-  };
-
+  const userDetails = await User.findById(user._id);
   res
     .status(STATUS_CODES.success.OK)
-    .json(jsend("success", returnData, "login successful!", { token }));
+    .json(jsend("success", userDetails, "login successful!", { token }));
 }
 async function AuthenticatePassword(
   req: UserConfirmRequest,
@@ -147,6 +191,7 @@ const authExports = {
   Login,
   ProtectRoutes,
   AuthenticatePassword,
+  GoogleSignIn,
 };
 
 export default wrapModuleFunctionsInAsyncErrorHandler(authExports);
