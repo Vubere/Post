@@ -1,8 +1,7 @@
-import { Empty, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import { ReactNode, useMemo, useState } from "react"
 import { isEmpty } from "lodash";
-import document from "@/assets/icons/document.svg";
-import Image from "next/image";
+import Empty from "@/app/_components/empty";
 
 interface Props {
   items: {
@@ -37,7 +36,7 @@ export default function Tab({ items, className, loading }: Props) {
             currentDisplay.content :
             <div className="flex w-full h-[300px] items-center justify-center">
               <div>
-                <Empty description={<p className="w-full text-center">No post here!</p>} image={<Image alt="" src={document} height={40} width={40} className="mx-auto" />} />
+                <Empty />
               </div>
             </div>
         ) : (

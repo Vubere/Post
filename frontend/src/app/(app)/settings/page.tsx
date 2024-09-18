@@ -1,5 +1,4 @@
 "use client";
-import editIcon from "@/assets/icons/edit.png";
 import PageContainer from "@/app/_components/general/page-container";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/hooks";
 import { RootState } from "@/app/_lib/store";
@@ -15,13 +14,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { User } from "@/app/_lib/type";
 import { toast } from "react-toastify";
 import { updateToken } from "@/app/_lib/store/user";
-import { LS_TOKEN_NAME } from "@/app/_lib/utils/constants";
+import { LS_TOKEN_NAME, SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
 
 
 export default function Settings() {
   const { info } = useAppSelector((state: RootState) => state.user);
 
-  const sectionsClassName = " bg-white pt-2 xs:pt-3 sm:pt-4 pb-6 px:2 xs:px-3 sm:px-4 shadow-xl  flex flex-col items-center py-[20px] mt-6 max-w-[500px] mx-auto";
+  const sectionsClassName = SECTION_CLASSNAME + " flex flex-col items-center py-[20px] mt-6 max-w-[500px] mx-auto";
 
   const NotificationComponent = useMemo(() => <Notification className={sectionsClassName} userInfo={info} />, [info]);
   const PrivacyComponent = useMemo(() => <Privacy className={sectionsClassName} userInfo={info} />, [info]);

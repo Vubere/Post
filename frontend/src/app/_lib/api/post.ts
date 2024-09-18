@@ -23,7 +23,7 @@ export const postApi = createApi({
     "Feed",
     "Interest",
     "Popular",
-    "Likes",
+    "Praises",
     "Subscriptions",
     "Bookmarks",
     "Following",
@@ -53,38 +53,41 @@ export const postApi = createApi({
       }),
       invalidatesTags: ["Token", "Feed"],
     }),
-    getAllPosts: builder.query<"Post", any>({
+    getAllPosts: builder.query({
       query: (params?: Record<string, any>) => ({
         url: "",
         params,
       }),
       providesTags: ["Post"],
     }),
-    getPost: builder.query<"Post", string>({
+    getPost: builder.query({
       query: (id) => `/${id}`,
       providesTags: (result, err, id) => [{ type: "Post", id }],
     }),
-    getLikes: builder.query<"Likes", any>({
+    getPraise: builder.query({
       query: () => "/praises",
-      providesTags: ["Likes"],
+      providesTags: ["Praises"],
     }),
-    getUserPost: builder.query<"User-Post", any>({
-      query: () => "/requester",
-      providesTags: ["Likes"],
+    getUserPost: builder.query({
+      query: (data?: Record<string, any>) => ({
+        url: "/requester",
+        params: data,
+      }),
+      providesTags: ["Praises"],
     }),
-    praisePost: builder.mutation<"Likes", string>({
+    praisePost: builder.mutation({
       query: (id: string) => ({
         url: `/praise/${id}`,
         method: "POST",
       }),
-      invalidatesTags: ["Likes", "Interest"],
+      invalidatesTags: ["Praises", "Interest"],
     }),
-    unpraisePost: builder.mutation<"Likes", string>({
+    unpraisePost: builder.mutation({
       query: (id: string) => ({
         url: `/praise/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Likes"],
+      invalidatesTags: ["Praises"],
     }),
     getPostFromFollowings: builder.query({
       query: () => "/following",
@@ -154,14 +157,14 @@ export const postApi = createApi({
 export const {
   useGetAllPostsQuery,
   useGetBookmarksQuery,
-  useGetLikesQuery,
+  useGetPraiseQuery,
   useGetPostFromFollowingsQuery,
   useGetPostFromInterestQuery,
   useGetPostQuery,
   useGetPostsFeedQuery,
   useGetPostsPopularQuery,
   useCreatePostMutation,
-  useLikePostMutation,
+  usePraisePostMutation,
   useBookmarkPostMutation,
   useClickPostMutation,
   useDeletePostMutation,
@@ -179,7 +182,7 @@ export const {
   deletePost,
   getAllPosts,
   getPost,
-  getLikes,
+  getPraise,
   praisePost,
   unpraisePost,
   bookmarkPost,

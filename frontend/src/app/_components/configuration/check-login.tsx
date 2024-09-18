@@ -21,17 +21,17 @@ export default function CheckLoginStatus() {
     if (token) {
 
       getUser(token).then((res: any) => {
-        console.log(res)
-        if (res.status === "rejected") {
-          router.push(ROUTES.login);
-          localStorage.clear();
+        if (res.status === "fulfilled") {
+          dispatch(updateToken(token));
+          dispatch(updateUserInfo(res?.data?.data));
+          if (publicRoutes.includes(pathname)) {
+            router.push(ROUTES.dashboard);
+          }
           return;
         }
-        dispatch(updateToken(token));
-        dispatch(updateUserInfo(res?.data?.data));
-        if (publicRoutes.includes(pathname)) {
-          router.push(ROUTES.dashboard);
-        }
+        /* router.push(ROUTES.login);
+        localStorage.clear();
+        return; */
       }).catch((err) => {
         router.push(ROUTES.login);
         localStorage.clear();
