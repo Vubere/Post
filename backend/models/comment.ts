@@ -9,7 +9,7 @@ interface IComment extends Document {
   edited: boolean;
   content: string;
   commentRepliedTo?: ObjectId | null;
-  likes?: Array<ObjectId>;
+  praises?: Array<ObjectId>;
   views?: number;
   clicks?: number;
   reads?: number;
@@ -52,7 +52,7 @@ const commentSchema = new mongoose.Schema<IComment>(
       type: Array,
       default: [],
     },
-    likes: {
+    praises: {
       type: Array,
       default: [],
     },
@@ -82,8 +82,8 @@ const commentSchema = new mongoose.Schema<IComment>(
     toObject: { virtuals: true },
   }
 );
-commentSchema.virtual("likesCount").get(function () {
-  return this.likes ? this.likes.length : 0;
+commentSchema.virtual("praisesCount").get(function () {
+  return this.praises ? this.praises.length : 0;
 });
 commentSchema.virtual("bookmarksCount").get(function () {
   return this.bookmarkedBy ? this.bookmarkedBy.length : 0;

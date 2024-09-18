@@ -1,13 +1,14 @@
-import { Form, Modal, notification } from "antd";
+import { Form, notification } from "antd";
 import React, { FormEvent, useRef, useState } from "react";
-import ReactQuill, { Quill, ReactQuillProps } from "react-quill";
-import { UploadButton } from "../general/uploadthing-button";
+import ReactQuill, { type ReactQuillProps } from "react-quill";
 import { useUploadThing } from "@/app/api/uploadthing/hooks";
 import Input, { NormalInput } from "../input";
 import Button from "../general/button";
 import Image from "next/image";
 import { useAppSelector } from "@/app/_lib/store/hooks";
 import { RootState } from "@/app/_lib/store";
+import ImageUploader from "../general/image-uploader";
+import cancel from "@/assets/icons/cancel.png";
 
 
 interface EditorProps extends ReactQuillProps {
@@ -21,6 +22,7 @@ interface EditorProps extends ReactQuillProps {
   coverLinkOnChange: (v: any) => void,
 }
 function Editor(props: EditorProps) {
+  //@ts-ignore
   const { info } = useAppSelector((state: RootState) => state.user)
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inputCoverImageRef = useRef<HTMLInputElement | null>(null);
@@ -127,20 +129,13 @@ function Editor(props: EditorProps) {
 
   return (
     <>
-      <div className="w-full preview pb-[100px] relative">
+      <div className="w-full preview pb-[10px] relative">
         <section className="flex flex-col gap-2 w-full mb-1">
           {/* cover photo */}
           <div>
-            {/* add cover photo */}
-            <Button theme="dark" text={`${coverLink ? "Change" : "Upload"} Cover Photo`} onClick={openSelectCoverImage} loading={isUploadingCoverPhoto} />
-            {coverLink && (
-              <div>
-                {/* remove cover photo */}
-                <div className="w-full h-[300px] relative rounded-[10px]">
-                  <Image src={coverLink} alt={heading} fill objectFit="cover" objectPosition="center" />
-                </div>
-              </div>
-            )}
+            <ImageUploader url={coverLink} setUrl={coverLinkOnChange} className="w-full h-[200px]" text={coverLink ? "change cover photo" : "upload cover photo"} removeLink={() => {
+              coverLinkOnChange("");
+            }} showIsDraggable />
           </div>
           {/* insert heading */}
           <div className="w-full">
@@ -210,15 +205,20 @@ function Editor(props: EditorProps) {
       </div>
       {
         showPreview && (
-          <div className="fixed top-[10vh] left-[50%] translate-x-[-50%] h-[80vh] rounded-xl max-h-[90vh] w-[95vw] mx-auto p-4 bg-[#e7e7e7] text-black overflow-y-auto py-4">
+          <div className="fixed top-0 left-0 h-[100vh] rounded-xl  w-[100vw] max-h-[100vh] mx-auto p-2 sm:p-4 bg-[#EDE0D4] text-black overflow-y-auto py-4 pb-10 z-[20]">
             <div className="w-full flex justify-end">
-              <Button text="x" className="!rounded-full !ml-auto !w-[35px] !h-[35px] px-2" theme="light" onClick={() => setShowPreview(prev => !prev)} />
+              <Button className="!rounded-full !ml-auto !w-[35px] !h-[35px] px-2 !border-none !outline-none !bg-transparent relative" theme="light" onClick={() => setShowPreview(prev => !prev)}>
+                <div>
+
+                  <Image src={cancel} fill alt="cancel" objectFit="cover" objectPosition="center" />
+                </div>
+              </Button>
             </div>
-            {coverLink && <div className="w-full h-[300px] relative rounded-[30px]">
+            {coverLink && <div className="w-full h-[300px] overflow-hidden relative rounded-[30px] md-[80px]">
               <Image src={coverLink} alt={heading} fill objectFit="cover" objectPosition="center" />
             </div>}
-            <div>
-              <h1 className="text-black leading-[15%] font-bold text-[24px] xs:text-[32px] sm:text-[42px] md:text-[48px] lg:text-[54px] mb-[15px]">{heading}</h1>
+            <div className="mb-[40px]">
+              <h1 className="text-black leading-[105%] font-bold text-[24px] xs:text-[32px] sm:text-[42px] md:text-[48px] lg:text-[54px] mb-[10px]">{heading}</h1>
               <p className="text-[#3d3d3d] text-[11px] xs:text-[14px] sm:text-[16px] md:text-[22px] italic">- {info?.fullName || "author"}</p>
             </div>
 

@@ -7,13 +7,13 @@ interface IPost extends Document {
   createdAt: Date;
   updatedAt: Date;
   author: ObjectId;
-  status: "0" | "1"; //"Draft"|"Published"
+  status: 0 | 1; //"Draft"|"Published"
   edited: boolean;
   title: string;
   synopsis: string;
   content: string;
   coverPhoto: string;
-  likes?: Array<ObjectId>;
+  praises?: Array<ObjectId>;
   views?: Array<ObjectId>;
   clicks?: Array<ObjectId>;
   reads?: Array<ObjectId>;
@@ -21,8 +21,8 @@ interface IPost extends Document {
   isPaywalled: boolean;
   paywallFee?: string;
   paywallPayedBy?: Array<ObjectId>;
-  paywalledUsers?: Array<"all" | "followers" | "mutuals" | "subscribers">;
-  userAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
+  paywalledUsers?: Array<"all" | "followers" | "subscribers">;
+  userAccess?: Array<"all" | "followers" | "subscribers">;
   comments?: Array<{ id: ObjectId; userId: ObjectId }>;
   tips?: Array<{ userId: ObjectId; amount: Number }>;
   notifications?: boolean;
@@ -37,14 +37,14 @@ interface IReshare extends Document {
   createdAt: Date;
   updatedAt: Date;
   author: ObjectId;
-  status: "0" | "1"; //"Draft"|"Published"
+  status: 0 | 1; //"Draft"|"Published"
   edited: boolean;
   content: string;
-  likes?: Array<ObjectId>;
+  praises?: Array<ObjectId>;
   views?: Array<ObjectId>;
   clicks?: Array<ObjectId>;
   reads?: Array<ObjectId>;
-  userAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
+  userAccess?: Array<"all" | "followers" | "subscribers">;
   comments?: Array<{ id: ObjectId; userId: ObjectId }>;
   tips?: Array<{ userId: ObjectId; amount: Number }>;
   notifications?: boolean;
@@ -90,15 +90,15 @@ const postSchema = new mongoose.Schema<IPost | IReshare>(
       default: false,
     },
     status: {
-      type: String,
-      enum: ["0", "1"],
-      default: "0",
+      type: Number,
+      enum: [0, 1],
+      default: 0,
     },
     coverPhoto: {
       type: String,
       default: "",
     },
-    likes: {
+    praises: {
       type: Array,
       default: [],
     },
@@ -119,15 +119,15 @@ const postSchema = new mongoose.Schema<IPost | IReshare>(
       default: false,
     },
     paywallFee: {
-      type: String,
-      default: "0",
+      type: Number,
+      default: 0,
     },
     paywallPayedBy: {
       type: Object,
       default: [],
     },
     paywalledUsers: {
-      type: Array<"all" | "followers" | "mutuals" | "subscribers">,
+      type: Array<"all" | "followers" | "subscribers">,
       default: [],
     },
     notifications: {
@@ -155,7 +155,7 @@ const postSchema = new mongoose.Schema<IPost | IReshare>(
       default: [],
     },
     userAccess: {
-      type: Array<"all" | "followers" | "mutuals" | "subscribers">,
+      type: Array<"all" | "followers" | "subscribers">,
       default: ["all"],
     },
     comments: {
@@ -175,14 +175,17 @@ const postSchema = new mongoose.Schema<IPost | IReshare>(
 postSchema.virtual("clicksCount").get(function () {
   return this.clicks ? this.clicks.length : 0;
 });
+postSchema.virtual("sharesCount").get(function () {
+  return this.resharedBy ? this.resharedBy.length : 0;
+});
 postSchema.virtual("viewsCount").get(function () {
   return this.views ? this.views.length : 0;
 });
 postSchema.virtual("readsCount").get(function () {
   return this.reads ? this.reads.length : 0;
 });
-postSchema.virtual("likesCount").get(function () {
-  return this.likes ? this.likes.length : 0;
+postSchema.virtual("praisesCount").get(function () {
+  return this.praises ? this.praises.length : 0;
 });
 postSchema.virtual("bookmarksCount").get(function () {
   return this.bookmarkedBy ? this.bookmarkedBy.length : 0;

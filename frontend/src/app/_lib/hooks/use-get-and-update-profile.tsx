@@ -1,8 +1,6 @@
 "use client";
 import { ROUTES } from "@/app/_lib/routes";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { useLazyGetProfileQuery } from "../../_lib/api/user";
 import { LS_TOKEN_NAME } from "@/app/_lib/utils/constants";
 import { useAppDispatch } from "@/app/_lib/store/hooks";
@@ -10,35 +8,32 @@ import { updateToken, updateUserInfo } from "@/app/_lib/store/user";
 
 
 
-export default function CheckLoginStatus() {
+export default function useGetAndUpdateProfile() {
   const dispatch = useAppDispatch();
-  const [getUser] = useLazyGetProfileQuery();
+  const [getUser, { isLoading }] = useLazyGetProfileQuery();
   const router = useRouter();
-  const pathname = usePathname() as ROUTES;
-  const publicRoutes = [ROUTES.login, ROUTES.signup, ROUTES.forgotPassword, ROUTES.resetPassword, ROUTES.home, ROUTES.about];
-  useEffect(() => {
+
+  const getProfile = async () => {
     const token = localStorage.getItem(LS_TOKEN_NAME);
     if (token) {
-
       getUser(token).then((res: any) => {
         console.log(res)
         if (res.status === "rejected") {
-          router.push(ROUTES.login);
-          localStorage.clear();
           return;
         }
         dispatch(updateToken(token));
         dispatch(updateUserInfo(res?.data?.data));
-        if (publicRoutes.includes(pathname)) {
-          router.push(ROUTES.dashboard);
-        }
       }).catch((err) => {
+        console.log(err)
         router.push(ROUTES.login);
         localStorage.clear();
       })
     } else {
       router.push(ROUTES.login);
     }
-  }, [pathname])
-  return null
+  };
+  return {
+    getProfile,
+    isLoading
+  }
 }

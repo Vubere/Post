@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/app/_components/general/button";
-import Input from "@/app/input";
+import Input from "@/app/_components/input";
 import { useGetAllUsersQuery, useGoogleSignInMutation, useSignUpMutation } from "@/app/_lib/api/user";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form, notification } from "antd";
@@ -102,7 +102,7 @@ export default function SignupForm() {
         <Input label="Date of Birth" placeholder="Date of Birth" type="date" name="dateOfBirth" state={rest} required />
         <Input label="Password" placeholder="********" name="password" state={rest} required />
         <Input label="Confirm Password" name="confirmPassword" placeholder="********" required state={rest} />
-        <Button type="submit" loading={isLoading || googleLoading} disabled={isLoading || googleLoading}>Submit</Button>
+        <Button type="submit" loading={isLoading || googleLoading} disabled={isLoading || googleLoading}>Sign In</Button>
       </Form>
       <div className="relative w-full flex justify-center ">
         <span className="block bg-[#fff] p-1 relative z-[1] text-black font-medium">
@@ -110,7 +110,7 @@ export default function SignupForm() {
         </span>
         <hr className=" block h-[2px] w-full bg-[#0003] bg-opacity-40 absolute z-[0] left-0 top-[50%] " />
       </div>
-      <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} loading={isLoading || googleLoading} className="mb-1" />
+      <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} loading={isLoading || googleLoading} className="mb-1 max-w-[400px]" />
       <div className="mt-4 w-full max-w-[400px]">
         <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Already have an account? <Link className="hover:underline hover:text-blue-300" href={ROUTES.signup}>Login</Link></p>
       </div>

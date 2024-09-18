@@ -8,7 +8,10 @@ import {
   jsend,
   validateObjectKeys,
 } from "../lib/utils";
-import { wrapModuleFunctionsInAsyncErrorHandler } from "../lib/utils/aynsc-error-handler";
+import {
+  asyncErrorHandlerIds,
+  wrapModuleFunctionsInAsyncErrorHandler,
+} from "../lib/utils/aynsc-error-handler";
 import { UserConfirmRequest } from "../lib/types";
 import CustomError from "../lib/utils/custom-error";
 import { signToken } from "../lib/utils/token";
@@ -107,7 +110,7 @@ async function updateUser(
 
     const token = signToken(user._id);
     res.status(STATUS_CODES.success.OK).json(
-      jsend("success!", userDetails, "password updated successfully", {
+      jsend("success!", userDetails, "user updated successfully", {
         token,
       })
     );
@@ -427,10 +430,9 @@ async function updateSections(
   res: Response,
   next: NextFunction
 ) {
-  const requesterId = req.requesterId;
   const body = req.body;
   const sentKeys = Object.keys(body);
-  const allowedKeys = ["sections"];
+  const allowedKeys = ["profileSections"];
   if (!validateObjectKeys(sentKeys, allowedKeys))
     return next(
       new CustomError(
@@ -438,11 +440,11 @@ async function updateSections(
         STATUS_CODES.clientError.Bad_Request
       )
     );
-  await User.findByIdAndUpdate(requesterId, body);
+  await User.findByIdAndUpdate(req.requesterId, body);
 
   res
     .status(STATUS_CODES.success.OK)
-    .json(jsend("success", undefined, "privacy settings updated!"));
+    .json(jsend("success", undefined, "profile sections updated!"));
 }
 async function getBlockedUsers(
   ...args: [UserConfirmRequest, Response, NextFunction]
@@ -485,7 +487,7 @@ async function getUserAnalytics(
 ) {
   const [req, res, next] = args;
   const fields =
-    "likes posts profileViews followers following subscribers subscribed bookmarks viewedProfiles";
+    "praises posts profileViews followers following subscribers subscribed bookmarks viewedProfiles";
   const user = await User.findById(req.requesterId).select(fields);
   const post = await Post.aggregate([
     {
@@ -496,7 +498,7 @@ async function getUserAnalytics(
     {
       $project: {
         author: "$author",
-        likesCount: { $size: "$likes" },
+        praisesCount: { $size: "$praises" },
         viewsCount: { $size: "$views" },
         clicksCount: { $size: "$clicks" },
         readsCount: { $size: "$reads" },
@@ -509,7 +511,7 @@ async function getUserAnalytics(
       $group: {
         _id: "$author",
         posts: { $sum: 1 },
-        likes: { $sum: "$likesCount" },
+        praises: { $sum: "$praisesCount" },
         views: { $sum: "$viewsCount" },
         clicks: { $sum: "$clicksCount" },
         reads: { $sum: "$readsCount" },
@@ -552,5 +554,4 @@ const userExports = {
   subscribe,
   unsubscribe,
 };
-
 export default wrapModuleFunctionsInAsyncErrorHandler(userExports);

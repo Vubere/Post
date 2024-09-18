@@ -13,10 +13,7 @@ const axiosBaseQuery =
       prepareHeaders,
     }: {
       baseUrl: string;
-      prepareHeaders?: (
-        headers: any,
-        state: { getState: GetState<any> }
-      ) => any;
+      prepareHeaders?: (headers: any) => any;
     } = { baseUrl: "" }
   ): BaseQueryFn<
     {
@@ -33,7 +30,7 @@ const axiosBaseQuery =
   async ({ url, method, data, body, params, headers }) => {
     try {
       if (prepareHeaders && headers === undefined) {
-        headers = prepareHeaders(headers, { getState: store.getState });
+        headers = prepareHeaders(headers);
       }
       const result = await axios({
         url: baseUrl + url,

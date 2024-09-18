@@ -1,14 +1,15 @@
 "use client";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Post } from "../type";
+import { Post, PostPayload } from "../type";
 import { RootState } from "../store";
+import { LS_TOKEN_NAME } from "../utils/constants";
 
-const post = createApi({
+export const postApi = createApi({
   reducerPath: "postApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/posts`,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).user?.token;
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem(LS_TOKEN_NAME);
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
       }
@@ -29,8 +30,8 @@ const post = createApi({
     "Popular",
   ],
   endpoints: (builder) => ({
-    create: builder.mutation({
-      query: (data: Post) => ({
+    createPost: builder.mutation({
+      query: (data: PostPayload) => ({
         url: "/",
         method: "POST",
         body: data,
@@ -52,8 +53,8 @@ const post = createApi({
       }),
       invalidatesTags: ["Token", "Feed"],
     }),
-    getAllPosts: builder.query({
-      query: (params: Record<string, any>) => ({
+    getAllPosts: builder.query<"Post", any>({
+      query: (params?: Record<string, any>) => ({
         url: "",
         params,
       }),
@@ -63,20 +64,24 @@ const post = createApi({
       query: (id) => `/${id}`,
       providesTags: (result, err, id) => [{ type: "Post", id }],
     }),
-    getLikes: builder.query({
-      query: () => "/likes",
+    getLikes: builder.query<"Likes", any>({
+      query: () => "/praises",
       providesTags: ["Likes"],
     }),
-    likePost: builder.mutation<"Likes", string>({
+    getUserPost: builder.query<"User-Post", any>({
+      query: () => "/requester",
+      providesTags: ["Likes"],
+    }),
+    praisePost: builder.mutation<"Likes", string>({
       query: (id: string) => ({
-        url: `/like/${id}`,
+        url: `/praise/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Likes", "Interest"],
     }),
-    unlikePost: builder.mutation<"Likes", string>({
+    unpraisePost: builder.mutation<"Likes", string>({
       query: (id: string) => ({
-        url: `/like/${id}`,
+        url: `/praise/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Likes"],
@@ -145,7 +150,7 @@ const post = createApi({
     }),
   }),
 });
-export default post;
+
 export const {
   useGetAllPostsQuery,
   useGetBookmarksQuery,
@@ -155,7 +160,7 @@ export const {
   useGetPostQuery,
   useGetPostsFeedQuery,
   useGetPostsPopularQuery,
-  useCreateMutation,
+  useCreatePostMutation,
   useLikePostMutation,
   useBookmarkPostMutation,
   useClickPostMutation,
@@ -164,18 +169,19 @@ export const {
   useReadPostMutation,
   useViewPostMutation,
   useUpdatePostMutation,
-  useUnlikePostMutation,
+  useUnpraisePostMutation,
   useUnBookmarkPostMutation,
-} = post;
+  useGetUserPostQuery,
+} = postApi;
 export const {
-  create,
+  createPost,
   updatePost,
   deletePost,
   getAllPosts,
   getPost,
   getLikes,
-  likePost,
-  unlikePost,
+  praisePost,
+  unpraisePost,
   bookmarkPost,
   unBookmarkPost,
   getBookmarks,
@@ -187,4 +193,4 @@ export const {
   clickPost,
   readPost,
   paywallPost,
-} = post.endpoints;
+} = postApi.endpoints;

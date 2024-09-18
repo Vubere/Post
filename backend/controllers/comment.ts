@@ -134,7 +134,7 @@ async function updateComment(
   );
 }
 
-async function likeComment(
+async function praiseComment(
   req: CommentConfirmRequest,
   res: Response,
   next: NextFunction
@@ -142,23 +142,25 @@ async function likeComment(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $push: { likes: requesterId },
+    $push: { praises: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { likes: comment.id },
+      $push: { praises: comment.id },
     });
     res
       .status(STATUS_CODES.success.OK)
-      .json(jsend("success", undefined, `successfully liked ${comment.title}`));
+      .json(
+        jsend("success", undefined, `successfully praised ${comment.title}`)
+      );
     return;
   } catch (err) {
     await Comment.findByIdAndUpdate(comment._id, {
-      $pull: { likes: requesterId },
+      $pull: { praises: requesterId },
     });
     next(
       new CustomError(
-        `failed to like ${comment.title}!`,
+        `failed to praise ${comment.title}!`,
         STATUS_CODES.serverError.Internal_Server_Error
       )
     );
@@ -212,7 +214,7 @@ async function readComment(
     .json(jsend("success", undefined, `read comment ${comment.title}`));
   return;
 }
-async function unlikeComment(
+async function unpraiseComment(
   req: CommentConfirmRequest,
   res: Response,
   next: NextFunction
@@ -220,25 +222,25 @@ async function unlikeComment(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $pull: { likes: requesterId },
+    $pull: { praises: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $pull: { likes: comment.id },
+      $pull: { praises: comment.id },
     });
     res
       .status(STATUS_CODES.success.OK)
       .json(
-        jsend("success", undefined, `successfully unliked ${comment.title}`)
+        jsend("success", undefined, `successfully unpraised ${comment.title}`)
       );
     return;
   } catch (err) {
     await Comment.findByIdAndUpdate(comment._id, {
-      $push: { likes: requesterId },
+      $push: { praises: requesterId },
     });
     next(
       new CustomError(
-        `failed to unlike ${comment.title}!`,
+        `failed to unpraise ${comment.title}!`,
         STATUS_CODES.serverError.Internal_Server_Error
       )
     );
@@ -317,7 +319,7 @@ async function getLikes(
   ...args: [CommentConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.likes = { $in: req.requesterId };
+  req.query.praises = { $in: req.requesterId };
   next();
 }
 async function getBookmarks(
@@ -352,8 +354,8 @@ const blogExports = {
   updateComment,
   getComment,
   deleteComment,
-  likeComment,
-  unlikeComment,
+  praiseComment,
+  unpraiseComment,
   getLikes,
   isRequestersComment,
   getBookmarks,

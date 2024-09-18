@@ -12,8 +12,8 @@ const {
   updateComment,
   getComment,
   deleteComment,
-  likeComment,
-  unlikeComment,
+  praiseComment,
+  unpraiseComment,
   getLikes,
   isRequestersComment,
   getBookmarks,
@@ -45,8 +45,8 @@ router.param(
 //multiple middlewares can be chained before calling the maing request
 
 router.route("/bookmarks").get(getBookmarks, getBlogComments);
-router.route("/likes").get(getLikes, getBlogComments);
-router.route("/like/:id").post(likeComment).delete(unlikeComment);
+router.route("/praises").get(getLikes, getBlogComments);
+router.route("/praise/:id").post(praiseComment).delete(unpraiseComment);
 
 router.route("/bookmark/:id").post(addToBookmarks).delete(removeFromBookmarks);
 

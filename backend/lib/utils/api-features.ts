@@ -103,9 +103,10 @@ class ApiFeaturesAggregation {
           this.queryItem?.sortDirection || -1,
       },
     });
-    if (!isEmpty(this.filter())) {
+    const filters = this.filter();
+    if (!isEmpty(filters)) {
       aggregateArray.push({
-        $match: { ...this.filter(), ...(this.lookupQuery || {}) },
+        $match: { ...filters, ...(this.lookupQuery || {}) },
       });
     }
     aggregateArray.push({
@@ -121,6 +122,7 @@ class ApiFeaturesAggregation {
       aggregateArray.push({ $skip: (page - 1) * limit });
       aggregateArray.push({ $limit: limit });
     }
+
     return this.model.aggregate(aggregateArray);
   }
   filter() {
@@ -129,12 +131,7 @@ class ApiFeaturesAggregation {
       return `$${match}`;
     });
 
-    const queryObj = omit(JSON.parse(queryStr), [
-      "sort",
-      "fields",
-      "page",
-      "limit",
-    ]);
+    const queryObj = omit(this.queryItem, ["sort", "fields", "page", "limit"]);
     return queryObj;
   }
   limitFields() {

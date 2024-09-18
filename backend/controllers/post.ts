@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Post from "../models/post";
 import ApiFeatures, { ApiFeaturesAggregation } from "../lib/utils/api-features";
-import bcrypt from "bcryptjs";
+import { Types } from "mongoose";
 import {
   STATUS_CODES,
   UPDATEABLE_BLOG_DATA,
@@ -149,7 +149,7 @@ async function updateBlog(
   next(new CustomError("post not found", STATUS_CODES.clientError.Not_Found));
 }
 
-async function likeBlog(
+async function praiseBlog(
   req: BlogConfirmRequest,
   res: Response,
   next: NextFunction
@@ -157,23 +157,23 @@ async function likeBlog(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $push: { likes: requesterId },
+    $push: { praises: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { likes: post.id },
+      $push: { praises: post.id },
     });
     res
       .status(STATUS_CODES.success.OK)
-      .json(jsend("success", undefined, `successfully liked ${post.title}`));
+      .json(jsend("success", undefined, `successfully praised ${post.title}`));
     return;
   } catch (err) {
     await Post.findByIdAndUpdate(post._id, {
-      $pull: { likes: requesterId },
+      $pull: { praises: requesterId },
     });
     next(
       new CustomError(
-        `failed to like ${post.title}!`,
+        `failed to praise ${post.title}!`,
         STATUS_CODES.serverError.Internal_Server_Error
       )
     );
@@ -227,7 +227,7 @@ async function readBlog(
     .json(jsend("success", undefined, `readed post ${post.title}`));
   return;
 }
-async function unlikeBlog(
+async function unpraiseBlog(
   req: BlogConfirmRequest,
   res: Response,
   next: NextFunction
@@ -235,23 +235,25 @@ async function unlikeBlog(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $pull: { likes: requesterId },
+    $pull: { praises: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $pull: { likes: post.id },
+      $pull: { praises: post.id },
     });
     res
       .status(STATUS_CODES.success.OK)
-      .json(jsend("success", undefined, `successfully unliked ${post.title}`));
+      .json(
+        jsend("success", undefined, `successfully unpraised ${post.title}`)
+      );
     return;
   } catch (err) {
     await Post.findByIdAndUpdate(post._id, {
-      $push: { likes: requesterId },
+      $push: { praises: requesterId },
     });
     next(
       new CustomError(
-        `failed to unlike ${post.title}!`,
+        `failed to unpraise ${post.title}!`,
         STATUS_CODES.serverError.Internal_Server_Error
       )
     );
@@ -351,14 +353,21 @@ async function addPaywall(
 }
 async function getLikes(...args: [BlogConfirmRequest, Response, NextFunction]) {
   const [req, , next] = args;
-  req.query.likes = { $in: req.requesterId };
+  req.query.praises = req.requesterId;
+  next();
+}
+async function getUserPost(
+  ...args: [BlogConfirmRequest, Response, NextFunction]
+) {
+  const [req, , next] = args;
+  req.query.author = new Types.ObjectId(req.requesterId) as any;
   next();
 }
 async function getBookmarks(
   ...args: [BlogConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.bookmarkedBy = { $in: req.requesterId };
+  req.query.bookmarkedBy = new Types.ObjectId(req.requesterId) as any;
   next();
 }
 async function isRequestersBlog(
@@ -382,11 +391,12 @@ async function isRequestersBlog(
 const blogExports = {
   createBlog,
   getAllPosts,
+  getUserPost,
   updateBlog,
   getBlog,
   deleteBlog,
-  likeBlog,
-  unlikeBlog,
+  praiseBlog,
+  unpraiseBlog,
   addPaywall,
   getLikes,
   isRequestersBlog,

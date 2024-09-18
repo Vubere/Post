@@ -25,14 +25,14 @@ export default function AppHeader() {
   }
 
   return (
-    <header className="flex h-[70px] px-[30px] justify-between items-center fixed top-0 left-0 min-w-full  nsm:hidden z-[8] ">
+    <header className="flex h-[60px] sm:h-[70px] px-[18px] nsm:shadow-xl xs:px-[20px] sm:px-[30px] justify-between items-center fixed top-0 left-0 min-w-full z-[10] nsm:bg-white">
       <h1 className="font-bold italic text-[21px] xs:text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] text-black bg-white">Collections</h1>
       <Popover
         className="w-[100px] h-[30px] relative"
         content={(
           <ul className="grid gap-1 text-[16px] px-[10px]">
             <li>
-              <Link href={ROUTES.profile}>
+              <Link href={ROUTES.account}>
                 Profile
               </Link>
             </li>
@@ -51,9 +51,9 @@ export default function AppHeader() {
       >
         <div className="flex gap-2 cursor-pointer items-center">
           <span className="block relative rounded-full w-[30px] h-[30px] min-w-[30px] min-h-[30px] border">
-            <Image alt={info?.fullName} fill src={info?.profilePhoto || avatar} objectFit="contain" objectPosition="center" className="rounded-full" />
+            <Image alt={info?.firstName || ""} fill src={info?.profilePhoto || avatar} objectFit="cover" objectPosition="center" className="rounded-full" />
           </span>
-          <span className=" block w-full bg-white text-black text-black text-sm truncate">{info?.fullName}</span>
+          <span className=" block w-full bg-white text-black text-black text-sm truncate">{info?.firstName?.[0]}{info?.lastName?.[0]}</span>
         </div>
       </Popover>
 

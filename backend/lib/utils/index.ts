@@ -33,12 +33,14 @@ const STATUS = {
 const UPDATEABLE_USER_DATA = [
   "firstName",
   "lastName",
+  "username",
   "email",
   "profilePhoto",
   "coverPhoto",
-  "bio",
+  "biography",
   "profession",
   "sections",
+  "interest",
   "dateOfBirth",
 ];
 const UPDATEABLE_BLOG_DATA = [

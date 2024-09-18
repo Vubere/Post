@@ -1,9 +1,10 @@
 import express, { NextFunction, Response } from "express";
 import userControllers from "../controllers/user";
 import authControllers from "../controllers/auth";
+import { UserConfirmRequest } from "../lib/types";
+import { asyncErrorHandlerIds } from "../lib/utils/aynsc-error-handler";
 import User from "../models/user";
 import CustomError from "../lib/utils/custom-error";
-import { UserConfirmRequest } from "../lib/types";
 import { STATUS_CODES } from "../lib/utils";
 
 const {
@@ -32,12 +33,23 @@ const {
 } = userControllers;
 const router = express.Router();
 
-//this is a param middleware used to target param(:id) values and this would only execute for the id param, can be used to check for presence of a user before resolving a delete or patch request
-router.param(
-  "id",
-  async (req: UserConfirmRequest, res: Response, next, value) => {
-    const user = await User.findById(value);
+router
+  .route("/")
+  .get(function (...args: [UserConfirmRequest, Response, NextFunction]) {
+    const [req, , next] = args;
+    req.query._id = { $ne: req.requesterId };
+    next();
+  }, getAllUsers);
 
+const idIdentifier = asyncErrorHandlerIds(
+  async (
+    req: UserConfirmRequest,
+    res: Response,
+    next: NextFunction,
+    value: any
+  ) => {
+    const user = await User.findById(value);
+    console.log(value, user);
     if (!user) {
       next(
         new CustomError(`User not found`, STATUS_CODES.clientError.Not_Found)
@@ -47,13 +59,22 @@ router.param(
     next();
   }
 );
+router.param("id", idIdentifier);
 
+router.route("/subscribers").get(getSubscribers, getAllUsers);
+router.route("/update-privacy").patch(updatePrivacySettings);
+router.route("/update-interest").patch(updateInterest);
+router.route("/sections").patch(updateSections);
+router.route("/profile").get(getProfile);
 router
   .route("/update-password")
   .patch(authControllers.AuthenticatePassword, updateUserPassword);
 
 router.route("/analytics").get(getUserAnalytics);
 router.route("/blocked-users").get(getBlockedUsers, getAllUsers);
+router.route("/followers").get(getFollowers, getAllUsers);
+router.route("/subscriptions").get(getSubscriptions, getAllUsers);
+
 router.route("/unblock/:id").post(unblockUser);
 router.route("/block/:id").post(blockUser);
 
@@ -61,22 +82,9 @@ router.route("/view-profile/:id").post(viewProfile);
 router.route("/follow/:id").post(followUser);
 router.route("/following").get(getFollowing, getAllUsers);
 router.route("/unfollow/:id").post(unfollowUser);
-router.route("/followers").get(getFollowers, getAllUsers);
+
 router.route("/subscribe/:id").post(subscribe);
-router.route("/subscriptions").get(getSubscriptions, getAllUsers);
 router.route("/unsubscribe/:id").post(unsubscribe);
-router.route("/subscribers").get(getSubscribers, getAllUsers);
-router.route("/update-privacy").patch(updatePrivacySettings);
-router.route("/update-interest").patch(updateInterest);
-router.route("/update-sections").patch(updateSections);
-router.route("/profile").get(getProfile);
-router
-  .route("/")
-  .get(function (...args: [UserConfirmRequest, Response, NextFunction]) {
-    const [req, , next] = args;
-    req.query._id = { $ne: req.requesterId };
-    next();
-  }, getAllUsers);
 
 router
   .route("/:id")

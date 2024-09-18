@@ -20,7 +20,7 @@ export default function RootLayout({
         <div className=" w-full h-full relative bg-white z-[0]">
           <AppHeader />
           <PostButton />
-          <div className="grid md:grid-cols-[268px_1fr] grid-cols-[200px_1fr] h-[100vh] max-h-[100vh] overflow-y-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[268px_1fr] h-[100vh] max-h-[100vh] overflow-y-hidden">
             <SideNav />
             <main className="h-full max-h-screen pt-[80px] overflow-y-auto">
               {children}

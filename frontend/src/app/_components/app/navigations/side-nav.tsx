@@ -25,6 +25,8 @@ import notifActive from "@/assets/icons/dashboard/notifActive.png"
 import settings from "@/assets/icons/dashboard/settings.svg";
 import settingsActive from "@/assets/icons/dashboard/settingsActive.svg";
 import trendingIcon from "@/assets/icons/dashboard/trendingIcon.svg"
+import arrowRightIcon from "@/assets/icons/arrow-right.png";
+import { useEffect, useRef } from "react";
 
 const overviewLinks = [
   {
@@ -76,18 +78,58 @@ const personalLinks = [
 
 
 export default function SideNav() {
-  const path = usePathname()
+  const path = usePathname();
+  const sideNavRef = useRef<HTMLDivElement | null>(null);
+  const openSideNavRef = useRef<HTMLButtonElement | null>(null);
   const { info } = useAppSelector((state: RootState) => state.user);
   const trendingTags = ["programming", "data science", "technology", "machine learning", "politics"]
 
   const headingClass = "font-[600] text-[#111] font-[18px] leading-[27px] w-full text-left "
 
+  useEffect(() => {
+    const sideNavEl = sideNavRef.current;
+    const openSideNavEl = openSideNavRef.current;
+    if (sideNavEl && openSideNavEl) {
+      const classes = ["fixed"];
+      const btnClasses = ["transform", "rotate-180"]
+      const showNav = () => {
+        if (sideNavEl.classList.contains("hidden")) {
+          sideNavEl.classList.remove("hidden");
+          sideNavEl.classList.add(...classes);
+          openSideNavEl.classList.add(...btnClasses);
+        }
+      }
+      const hideNav = () => {
+        sideNavEl.classList.add("hidden");
+        sideNavEl.classList.remove(...classes);
+        openSideNavEl.classList.remove(...btnClasses);
+      };
+      const handleOpenNav = () => {
+        if (sideNavEl.classList.contains("hidden"))
+          showNav();
+        else
+          hideNav()
+      }
+      const handleClickEvent = (e: MouseEvent) => {
+        const clickEl = e.target as HTMLElement;
+        const isChildOfNav = sideNavEl.contains(clickEl) || openSideNavEl.contains(clickEl);
+        if (!isChildOfNav) {
+          hideNav();
+        }
+      }
+      openSideNavEl.addEventListener("click", handleOpenNav);
+      document.addEventListener("click", handleClickEvent);
+      return () => {
+        openSideNavEl.removeEventListener("click", handleOpenNav);
+        document.removeEventListener("click", handleClickEvent);
+      }
+    }
+  }, []);
 
   return (
-    <div className="w-full">
-
-      <div className="text-black w-[100%]flex flex-col items-center overflow-y-auto  pt-[80px] z-[5] pb-20  bg-[#fff] shadow-xl  h-[100vh]">
-        <nav className="flex flex-col h-[70px] px-[30px] justify-between items-center min-w-full  nsm:hidden z-[5] s">
+    <>
+      <div className="text-black w-[100%] max-w-[285px] flex flex-col items-center overflow-y-auto pt-[80px]  bg-[#fff] shadow-xl  h-[100vh] w-full nsm:w-[85%] hidden sm:block shadow-xl pb-[10vh]  left-0 top-0 z-[8]" ref={sideNavRef} >
+        <nav className="flex flex-col px-[20px] sm:px-[30px] items-center min-w-full">
           <section className="flex flex-col gap-4 w-[80%] mb-6">
             <h3 className={headingClass}>Overview</h3>
             <ul className="flex flex-col gap-2 ">
@@ -127,7 +169,11 @@ export default function SideNav() {
 
         </nav>
       </div>
-    </div>
+
+      <button className="bg-transparent outline-none sm:hidden fixed left-[10px] border border-1 border-[#0008] shadow-xl top-[50%] translate-y-[-50%] h-[25px] w-[25px] bg-white sm:h-[30px] sm:w-[30px] rounded-full p-1 z-[21]" ref={openSideNavRef}>
+        <Image src={arrowRightIcon} fill alt="arrow" objectFit="contain" objectPosition="center" />
+      </button>
+    </>
 
   )
 }

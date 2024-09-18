@@ -104,9 +104,16 @@ async function Login(req: Request, res: Response, next: NextFunction) {
     );
 
   const user = await User.findOne({ email }).select(
-    "password username email firstName lastName"
+    "password username email firstName lastName signUpMethod"
   );
-  //@ts-ignore
+  if (user?.signUpMethod !== "signup-form") {
+    return next(
+      new CustomError(
+        "user signed in with google auth!",
+        STATUS_CODES.clientError.Bad_Request
+      )
+    );
+  }
   if (!user || !(await user.authenticatePassword(password, user.password))) {
     return next(
       new CustomError(

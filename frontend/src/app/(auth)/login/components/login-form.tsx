@@ -92,7 +92,7 @@ export default function LoginForm() {
       <Form onFinish={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] max-w-[400px] w-full ">
         <Input type="email" label="Email" placeholder="user@email.com" name="email" state={rest} required />
         <Input label="Password" placeholder="********" name="password" state={rest} required />
-        <Button type="submit" loading={isLoading} disabled={isLoading || googleLoading}>Submit</Button>
+        <Button type="submit" loading={isLoading} disabled={isLoading || googleLoading}>Login</Button>
       </Form>
       <div className="relative w-full flex justify-center ">
         <span className="block bg-[#fff] p-1 relative z-[1] text-black font-medium">
@@ -100,7 +100,7 @@ export default function LoginForm() {
         </span>
         <hr className=" block h-[2px] w-full bg-[#0003] bg-opacity-40 absolute z-[0] left-0 top-[50%] " />
       </div>
-      <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} className="mb-1" loading={isLoading || googleLoading} />
+      <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} className="mb-1 max-w-[400px]" loading={isLoading || googleLoading} />
       <div className="mt-4 w-full max-w-[400px]">
         <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Forgot password?  <Link className="hover:underline hover:text-blue-300" href={ROUTES.forgotPassword}>Recover.</Link></p>
         <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Don't have an account? <Link className="hover:underline hover:text-blue-300" href={ROUTES.signup}>Sign up</Link></p>

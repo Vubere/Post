@@ -12,7 +12,7 @@ interface INotification extends Document {
   notificationOrigin: ObjectId;
   type:
     | "follow"
-    | "like"
+    | "praise"
     | "comment"
     | "tip"
     | "subscription"
@@ -49,7 +49,7 @@ const notificationSchema = new mongoose.Schema<INotification>(
       type: String,
       enum: [
         "follow",
-        "like",
+        "praise",
         "comment",
         "tip",
         "subscription",

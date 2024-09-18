@@ -3,7 +3,8 @@ import userReducer from "./user";
 import { persistReducer, persistStore } from "redux-persist";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import storage from "redux-persist/lib/storage";
-import { userApi, postApi } from "@/app/_lib/api";
+import { userApi } from "@/app/_lib/api/user";
+import { postApi } from "@/app/_lib/api/post";
 
 const persistConfig = {
   key: "collections-root",
@@ -16,17 +17,14 @@ const rootReducer = combineReducers({
   [postApi.reducerPath]: postApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
 });
-//@ts-ignore
-const persistedReducer = persistReducer(persistConfig, rootReducer as any);
 
 //@ts-ignore
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   //@ts-ignore
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(userApi.middleware, postApi.middleware),
 });
-export const persistor = persistStore(store);
 setupListeners(store.dispatch);
 export const getState = store.getState;
 //@ts-ignore

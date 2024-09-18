@@ -1,8 +1,23 @@
-import { NextFunction } from "express";
+import { NextFunction, Response } from "express";
+import { UserConfirmRequest } from "../types";
 
 const asyncErrorHandler = (func: any) => {
-  return function (req: Request, res: Response, next: NextFunction) {
+  return function (
+    req: Request | UserConfirmRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     func(req, res, next).catch((err: any) => next(err));
+  };
+};
+const asyncErrorHandlerIds = (func: any) => {
+  return function (
+    req: Request | UserConfirmRequest,
+    res: Response,
+    next: NextFunction,
+    value: any
+  ) {
+    func(req, res, next, value).catch((err: any) => next(err));
   };
 };
 const wrapModuleFunctionsInAsyncErrorHandler = (
@@ -19,5 +34,5 @@ const wrapModuleFunctionsInAsyncErrorHandler = (
   }
   return transformedexports;
 };
-export { wrapModuleFunctionsInAsyncErrorHandler };
+export { wrapModuleFunctionsInAsyncErrorHandler, asyncErrorHandlerIds };
 export default asyncErrorHandler;

@@ -28,7 +28,6 @@ const limiter = rateLimit({
   message:
     "you have exceeded the amount of allowed request, try again in an hour!",
 });
-app.use(express.json());
 app.use(logger);
 app.use(addRequestTime);
 app.use(morgan("dev"));
@@ -45,15 +44,15 @@ app.use(cors());
 const baseRootUsers = "/api/users";
 const baseRootPosts = "/api/posts";
 const baseRootComments = "/api/comments";
-
+app.post(baseRootUsers + "/login", authController.Login);
 app.use(baseRootUsers, authRouter);
 app.use(baseRootUsers, authController.ProtectRoutes, userRouter);
 app.use(baseRootPosts, authController.ProtectRoutes, blogRouter);
 app.use(baseRootComments, authController.ProtectRoutes, commentRouter);
 app.all("*", (...args) => {
-  const next = args[2];
+  const [req, , next] = args;
   const error = new CustomError(
-    "not found",
+    "route not found: " + req.url,
     STATUS_CODES.clientError.Not_Found
   );
   next(error);

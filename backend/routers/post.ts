@@ -12,8 +12,9 @@ const {
   updateBlog,
   getBlog,
   deleteBlog,
-  likeBlog,
-  unlikeBlog,
+  praiseBlog,
+  unpraiseBlog,
+  getUserPost,
   addPaywall,
   getLikes,
   isRequestersBlog,
@@ -47,8 +48,9 @@ router.param(
 
 router.route("/paywall").post(isRequestersBlog, addPaywall);
 router.route("/bookmarks").get(getBookmarks, getAllPosts);
-router.route("/likes").get(getLikes, getAllPosts);
-router.route("/like/:id").post(likeBlog).delete(unlikeBlog);
+router.route("/requester").get(getUserPost, getAllPosts);
+router.route("/praises").get(getLikes, getAllPosts);
+router.route("/praise/:id").post(praiseBlog).delete(unpraiseBlog);
 
 router.route("/bookmark/:id").post(addToBookmarks).delete(removeFromBookmarks);
 

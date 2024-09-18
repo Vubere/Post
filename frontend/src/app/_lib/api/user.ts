@@ -1,25 +1,25 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { User } from "../type";
 import { RootState } from "../store";
 import axiosBaseQuery from "./axios-config";
-import { PayloadAction, Action } from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
+import { LS_TOKEN_NAME } from "../utils/constants";
 
-function isHydrateAction(action: Action): action is PayloadAction<RootState> {
-  return action.type === HYDRATE;
-}
-
-const user = createApi({
+export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: axiosBaseQuery({
     baseUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/users`,
-    prepareHeaders: (headers, { getState }) => {
-      //@ts-ignore
-      const token = (getState() as RootState).user?.token;
-
-      if (token) {
-        return { authorization: `Bearer ${token}` };
+    prepareHeaders: (headers) => {
+      try {
+        //@ts-ignore
+        const token = localStorage.getItem(LS_TOKEN_NAME);
+        console.log(token);
+        if (token) {
+          return { authorization: `Bearer ${token}` };
+        }
+      } catch (err) {
+        console.log(err);
       }
+
       return headers;
     },
   }),
@@ -87,12 +87,14 @@ const user = createApi({
       invalidatesTags: ["Profile"],
     }),
     updateSections: builder.mutation({
-      query: (data: { name: string; content: string }[]) => ({
+      query: (data: {
+        profileSections: { name: string; content: string }[];
+      }) => ({
         url: "/sections",
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["Profile"],
+      invalidatesTags: ["Profile", "User", "Users"],
     }),
     updateUserPassword: builder.mutation({
       query: ({
@@ -125,18 +127,18 @@ const user = createApi({
       providesTags: ["Users"],
     }),
     getUser: builder.query<"User", string>({
-      query: (id) => ({ url: `/${id}` }),
+      query: (id) => ({ url: `/analytics` }),
       providesTags: (result, err, id) => [{ type: "User", id }],
     }),
-    getUserAnalytics: builder.query<"User", string>({
-      query: (id) => ({ url: `/${id}` }),
+    getUserAnalytics: builder.query({
+      query: () => ({ url: `/analytics` }),
     }),
     getProfile: builder.query<"Profile", string>({
       query: (token?: string) => ({
         url: `/profile`,
         ...(token ? { headers: { authorization: `Bearer ${token}` } } : {}),
       }),
-      providesTags: (result, err, id) => [{ type: "Profile" }],
+      providesTags: ["Profile", "User", "Users"],
     }),
     getBlockedUsers: builder.query({
       query: () => ({ url: "/blocked-users" }),
@@ -202,7 +204,7 @@ const user = createApi({
     }),
   }),
 });
-export default user;
+
 export const {
   useSignUpMutation,
   useLoginMutation,
@@ -230,7 +232,7 @@ export const {
   useGetProfileQuery,
   useLazyGetProfileQuery,
   util: { getRunningQueriesThunk },
-} = user;
+} = userApi;
 
 export const {
   signUp,
@@ -256,4 +258,4 @@ export const {
   getFollowers,
   getFollowing,
   getProfile,
-} = user.endpoints;
+} = userApi.endpoints;

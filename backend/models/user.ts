@@ -32,7 +32,7 @@ interface IUser extends Document {
   viewedProfiles?: Array<ObjectId>;
   profileViews?: Array<ObjectId>;
   notifications?: Array<{ id: ObjectId; read: Boolean }>;
-  likes?: Array<ObjectId>;
+  praises?: Array<ObjectId>;
   posts?: Array<ObjectId>;
   bookmarks?: Array<ObjectId>;
   isPasswordChanged: (JWTTimestamp: number) => Promise<boolean>;
@@ -127,7 +127,6 @@ const userSchema = new mongoose.Schema<IUser>(
     signUpMethod: {
       type: String,
       default: "signup-form",
-      select: false,
     },
     viewedProfiles: {
       type: Array,
@@ -141,7 +140,7 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Array<{ read: Boolean; id: ObjectId }>,
       default: [],
     },
-    likes: {
+    praises: {
       type: Array<ObjectId>,
       default: [],
     },
@@ -208,8 +207,8 @@ userSchema.virtual("unreadNotifications").get(function () {
 userSchema.virtual("postsCount").get(function () {
   return this.posts && this.posts.length;
 });
-userSchema.virtual("likesCount").get(function () {
-  return this.likes && this.likes.length;
+userSchema.virtual("praisesCount").get(function () {
+  return this.praises && this.praises.length;
 });
 userSchema.virtual("bookmarksCount").get(function () {
   return this.bookmarks && this.bookmarks.length;

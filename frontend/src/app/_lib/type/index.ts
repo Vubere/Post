@@ -1,3 +1,5 @@
+import { FormState, UseFormGetValues, UseFormRegister } from "react-hook-form";
+
 interface User {
   _id?: string;
   id?: string;
@@ -17,9 +19,11 @@ interface User {
   profilePhoto: string;
   active: boolean;
   profileSections?: { name: string; content: string }[];
-  blogNotifications?: Array<"all" | "followers" | "mutuals" | "subscribers">;
-  messageAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
-  notificationAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
+  blogNotifications?: Array<"all" | "followers" | "subscribers">;
+  messageAccess?: Array<"all" | "followers" | "subscribers">;
+  notificationAccess?: Array<"all" | "followers" | "subscribers">;
+  signUpMethod?: "google-auth" | "signup-form";
+
   subscribers?: Array<string>;
   subscriptions?: Array<string>;
   followers?: Array<string>;
@@ -27,7 +31,7 @@ interface User {
   viewedProfiles?: Array<string>;
   profileViews?: Array<string>;
   notifications?: Array<{ id: string; read: Boolean }>;
-  likes?: Array<string>;
+  praises?: Array<string>;
   posts?: Array<string>;
   bookmarks?: Array<string>;
   blockedBy?: Array<string>;
@@ -37,21 +41,22 @@ interface User {
 
 interface Post extends Document {
   id?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  author: string;
-  status: "0" | "1"; //"Draft"|"Published"
-  edited: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  author?: string;
+  authorDetails?: Record<string, any>;
+  status?: 0 | 1; //"Draft"|"Published"
+  edited?: boolean;
   title: string;
-  synopsis: string;
-  content: string;
-  coverPhoto: string;
-  likes?: Array<string>;
+  synopsis?: string;
+  content?: string;
+  coverPhoto?: string;
+  praises?: Array<string>;
   views?: Array<string>;
   clicks?: Array<string>;
   reads?: Array<string>;
   categories?: Array<string>;
-  isPaywalled: boolean;
+  isPaywalled?: boolean;
   paywallFee?: string;
   paywallPayedBy?: Array<string>;
   paywalledUsers?: Array<"all" | "followers" | "mutuals" | "subscribers">;
@@ -63,6 +68,81 @@ interface Post extends Document {
   bookmarkedBy?: Array<string>;
   version?: number;
   deleted?: boolean;
+  clicksCount?: number;
+  viewsCount?: number;
+  readsCount?: number;
+  praisesCount?: number;
+  bookmarksCount?: number;
+  commentsCount?: number;
+  tipsCount?: number;
+  sharesCount?: number;
+}
+interface PostPayload {
+  id?: string;
+  author?: string;
+  status: 0 | 1; //"Draft"|"Published"
+  title: string;
+  synopsis: string;
+  paywalledUsers?: Array<"all" | "followers" | "subscribers">;
+  isPaywalled?: boolean;
+  userAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
+  content: string;
+  coverPhoto: string;
 }
 
-export type { User, Post };
+type Multi = {
+  value?: string[];
+  onChange?: (v: string[]) => void;
+  className?: string;
+  multiSelect?: true;
+  multiTextOptions?: string[];
+};
+type Option = {
+  label: string | number;
+  value: string | number;
+};
+type SingleOp = {
+  options?: Option[];
+  value?: string | number;
+  onChange?: (v: string | number, o?: Option) => void;
+  className?: string;
+};
+
+type MultiOp = {
+  options?: Option[];
+  value: (string | number)[];
+  onChange?: (v: (string | number)[], o?: Option) => void;
+  className?: string;
+  multiSelect?: true;
+};
+type MultiSelect = SingleOp | MultiOp;
+type InputProps = {
+  className?: string;
+  label: string;
+  type?:
+    | "text"
+    | "select"
+    | "textarea"
+    | "multi-input"
+    | "number"
+    | "date"
+    | "email";
+  name: string;
+  placeholder?: string;
+  state: {
+    formState: FormState<any>;
+    getValues: UseFormGetValues<any>;
+    register: UseFormRegister<any>;
+    control: any;
+  };
+  required?: boolean;
+  readonly?: boolean;
+  onChange?: (...args: any[]) => any;
+  options?: Option[];
+  value?: any;
+  extraProps?: Record<string, any>;
+  twHeight?: string;
+} & MultiSelect &
+  Multi;
+
+export type { User, Post, PostPayload, InputProps, Option };

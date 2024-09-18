@@ -1,11 +1,19 @@
-import Feeds from "./post";
+"use client";
+import PageContainer from "@/app/_components/general/page-container";
+import { useGetUserAnalyticsQuery } from "@/app/_lib/api/user";
 
 
-export default function Dashboard() {
+export default function Analytics() {
+  const { data, isLoading } = useGetUserAnalyticsQuery("");
+  const analyticsUser = data?.data?.userInteractionAnalytics;
+  const analyticsPost = data?.data?.userPostAnalytics;
+  console.log(analyticsUser, analyticsPost);
+
   return (
-    <div>
-      <Feeds />
-      <h1 className="text-black">Dashboard</h1>
-    </div>
+    <PageContainer title="Analytics" loading={isLoading}>
+      <div>
+
+      </div>
+    </PageContainer>
   )
 }
