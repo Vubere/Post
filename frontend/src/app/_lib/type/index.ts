@@ -68,8 +68,10 @@ interface Post extends Document {
   bookmarkedBy?: Array<string>;
   version?: number;
   deleted?: boolean;
+  type?: "Blog" | "Essay" | "Short story" | "Article";
   clicksCount?: number;
   viewsCount?: number;
+  theme?: "Roboto" | "Sans Serif" | "JF" | "MF" | "Default";
   readsCount?: number;
   praisesCount?: number;
   bookmarksCount?: number;
@@ -134,8 +136,10 @@ type InputProps = {
     getValues: UseFormGetValues<any>;
     register: UseFormRegister<any>;
     control: any;
+    setValue?: any;
   };
   required?: boolean;
+  defaultValue?: any;
   readonly?: boolean;
   onChange?: (...args: any[]) => any;
   options?: Option[];

@@ -2,8 +2,8 @@ import Button from "@/app/_components/general/button";
 import Input from "@/app/_components/input";
 import { useCreatePostMutation } from "@/app/_lib/api/post";
 import { PostPayload } from "@/app/_lib/type";
-import { Form, Modal } from "antd";
-import { useForm } from "react-hook-form";
+import { Modal } from "antd";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 
 
@@ -24,6 +24,11 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails 
   const [sendPost, {
     isLoading
   }] = useCreatePostMutation();
+  const paywalled = !!useWatch({
+    control,
+    name: "paywall"
+  })
+
 
   const onSubmit = (status: 0 | 1) => {
     const data = getValues();
@@ -31,7 +36,7 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails 
       ...data,
       paywalledUsers: (data.paywall || "").split(","),
       isPaywalled: !!data.paywall?.length,
-      userAccess: (data.user_access || "").split(","),
+      userAccess: (data.userAccess || "").split(","),
       status,
       ...postDetails
     }
@@ -44,7 +49,7 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails 
     });
   }
   const draftClick = () => onSubmit(0);
-  const publichClick = () => onSubmit(1);
+  const publishClick = () => onSubmit(1);
 
 
 
@@ -86,7 +91,7 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails 
             options={accessOptions}
             label="Viewable by"
             placeholder="select user access"
-            name="user_access"
+            name="userAccess"
             state={{
               formState,
               register,
@@ -107,10 +112,22 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails 
               getValues
             }}
           />
+          {paywalled && <Input
+            type="number"
+            placeholder="paywall fee"
+            label="Paywall Fee"
+            name="paywallFee"
+            state={{
+              formState,
+              register,
+              control,
+              getValues
+            }}
+          />}
 
           <div className="flex gap-4 mt-4">
             <Button theme="light" text="Draft" type="button" onClick={draftClick} disabled={isLoading} />
-            <Button className="!bg-[#44d]" text="Publish" type="submit" onClick={publichClick} disabled={isLoading} />
+            <Button className="!bg-[#44d]" text="Publish" type="submit" onClick={publishClick} disabled={isLoading} />
           </div>
         </div>
       </div>

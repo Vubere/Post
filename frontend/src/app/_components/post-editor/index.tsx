@@ -1,5 +1,5 @@
 import { Form, notification } from "antd";
-import React, { FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useMemo, useRef, useState } from "react";
 import ReactQuill, { type ReactQuillProps } from "react-quill";
 import { useUploadThing } from "@/app/api/uploadthing/hooks";
 import Input, { NormalInput } from "../input";
@@ -10,6 +10,7 @@ import { RootState } from "@/app/_lib/store";
 import ImageUploader from "../general/image-uploader";
 import cancel from "@/assets/icons/cancel.png";
 
+const themes = ["Roboto", "SansSerif", "JF", "MF", "Default"] as const;
 
 interface EditorProps extends ReactQuillProps {
   post: string,
@@ -20,6 +21,8 @@ interface EditorProps extends ReactQuillProps {
   synopsisOnChange: (v: any) => void,
   coverLink: string,
   coverLinkOnChange: (v: any) => void,
+  theme: string,
+  setTheme: (v: any) => void,
 }
 function Editor(props: EditorProps) {
   //@ts-ignore
@@ -27,13 +30,17 @@ function Editor(props: EditorProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inputCoverImageRef = useRef<HTMLInputElement | null>(null);
   const quillRef = useRef<ReactQuill | null>(null);
-  const { post, postOnChange, heading, headerOnChange, synopsis, synopsisOnChange, coverLink, coverLinkOnChange } = props;
+  const { post, postOnChange, heading, headerOnChange, synopsis, synopsisOnChange, coverLink, coverLinkOnChange, theme, setTheme } = props;
   const [showPreview, setShowPreview] = useState(false);
   const [linkValue, setLinkValue] = useState({
     text: "",
     href: ""
   });
   const [showLinkInsert, setShowLinkInsert] = useState(false);
+  const themesOptions = useMemo(() => themes.map((val) => ({
+    label: val,
+    value: val
+  })), []);
 
   const { startUpload, isUploading } = useUploadThing(
     "imageUploader",
@@ -73,7 +80,7 @@ function Editor(props: EditorProps) {
     } else {
       notification.error({
         message: "invalid file format, only images are allowed!"
-      })
+      });
     }
   }
   function handleCoverImageSelection(v: any) {
@@ -115,6 +122,9 @@ function Editor(props: EditorProps) {
       synopsisOnChange(value)
     }
   }
+  const handleThemChange = (e: any) => {
+    setTheme(e);
+  }
   const handleCancelLink = () => {
     setShowLinkInsert(false);
     setLinkValue({
@@ -132,10 +142,13 @@ function Editor(props: EditorProps) {
       <div className="w-full preview pb-[10px] relative">
         <section className="flex flex-col gap-2 w-full mb-1">
           {/* cover photo */}
-          <div>
+          <div className="mb-16">
             <ImageUploader url={coverLink} setUrl={coverLinkOnChange} className="w-full h-[200px]" text={coverLink ? "change cover photo" : "upload cover photo"} removeLink={() => {
               coverLinkOnChange("");
             }} showIsDraggable />
+          </div>
+          <div className="w-full">
+            <NormalInput type="select" label="Theme" name="theme" onChange={handleThemChange} value={theme} options={themesOptions} defaultValue="Default" />
           </div>
           {/* insert heading */}
           <div className="w-full">
@@ -164,40 +177,44 @@ function Editor(props: EditorProps) {
 
           <input hidden type="file" accept="image/*" name="image" ref={inputRef} onChange={handleImageSelection} />
           <input hidden type="file" accept="image/*" name="image" ref={inputCoverImageRef} onChange={handleCoverImageSelection} />
-          <div id="toolbar">
-            <select className="ql-header" defaultValue={""} onChange={e => e.persist()}>
-              <option value="1" />
-              <option value="2" />
-              <option selected />
-            </select>
-            <button className="ql-bold" />
-            <button className="ql-italic" />
-            <button className="ql-underline" />
-            <button className="ql-list" value="bullet" />
-            <button className="ql-list" value="ordered" />
-            <select className="ql-color">
-              <option value="red" />
-              <option value="green" />
-              <option value="blue" />
-              <option value="orange" />
-              <option value="violet" />
-              <option value="#d0d1d2" />
-              <option selected />
-            </select>
-            <button className="ql-link" onClick={handleLinkInsertion} />
-            <button className="ql-image" onClick={openSelectImage} />
+          <div className="min-h-[200px]">
+
+            <div id="toolbar">
+              <select className="ql-header" defaultValue={""} onChange={e => e.persist()}>
+                <option value="1" />
+                <option value="2" />
+                <option selected />
+              </select>
+              <button className="ql-bold" />
+              <button className="ql-italic" />
+              <button className="ql-underline" />
+              <button className="ql-list" value="bullet" />
+              <button className="ql-list" value="ordered" />
+              <select className="ql-color">
+                <option value="red" />
+                <option value="green" />
+                <option value="blue" />
+                <option value="orange" />
+                <option value="violet" />
+                <option value="#d0d1d2" />
+                <option selected />
+              </select>
+              <button className="ql-link" onClick={handleLinkInsertion} />
+              <button className="ql-image" onClick={openSelectImage} />
+            </div>
+            {isUploading && <Button theme="light" loading={isUploading} adjustSize="medium" text="inserting image" />}
+            <ReactQuill
+              onChange={postOnChange}
+              value={post}
+              readOnly={isUploading}
+              placeholder={"Write Post..."}
+              modules={editorModules}
+              formats={formats}
+              theme={"snow"}
+              ref={quillRef}
+            />
           </div>
-          {isUploading && <Button theme="light" loading={isUploading} adjustSize="medium" text="inserting image" />}
-          <ReactQuill
-            onChange={postOnChange}
-            value={post}
-            readOnly={isUploading}
-            placeholder={"Write Post..."}
-            modules={editorModules}
-            formats={formats}
-            theme={"snow"}
-            ref={quillRef}
-          />
+
         </section>
       </div>
       <div className="absolute left-[20px] sm:left-[230px] md:left-[280px] bottom-[60px] z-[6]">
@@ -219,7 +236,7 @@ function Editor(props: EditorProps) {
             </div>}
             <div className="mb-[40px]">
               <h1 className="text-black leading-[105%] font-bold text-[24px] xs:text-[32px] sm:text-[42px] md:text-[48px] lg:text-[54px] mb-[10px]">{heading}</h1>
-              <p className="text-[#3d3d3d] text-[11px] xs:text-[14px] sm:text-[16px] md:text-[22px] italic">- {info?.fullName || "author"}</p>
+              <p className="text-[#3d3d3d] text-[11px] xs:text-[14px] sm:text-[16px] md:text-[22px] italic">- {info?.firstName ? `${info?.firstName || ""} ${info?.lastName || ""}` : "author"}</p>
             </div>
 
 

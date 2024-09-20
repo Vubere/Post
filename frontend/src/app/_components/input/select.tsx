@@ -5,26 +5,23 @@ import Image from "next/image";
 import { InputProps, Option } from "@/app/_lib/type";
 
 
-export default function Select(props: InputProps) {
-  const { options, value, className, onChange, state, name, required, extraProps } = props;
-  const { register } = state;
+export default function Select(props: Omit<InputProps, "state"> & { onHookChange?: any }) {
+  const { options, value, className, onChange, name, extraProps, onHookChange, defaultValue } = props;
   const [showSelect, setShowSelect] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const optionsRef = useRef<HTMLDivElement>();
   const extraDisplayRef: MutableRefObject<HTMLDivElement | null> = extraProps?.extraDisplayRef;
   const setExtraDisplay: Dispatch<SetStateAction<JSX.Element | null>> = extraProps?.setExtraDisplay;
 
-  const onHookChange = useCallback(register(name, { required }).onChange, [register, required, name]);
 
-  const handleSetValue = (val: string | number, o: Option) => {
-    if ("multiSelect" in props) {
+  const handleSetValue = (val: string | number, o?: Option) => {
+    if ("multiSelect" in props && props?.multiSelect) {
       const newValue = [...(props.value as (string | number)[]), val];
       onChange?.(newValue, o);
       onHookChange?.({ target: { value: newValue, name } });
 
     } else {
       onChange?.(val, o);
-      onHookChange?.({ target: { value: val, name } });
     }
     extraDisplayRef.current && extraDisplayRef.current.classList.add("hidden");
   };
@@ -85,6 +82,12 @@ export default function Select(props: InputProps) {
       }
     }
   }, [containerRef.current, optionsRef.current]);
+  useEffect(() => {
+    if (defaultValue) {
+      handleSetValue(defaultValue);
+    }
+
+  }, [defaultValue])
 
   useEffect(() => {
     const displayDiv = extraDisplayRef.current;

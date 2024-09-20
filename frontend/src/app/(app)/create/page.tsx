@@ -11,7 +11,8 @@ export default function CreatePost() {
   const [coverPhoto, setCoverPhoto] = useState("");
   const [title, setTitle] = useState("");
   const [synopsis, setSynopsis] = useState("");
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState("");
 
   const onCancel = () => {
     setOpen(false);
@@ -35,6 +36,7 @@ export default function CreatePost() {
     coverPhoto,
     title,
     synopsis,
+    theme
   }
 
   return (
@@ -43,7 +45,7 @@ export default function CreatePost() {
       <PostOptions open={open} onCancel={onCancel} postDetails={postDetails} resetDetails={resetDetails} />
       <div className="">
 
-        <Editor post={content} postOnChange={setContent} heading={title} headerOnChange={setTitle} coverLink={coverPhoto} coverLinkOnChange={setCoverPhoto} synopsis={synopsis} synopsisOnChange={setSynopsis} />
+        <Editor theme={theme} setTheme={setTheme} post={content} postOnChange={setContent} heading={title} headerOnChange={setTitle} coverLink={coverPhoto} coverLinkOnChange={setCoverPhoto} synopsis={synopsis} synopsisOnChange={setSynopsis} />
         <div className="flex justify-end mt-[40px]">
           <Button className="!w-[100px]" text="Done" onClick={onDone} />
         </div>

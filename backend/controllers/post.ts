@@ -67,9 +67,10 @@ async function getPostFromFollowings(
   next: NextFunction
 ) {
   const blogQuery = postApiFeaturesAggregation(req.query, {
-    authorDetails: {
-      $or: [{ followers: req.requesterId }, { _id: req.requesterId }],
-    },
+    $or: [
+      { "authorDetails.followers": req.requesterId },
+      { "authorDetails._id": req.requesterId },
+    ],
   }).aggregate();
 
   const post = await blogQuery;

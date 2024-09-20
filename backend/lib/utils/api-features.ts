@@ -122,7 +122,6 @@ class ApiFeaturesAggregation {
       aggregateArray.push({ $skip: (page - 1) * limit });
       aggregateArray.push({ $limit: limit });
     }
-
     return this.model.aggregate(aggregateArray);
   }
   filter() {
@@ -132,6 +131,12 @@ class ApiFeaturesAggregation {
     });
 
     const queryObj = omit(this.queryItem, ["sort", "fields", "page", "limit"]);
+
+    queryObj.status =
+      queryObj.status !== undefined && !isNaN(+queryObj.status)
+        ? Number(queryObj.status)
+        : 1;
+
     return queryObj;
   }
   limitFields() {

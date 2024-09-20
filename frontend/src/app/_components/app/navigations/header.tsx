@@ -9,7 +9,12 @@ import { destroyUserState } from "@/app/_lib/store/user";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import avatar from "@/assets/icons/avatar.png";
+import { Jacques_Francois } from "next/font/google";
 
+const JF = Jacques_Francois({
+  weight: ["400"],
+  subsets: ["latin"]
+})
 
 
 
@@ -26,7 +31,7 @@ export default function AppHeader() {
 
   return (
     <header className="flex h-[60px] sm:h-[70px] px-[18px] nsm:shadow-xl xs:px-[20px] sm:px-[30px] justify-between items-center fixed top-0 left-0 min-w-full z-[10] nsm:bg-white">
-      <h1 className="font-bold italic text-[21px] xs:text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] text-black bg-white">Collections</h1>
+      <h1 className={`font-bold  text-[21px] xs:text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] text-black bg-white ${JF.className}`}>Collections</h1>
       <Popover
         className="w-[100px] h-[30px] relative"
         content={(

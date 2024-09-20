@@ -2,11 +2,16 @@ import type { Metadata } from "next";
 import AppHeader from "../_components/app/navigations/header";
 import SideNav from "../_components/app/navigations/side-nav";
 import PostButton from "../_components/post-button";
+import { Familjen_Grotesk } from "next/font/google";
 
+const FG = Familjen_Grotesk({
+  weight: ["400", "400", "700"],
+  subsets: ["latin"]
+})
 
 export const metadata: Metadata = {
   title: "Collections",
-  description: "Collection of blogs, short stories, essays, news and articles",
+  description: "Collection of blogs, short stories, essays and articles",
 };
 
 export default function RootLayout({
@@ -16,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={"inter w-full !p-0 !m-0 overflow-hidden bg-white"} style={{ backgroundColor: "white" }}>
+      <body className={`${FG.className} w-full !p-0 !m-0 overflow-hidden bg-white`} style={{ backgroundColor: "white" }}>
         <div className=" w-full h-full relative bg-white z-[0]">
           <AppHeader />
           <PostButton />

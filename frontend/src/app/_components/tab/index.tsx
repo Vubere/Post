@@ -15,7 +15,7 @@ interface Props {
 
 
 export default function Tab({ items, className, loading }: Props) {
-  const headers = useMemo(() => items.map(v => v.title) || [], [items]);
+  const headers = useMemo(() => items.map(v => v.title) || [], [items, loading]);
   const [currentTab, setCurrentTab] = useState(headers[0]);
   const currentDisplay = useMemo(() => items.find(item => item.title === currentTab), [currentTab, loading]);
 

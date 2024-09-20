@@ -16,6 +16,12 @@ interface PostDisplay extends Post {
 }
 
 export default function PostDisplay(props: PostDisplay) {
+  const typeClassName = {
+    "Blog": "text-blue-500 bg-blue-100",
+    "Short story": "text-green-500 bg-green-100",
+    "Essay": "text-red-500 bg-red-100",
+    "Article": "text-yellow-500 bg-yellow-100",
+  };
 
   return (
     <article className={props?.className}>
@@ -29,6 +35,9 @@ export default function PostDisplay(props: PostDisplay) {
             <p className="font-medium text-[14px] sm:text-[16px]"> {props?.authorDetails?.firstName} {props?.authorDetails?.lastName}</p>
             <p className="text-[8px] sm:text-[11px] text-[#373737aa] italic">@{props?.authorDetails?.username}</p>
           </div>
+          {props?.type && <div className={`font-light rounded-full px-2 py-1 text-[11px] sm:text-[14px] ${typeClassName[props.type]}`}>
+            {props?.type}
+          </div>}
         </div>
 
         {props.isAuthorPost && <div className="" title="options">

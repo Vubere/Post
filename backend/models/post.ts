@@ -30,6 +30,7 @@ interface IPost extends Document {
   bookmarkedBy?: Array<ObjectId>;
   version?: number;
   deleted?: boolean;
+  theme?: string;
 }
 
 interface IReshare extends Document {

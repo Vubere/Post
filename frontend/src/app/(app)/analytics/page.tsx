@@ -1,4 +1,5 @@
 "use client";
+import Empty from "@/app/_components/empty";
 import PageContainer from "@/app/_components/general/page-container";
 import { useGetUserAnalyticsQuery } from "@/app/_lib/api/user";
 import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
@@ -33,14 +34,16 @@ export default function Analytics() {
       <section className={SECTION_CLASSNAME}>
         <h3 className="font-bold text-[16px] xs:text-[18px] sm:text-[21px] md:text-[24px] lg:text-[28px]">Post Interactions</h3>
         <div>
-          <ul>
+          {postAnalyticsArray.length ? (<ul>
             {
               postAnalyticsArray.map(([name, value]: [string, number]) => (
                 <li key={name} className="font-medium  text-[#34343499] ">{startCase(name.replace("Count", ""))} : {value}</li>
               ))
             }
 
-          </ul>
+          </ul>) :
+            <Empty text="You have no Post to Analyse" />
+          }
         </div>
       </section>
     </PageContainer>
