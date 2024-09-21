@@ -9,6 +9,7 @@ import repost from "@/assets/icons/repost.png";
 import comment from "@/assets/icons/comment.svg";
 import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
+import { Popover } from "antd"
 
 interface PostDisplay extends Post {
   isAuthorPost: boolean;
@@ -40,11 +41,22 @@ export default function PostDisplay(props: PostDisplay) {
           </div>}
         </div>
 
-        {props.isAuthorPost && <div className="" title="options">
-          <Button className="relative rounded-full !w-[20px] !h-[40px] !border-none !bg-transparent" theme="light">
-            <Image src={editIcon} alt="" fill objectFit="contain" objectPosition="center" />
-          </Button>
-        </div>}
+        {props.isAuthorPost &&
+          <Popover
+            content={
+              <ul>
+                <li><Link className="text-[12px] xs:text-[14px] sm:text-[16px]" href={ROUTES.scribeId.replace(":id", props._id || "")}>Edit</Link></li>
+              </ul>
+            }
+
+          >
+            <div className="" title="options">
+              <Button theme="light" className="relative block rounded-full !w-[20px] !h-[40px] !border-none !bg-transparent" >
+                <Image src={editIcon} alt="" fill objectFit="contain" objectPosition="center" />
+              </Button>
+            </div>
+          </Popover>
+        }
       </div>
       <div className="flex flex-col gap-1">
         {props?.coverPhoto && <div className="relative w-full rounded-[8px] h-[200px] overflow-hidden mb-2 sm:mb-4">

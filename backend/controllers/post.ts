@@ -113,7 +113,7 @@ async function updateBlog(
 ) {
   const post = await Post.findById(req.post._id);
   if (post !== null) {
-    const blogDataToUpdate = req.body;
+    const { id, ...blogDataToUpdate } = req.body;
     const validated = validateUpdateRequestBody(blogDataToUpdate);
     if (typeof blogDataToUpdate !== "object") {
       next(
@@ -377,7 +377,7 @@ async function isRequestersBlog(
   const [req, , next] = args;
   const blogId = req.body.id || req.params.id;
   const post = await Post.findById(blogId).select("author");
-  if (post?.author !== req.requesterId) {
+  if (post?.author?.toString() !== req.requesterId) {
     next(
       new CustomError(
         "cannot query another users post!",

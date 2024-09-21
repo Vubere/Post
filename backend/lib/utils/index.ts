@@ -44,12 +44,17 @@ const UPDATEABLE_USER_DATA = [
   "dateOfBirth",
 ];
 const UPDATEABLE_BLOG_DATA = [
+  "theme",
   "title",
   "synopsis",
   "content",
   "coverPhoto",
   "notifications",
-  "paywalls",
+  "isPaywalled",
+  "paywallFee",
+  "type",
+  "status",
+  "categories",
   "paywalledUsers",
   "userAccess",
 ];

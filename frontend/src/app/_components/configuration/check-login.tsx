@@ -7,6 +7,7 @@ import { useLazyGetProfileQuery } from "../../_lib/api/user";
 import { LS_TOKEN_NAME } from "@/app/_lib/utils/constants";
 import { useAppDispatch } from "@/app/_lib/store/hooks";
 import { updateToken, updateUserInfo } from "@/app/_lib/store/user";
+import { saveTokenAsCookie } from "@/app/_lib/services";
 
 
 
@@ -23,6 +24,8 @@ export default function CheckLoginStatus() {
       getUser(token).then((res: any) => {
         if (res.status === "fulfilled") {
           dispatch(updateToken(token));
+          saveTokenAsCookie(token);
+
           dispatch(updateUserInfo(res?.data?.data));
           if (publicRoutes.includes(pathname)) {
             router.push(ROUTES.dashboard);

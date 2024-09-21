@@ -7,6 +7,12 @@ import Image from "next/image";
 const LoginForm = dynamic(() => import("./components/login-form"), {
   ssr: false
 })
+export async function generateMetadata() {
+  return {
+    title: "Login",
+    description: "Login to your Collections account"
+  }
+}
 
 export default function Login() {
 

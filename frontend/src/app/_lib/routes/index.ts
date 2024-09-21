@@ -15,6 +15,7 @@ export enum ROUTES {
   account = "/account",
   accountEdit = ROUTES.account + "/edit",
   accountId = ROUTES.account + "/:id",
-  create_post = "/create",
+  scribe = "/scribe",
+  scribeId = "/scribe/:id",
   post = "/post",
 }

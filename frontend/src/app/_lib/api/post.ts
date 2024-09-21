@@ -42,7 +42,7 @@ export const postApi = createApi({
       query: ({ id, ...data }: Post) => ({
         url: `/${id}`,
         method: "PATCH",
-        body: data,
+        body: { id, ...data },
       }),
       invalidatesTags: ["Feed"],
     }),

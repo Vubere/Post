@@ -21,19 +21,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${FG.className} w-full !p-0 !m-0 overflow-hidden bg-white`} style={{ backgroundColor: "white" }}>
-        <div className=" w-full h-full relative bg-white z-[0]">
-          <AppHeader />
-          <PostButton />
-          <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[268px_1fr] h-[100vh] max-h-[100vh] overflow-y-hidden">
-            <SideNav />
-            <main className="h-full max-h-screen pt-[80px] overflow-y-auto">
-              {children}
-            </main>
-          </div>
-          <footer className="flex flex-col items-center bg-black">
-            <p>By Victor Ubere 2024&copy;</p>
-          </footer>
+      <body className={`${FG.className} w-full !p-0 !m-0 overflow-hidden  !bg-white`} style={{ backgroundColor: "white" }}>
+
+        <AppHeader />
+        <PostButton />
+        <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[268px_1fr] h-[100vh] max-h-[100vh] overflow-y-hidden bg-white">
+          <SideNav />
+          <main className="h-full max-h-screen pt-[80px] overflow-y-auto">
+            {children}
+          </main>
         </div>
       </body>
     </html>

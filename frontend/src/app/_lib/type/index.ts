@@ -40,11 +40,12 @@ interface User {
 }
 
 interface Post extends Document {
+  _id?: string;
   id?: string;
   createdAt?: Date;
   updatedAt?: Date;
   author?: string;
-  authorDetails?: Record<string, any>;
+  authorDetails?: User;
   status?: 0 | 1; //"Draft"|"Published"
   edited?: boolean;
   title: string;
@@ -71,7 +72,7 @@ interface Post extends Document {
   type?: "Blog" | "Essay" | "Short story" | "Article";
   clicksCount?: number;
   viewsCount?: number;
-  theme?: "Roboto" | "Sans Serif" | "JF" | "MF" | "Default";
+  theme?: "Roboto" | "BreeSerif" | "Jacques" | "Merriweather" | "Default";
   readsCount?: number;
   praisesCount?: number;
   bookmarksCount?: number;

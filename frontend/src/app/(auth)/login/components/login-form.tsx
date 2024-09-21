@@ -14,6 +14,7 @@ import { useAppDispatch } from "@/app/_lib/store/hooks";
 import { useRouter } from "next/navigation";
 import { updateToken, updateUserInfo } from "@/app/_lib/store/user";
 import { LS_TOKEN_NAME } from "@/app/_lib/utils/constants";
+import { saveTokenAsCookie } from "@/app/_lib/services";
 
 const schema = yup.object({
   email: yup.string().email("Invalid email address").required().trim().label("Email"),
@@ -52,6 +53,7 @@ export default function LoginForm() {
         dispatch(updateToken(data.data.token));
         dispatch(updateUserInfo(data.data.data));
         toast.success(data.data.message || "success!");
+        saveTokenAsCookie(data.data.token)
         setTimeout(() => {
           router.push(ROUTES.dashboard);
         }, 2000);
@@ -69,6 +71,7 @@ export default function LoginForm() {
         dispatch(updateToken(data.data.token));
         dispatch(updateUserInfo(data.data.data));
         toast.success(data.data.message || "success!");
+        saveTokenAsCookie(data.data.token);
         setTimeout(() => {
           router.push(ROUTES.dashboard);
         }, 2000);
