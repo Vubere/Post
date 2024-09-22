@@ -2,7 +2,7 @@ import { Form, notification } from "antd";
 import React, { FormEvent, useMemo, useRef, useState } from "react";
 import ReactQuill, { type ReactQuillProps } from "react-quill";
 import { useUploadThing } from "@/app/api/uploadthing/hooks";
-import Input, { NormalInput } from "../input";
+import { NormalInput } from "../input";
 import Button from "../general/button";
 import Image from "next/image";
 import { useAppSelector } from "@/app/_lib/store/hooks";
@@ -223,7 +223,7 @@ function Editor(props: EditorProps) {
       </div>
       {
         showPreview && (
-          <div className="fixed top-0 left-0 h-[100vh] rounded-xl  w-[100vw] max-h-[100vh] mx-auto p-2 sm:p-4 bg-[#EDE0D4] text-black overflow-y-auto py-4 pb-10 z-[20]">
+          <div className="fixed top-0 left-0 h-[100vh] rounded-xl  w-[100vw] max-h-[100vh] mx-auto p-2 sm:p-4 bg-[#fff] text-black overflow-y-auto py-4 pb-10 z-[20]">
             <div className="w-full flex justify-end">
               <Button className="!rounded-full !ml-auto !w-[35px] !h-[35px] px-2 !border-none !outline-none !bg-transparent relative" theme="light" onClick={() => setShowPreview(prev => !prev)}>
                 <div>

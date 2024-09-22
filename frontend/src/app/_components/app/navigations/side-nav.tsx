@@ -170,7 +170,7 @@ export default function SideNav() {
         </nav>
       </div>
 
-      <button className="bg-transparent outline-none sm:hidden fixed left-[10px] border border-1 border-[#0008] shadow-xl top-[50%] translate-y-[-50%] h-[25px] w-[25px] bg-white sm:h-[30px] sm:w-[30px] rounded-full p-1 z-[21]" ref={openSideNavRef}>
+      <button className="bg-transparent outline-none sm:hidden fixed right-[10px] shadow-2xl border border-1 border-[#0001] top-[50%] translate-y-[-50%] h-[25px] w-[25px] bg-white sm:h-[30px] sm:w-[30px] rounded-full p-1 z-[21]" ref={openSideNavRef}>
         <Image src={arrowRightIcon} fill alt="arrow" objectFit="contain" objectPosition="center" />
       </button>
     </>
