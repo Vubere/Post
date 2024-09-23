@@ -184,7 +184,6 @@ export function NormalInput(props: Omit<InputProps, "state">) {
           }
           return;
         } else {
-          console.log(value)
           if (!value && !containerEl?.classList?.contains("hide")) {
             containerEl?.classList?.add("hide")
 
@@ -205,7 +204,7 @@ export function NormalInput(props: Omit<InputProps, "state">) {
     <div className="relative w-full h-auto">
       <div className={`${containerHeight} w-full border border-1 border-black border-opacity-70 px-2 py-1 text-sm text-black flex flex-col items-center justify-center relative overflow-hidden hide gap-0 [&_label]:text-[8px] [&.hide_label]:text-sm [&:hover_input]:opacity-100 [&.hide_input]:opacity-0 [&.hide_input]:absolute  [&:hover_input]:opacity-100 [&:hover_input]:static [&.hide_input]:z-[-3] [&.hide:hover_input]:z-[2] [&:hover_input]:block  [&.hide_.input]:z-[-3] [&.hide:hover_.input]:z-[2] [&:hover_.input]:block [&:hover_label]:text-[8px] [&:hover_label]:leading-[100%] `} id={containerId} ref={containerRef as any}>
         {label && <label htmlFor={name} className="text-sm w-full p-0 m-0 leading-[100%] !h-full !pb-0 py-0 " style={{ paddingBottom: 0 }}>{label}{required && <sup className="ml-1 text-[8px] leading-[20%] text-red relative">*</sup>}</label>}
-        {renderInput("placeholder:text-sm placeholder:text-opacity-60  block w-[100%] min-w-full max-w-full focus:outline-none focus:border-none active:outline-none active:border-none hover:outline-none hover:border-none p-0 m-0", type)}
+        {renderInput("placeholder:text-sm placeholder:text-opacity-60  block w-[100%] !bg-transparent min-w-full max-w-full focus:outline-none focus:border-none active:outline-none active:border-none hover:outline-none hover:border-none p-0 m-0", type)}
       </div>
       {/*   {errorMessage && <p className="text-xs leading-[105%] pt-1 mx-1 text-red-300">{errorMessage as string}</p>} */}
       <div ref={extraDisplayRef} className="hidden">{extraDisplay}</div>

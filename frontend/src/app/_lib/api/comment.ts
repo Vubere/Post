@@ -56,6 +56,13 @@ export const commentApi = createApi({
       }),
       providesTags: ["Comments"],
     }),
+    getCommentReplies: builder.query({
+      query: (params?: { commentRepliedTo: string }) => ({
+        url: "/replies",
+        params,
+      }),
+      providesTags: ["Comments"],
+    }),
     getComment: builder.query({
       query: (id) => `/${id}`,
     }),
@@ -137,6 +144,7 @@ export const {
   useUnPraiseCommentMutation,
   useUnBookmarkCommentMutation,
   useGetPostCommentsQuery,
+  useGetCommentRepliesQuery,
   useCreateCommentMutation,
   useReplyCommentMutation,
 } = commentApi;

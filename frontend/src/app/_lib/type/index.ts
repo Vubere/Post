@@ -86,7 +86,7 @@ interface Comments {
   updatedAt?: Date;
   id?: string;
   _id?: string;
-  postId: string;
+  postId?: string;
   authorId: string;
   edited?: boolean;
   content: string;

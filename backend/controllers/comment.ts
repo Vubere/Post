@@ -59,11 +59,17 @@ async function replyComment(
   res: Response,
   next: NextFunction
 ) {
-  if (!req.body.commentRepliedTo)
+  const commentId = req.body.commentRepliedTo;
+  if (!commentId)
     return next(
       new CustomError("failed to pass the comment being replied to!", 400)
     );
   const newComment = await Comment.create(req.body);
+  await Comment.findByIdAndUpdate(commentId, {
+    $push: {
+      replies: newComment._id,
+    },
+  });
 
   res
     .status(STATUS_CODES.success.Created)
@@ -77,6 +83,23 @@ async function getPostComments(
   if (!req.query.postId)
     return next(new CustomError("field postId is missing", 400));
   else req.query.postId = new Types.ObjectId(req.query.postId as string) as any;
+
+  const commentQuery = commentApiFeaturesAggregation(req.query, {}).aggregate();
+
+  const comment = await commentQuery;
+  res.status(STATUS_CODES.success.OK).json(
+    jsend("success!", comment, "successfully fetched comments!", {
+      count: comment.length,
+    })
+  );
+}
+async function getCommentReplies(
+  req: CommentConfirmRequest,
+  res: Response,
+  next: NextFunction
+) {
+  if (!req.query.commentRepliedTo)
+    return next(new CustomError("field commentRepliedTo is missing", 400));
 
   const commentQuery = commentApiFeaturesAggregation(req.query, {}).aggregate();
 
@@ -376,6 +399,7 @@ async function isRequestersComment(
 const postExports = {
   comment,
   getPostComments,
+  getCommentReplies,
   updateComment,
   getComment,
   deleteComment,

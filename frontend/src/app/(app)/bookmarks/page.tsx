@@ -1,30 +1,15 @@
-"use client";
-import Empty from "@/app/_components/empty";
-import PageContainer from "@/app/_components/general/page-container";
-import PostDisplay from "@/app/_components/post-display";
-import { useGetBookmarksQuery } from "@/app/_lib/api/post";
-import { Post } from "@/app/_lib/type";
-import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
+import { Metadata } from "next"
+import BookmarksPage from "."
+
+export const metadata: Metadata = {
+  title: "Bookmarks",
+  description: "See the post from the community you have bookmarked!"
+}
 
 
 export default function Bookmarks() {
-  const { data, isLoading } = useGetBookmarksQuery({});
-  const bookmarks = data?.data || [];
-
 
   return (
-    <PageContainer title="Bookmarks" loading={isLoading}>
-      <div>
-        {bookmarks?.map((item: Post) => (
-          <PostDisplay isAuthorPost {...item} />
-        ))}
-      </div>
-      {(!bookmarks.length && !isLoading) ?
-        <div className={"w-full" + SECTION_CLASSNAME}>
-          <Empty text="No Bookmarks" />
-        </div>
-        : null
-      }
-    </PageContainer >
+    <BookmarksPage />
   )
 }

@@ -20,6 +20,7 @@ const {
   addToBookmarks,
   removeFromBookmarks,
   viewComment,
+  getCommentReplies,
   clickComment,
   replyComment,
   readComment,
@@ -54,6 +55,7 @@ router.route("/click/:id").post(clickComment);
 router.route("/view/:id").post(viewComment);
 router.route("/read/:id").post(readComment);
 router.route("/reply/:id").post(replyComment);
+router.route("/replies").get(getCommentReplies);
 
 router
   .route("/")

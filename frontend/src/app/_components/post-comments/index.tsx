@@ -30,7 +30,7 @@ export default function PostComments({ _id, ...post }: Post) {
       <Skeleton />
     </div>
   )
-  console.log(comments)
+
   return (
     <section className="mt-12 sm:mt-20">
       <div>
@@ -45,7 +45,7 @@ export default function PostComments({ _id, ...post }: Post) {
             </h4>
             <div>
               {comments.map((comment, i) => (
-                <CommentDisplay isAuthorComment={info?._id === comment.authorId} key={comment._id || i} {...comment} />
+                <CommentDisplay validate={refetch} isAuthorComment={info?._id === comment.authorId} key={comment._id || i} {...comment} />
               ))}
             </div>
           </div>
@@ -88,9 +88,10 @@ function CommentForm({ postId, authorId, validate }: { postId: string, authorId:
 interface CommentDisplay extends Comments {
   isAuthorComment: boolean;
   className?: string,
+  validate?: () => void;
 }
 
-function CommentDisplay({ isAuthorComment, className, ...comment }: CommentDisplay) {
+export function CommentDisplay({ isAuthorComment, className, validate, ...comment }: CommentDisplay) {
 
 
   return (
@@ -128,7 +129,7 @@ function CommentDisplay({ isAuthorComment, className, ...comment }: CommentDispl
       <div className="flex flex-col gap-1">
         <p className="text-[12px] xs:text-[14px] sm:text-[16px] md:text-[18px] text-[#373737aa]">{comment?.content}</p>
       </div>
-      <CommentReaction {...comment} />
+      <CommentReaction {...comment} validate={validate} />
     </article>
   )
 }

@@ -6,7 +6,14 @@ import Image from "next/image";
 
 const SignupForm = dynamic(() => import("./components/sign-up-form"), {
   ssr: false
-})
+});
+
+export async function generateMetadata() {
+  return {
+    title: "Sign up",
+    description: "Sign up and be a part of the Collections community"
+  }
+}
 
 export default function Signup() {
 

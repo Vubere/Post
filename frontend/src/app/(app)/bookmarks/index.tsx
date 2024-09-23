@@ -13,7 +13,7 @@ export default function Bookmarks() {
 
 
   return (
-    <PageContainer title="Dashboard" loading={isLoading}>
+    <PageContainer title="Bookmarks" loading={isLoading}>
       <div>
         {bookmarks?.map((item: Post) => (
           <PostDisplay isAuthorPost {...item} />

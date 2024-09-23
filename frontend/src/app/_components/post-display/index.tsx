@@ -20,7 +20,7 @@ export default function PostDisplay({ isAuthorPost, className, ...post }: PostDi
 
 
   return (
-    <article className={className}>
+    <article className={"px-2 " + className}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 relative">
 
