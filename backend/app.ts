@@ -4,7 +4,7 @@ import morgan from "morgan";
 
 import userRouter from "./routers/user";
 import authRouter from "./routers/auth";
-import blogRouter from "./routers/post";
+import postRouter from "./routers/post";
 import commentRouter from "./routers/comment";
 import authController from "./controllers/auth";
 import rateLimit from "express-rate-limit";
@@ -47,7 +47,7 @@ const baseRootComments = "/api/comments";
 app.post(baseRootUsers + "/login", authController.Login);
 app.use(baseRootUsers, authRouter);
 app.use(baseRootUsers, authController.ProtectRoutes, userRouter);
-app.use(baseRootPosts, authController.ProtectRoutes, blogRouter);
+app.use(baseRootPosts, authController.ProtectRoutes, postRouter);
 app.use(baseRootComments, authController.ProtectRoutes, commentRouter);
 app.all("*", (...args) => {
   const [req, , next] = args;

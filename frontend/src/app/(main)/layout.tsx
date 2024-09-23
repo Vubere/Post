@@ -9,7 +9,7 @@ const MobileHeader = dynamic(() => import("@/app/_components/mobile-header"), {
 
 export const metadata: Metadata = {
   title: "Collections",
-  description: "Collection of blogs, short stories, essays, news and articles",
+  description: "Collection of posts, short stories, essays, news and articles",
 };
 
 export default function RootLayout({

@@ -62,7 +62,7 @@ export default async function Post({ params: { id } }: EditPost) {
           <PostReactions showReads showViews isPostPage {...post} />
         </div>
         {/* comments */}
-        <PostComments />
+        <PostComments {...post} />
       </div>
     </PageContainer>
   );

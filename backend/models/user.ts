@@ -22,7 +22,7 @@ interface IUser extends Document {
   profilePhoto: string;
   active: boolean;
   profileSections?: { name: string; content: string }[];
-  blogNotifications?: Array<"all" | "followers" | "mutuals" | "subscribers">;
+  postNotifications?: Array<"all" | "followers" | "mutuals" | "subscribers">;
   messageAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
   notificationAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
   subscribers?: Array<ObjectId>;
@@ -104,7 +104,7 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Array<"all" | "followers" | "mutuals" | "subscribers">,
       default: ["all"],
     },
-    blogNotifications: {
+    postNotifications: {
       type: Array<"all" | "followers" | "mutuals" | "subscribers">,
       default: [],
     },

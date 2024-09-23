@@ -1,5 +1,5 @@
 import express, { NextFunction, Response } from "express";
-import blogControllers from "../controllers/comment";
+import commentController from "../controllers/comment";
 import authControllers from "../controllers/auth";
 import Comment from "../models/comment";
 import CustomError from "../lib/utils/custom-error";
@@ -8,7 +8,7 @@ import { STATUS_CODES } from "../lib/utils";
 
 const {
   comment,
-  getBlogComments,
+  getPostComments,
   updateComment,
   getComment,
   deleteComment,
@@ -23,7 +23,7 @@ const {
   clickComment,
   replyComment,
   readComment,
-} = blogControllers;
+} = commentController;
 const router = express.Router();
 
 //this is a param middleware used to target param(:id) values and this would only execute for the id param, can be used to check for presence of a user before resolving a get,post,delete or patch request
@@ -44,8 +44,8 @@ router.param(
 
 //multiple middlewares can be chained before calling the maing request
 
-router.route("/bookmarks").get(getBookmarks, getBlogComments);
-router.route("/praises").get(getLikes, getBlogComments);
+router.route("/bookmarks").get(getBookmarks, getPostComments);
+router.route("/praises").get(getLikes, getPostComments);
 router.route("/praise/:id").post(praiseComment).delete(unpraiseComment);
 
 router.route("/bookmark/:id").post(addToBookmarks).delete(removeFromBookmarks);
@@ -60,7 +60,7 @@ router
   .get(function (...args: [CommentConfirmRequest, Response, NextFunction]) {
     const [req, , next] = args;
     next();
-  }, getBlogComments)
+  }, getPostComments)
   .post(comment);
 
 router

@@ -5,7 +5,7 @@ interface IReshare extends Document {
   createdAt: Date;
   updatedAt: Date;
   userId: ObjectId;
-  blogId: ObjectId;
+  postId: ObjectId;
   content: string;
   edited?: boolean;
 }
@@ -24,7 +24,7 @@ const notificationSchema = new mongoose.Schema<IReshare>(
       type: String,
       required: [true, "user id is required!"],
     },
-    blogId: {
+    postId: {
       type: String,
       required: [true, "post id is required!"],
     },

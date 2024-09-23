@@ -11,7 +11,7 @@ const FG = Familjen_Grotesk({
 
 export const metadata: Metadata = {
   title: "Collections",
-  description: "Collection of blogs, short stories, essays and articles",
+  description: "Collection of posts, short stories, essays and articles",
 };
 
 export default function RootLayout({

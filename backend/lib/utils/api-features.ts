@@ -5,6 +5,7 @@ export type Lookup = {
   localField: string;
   foreignField: string;
   as: string;
+  pipeline?: Array<any>;
 };
 
 class ApiFeatures {
@@ -70,14 +71,14 @@ class ApiFeaturesAggregation {
   queryItem: Record<string, any> | null = null;
   model: any | null = null;
   queryStr: string | null = null;
-  unwind: string | null = null;
+  unwind: string | Record<string, any> | null = null;
   lookup: Lookup | null = null;
   lookupQuery: Record<string, any> | null = null;
   constructor(
     lookup: Lookup,
     model: any,
     queryItem: any,
-    unwind?: string,
+    unwind?: string | Record<string, any>,
     lookupQuery?: Record<string, any>
   ) {
     this.lookup = lookup;
@@ -92,6 +93,7 @@ class ApiFeaturesAggregation {
     if (this.lookup === null) {
       throw new Error("document to lookup not passed!");
     }
+
     aggregateArray.push({ $lookup: this.lookup });
     if (this.unwind) {
       aggregateArray.push({ $unwind: this.unwind });
@@ -132,10 +134,10 @@ class ApiFeaturesAggregation {
 
     const queryObj = omit(this.queryItem, ["sort", "fields", "page", "limit"]);
 
-    queryObj.status =
+    /* queryObj.status =
       queryObj.status !== undefined && !isNaN(+queryObj.status)
         ? Number(queryObj.status)
-        : 1;
+        : 1; */
 
     return queryObj;
   }

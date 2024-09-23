@@ -6,7 +6,7 @@ export enum ROUTES {
   forgotPassword = "/forgot-password",
   resetPassword = "/reset-password",
   setup = "/set-up",
-  dashboard = "/dashboard",
+  dashboard = "/feed",
   settings = "/settings",
   notifications = "/notifications",
   bookmarks = "/bookmarks",

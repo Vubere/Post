@@ -19,7 +19,7 @@ export default function Home() {
       </section>
       <section className="bg-white w-full p-4 text-black mb-[40px]">
         <h3 id="about" className="w-full text-center font-bold text-[21px] md:text-[24px] lg:text-[32px]">About</h3>
-        <p className="max-w-[400px] text-center mx-auto leading-[105%]">Write ups are put in 4 not so distinct categories: essay, blog, short story and articles.</p>
+        <p className="max-w-[400px] text-center mx-auto leading-[105%]">Write ups are put in 4 not so distinct categories: essay, post, short story and articles.</p>
         <ul className="grid sm:gap-[10px] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:px-[20px] mt-[25px] sm:mt-[40px]">
           {
             contentDisplay.map((item, i) => {
@@ -86,7 +86,7 @@ export default function Home() {
 }
 const contentDisplay = [
   {
-    heading: "Popular Blog",
+    heading: "Popular Post",
     content: {
       title: "Title",
       synopsis: "synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis synopsis",
@@ -123,7 +123,7 @@ const usersDisplay = [
     name: "Muup Cope",
     details: {
       profession: "profession",
-      blogs: 288,
+      posts: 288,
       image: heroImage,
       bio: "Writer and Chess fanatic"
     }
@@ -132,7 +132,7 @@ const usersDisplay = [
     name: "Jack Rany",
     details: {
       profession: "profession",
-      blogs: 288,
+      posts: 288,
       image: heroImage,
       bio: "Writer and Chess fanatic"
     }
@@ -141,7 +141,7 @@ const usersDisplay = [
     name: "Chuks Scrap",
     details: {
       profession: "profession",
-      blogs: 288,
+      posts: 288,
       image: heroImage,
       bio: "Writer and Chess fanatic",
     }
@@ -150,7 +150,7 @@ const usersDisplay = [
     name: "Olamide Console",
     details: {
       profession: "profession",
-      blogs: 288,
+      posts: 288,
       image: heroImage,
       bio: "Writer and fifa game fanatic"
     }

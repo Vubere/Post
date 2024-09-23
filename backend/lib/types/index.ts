@@ -8,7 +8,7 @@ interface UserConfirmRequest extends Request {
   user?: any;
   requesterId?: string;
 }
-interface BlogConfirmRequest extends Request {
+interface PostConfirmRequest extends Request {
   post?: any;
   requesterId?: string;
 }
@@ -20,6 +20,6 @@ interface CommentConfirmRequest extends Request {
 export {
   CustomError,
   UserConfirmRequest,
-  BlogConfirmRequest,
+  PostConfirmRequest,
   CommentConfirmRequest,
 };

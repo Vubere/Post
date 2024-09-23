@@ -5,6 +5,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import storage from "redux-persist/lib/storage";
 import { userApi } from "@/app/_lib/api/user";
 import { postApi } from "@/app/_lib/api/post";
+import { commentApi } from "../api/comment";
 
 const persistConfig = {
   key: "collections-root",
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   [postApi.reducerPath]: postApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [commentApi.reducerPath]: commentApi.reducer,
 });
 
 //@ts-ignore
@@ -23,7 +25,11 @@ export const store = configureStore({
   reducer: rootReducer,
   //@ts-ignore
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(userApi.middleware, postApi.middleware),
+    getDefaultMiddleware().concat(
+      userApi.middleware,
+      postApi.middleware,
+      commentApi.middleware
+    ),
 });
 setupListeners(store.dispatch);
 export const getState = store.getState;

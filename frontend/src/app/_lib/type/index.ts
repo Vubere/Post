@@ -19,7 +19,7 @@ interface User {
   profilePhoto: string;
   active: boolean;
   profileSections?: { name: string; content: string }[];
-  blogNotifications?: Array<"all" | "followers" | "subscribers">;
+  postNotifications?: Array<"all" | "followers" | "subscribers">;
   messageAccess?: Array<"all" | "followers" | "subscribers">;
   notificationAccess?: Array<"all" | "followers" | "subscribers">;
   signUpMethod?: "google-auth" | "signup-form";
@@ -39,7 +39,7 @@ interface User {
   createdBy?: string | null;
 }
 
-interface Post extends Document {
+interface Post {
   _id?: string;
   id?: string;
   createdAt?: Date;
@@ -69,7 +69,7 @@ interface Post extends Document {
   bookmarkedBy?: Array<string>;
   version?: number;
   deleted?: boolean;
-  type?: "Blog" | "Essay" | "Short story" | "Article";
+  type?: "Post" | "Essay" | "Short story" | "Article";
   clicksCount?: number;
   viewsCount?: number;
   theme?: "Roboto" | "BreeSerif" | "Jacques" | "Merriweather" | "Default";
@@ -79,6 +79,25 @@ interface Post extends Document {
   commentsCount?: number;
   tipsCount?: number;
   sharesCount?: number;
+}
+interface Comments {
+  createdAt?: Date;
+  authorDetails?: User;
+  updatedAt?: Date;
+  id?: string;
+  _id?: string;
+  postId: string;
+  authorId: string;
+  edited?: boolean;
+  content: string;
+  commentRepliedTo?: string | null;
+  praises?: Array<string>;
+  views?: number;
+  clicks?: number;
+  reads?: number;
+  replies?: Array<{ id: string; userId: string }>;
+  notifications?: boolean;
+  bookmarkedBy?: Array<string>;
 }
 interface PostPayload {
   id?: string;
@@ -150,4 +169,4 @@ type InputProps = {
 } & MultiSelect &
   Multi;
 
-export type { User, Post, PostPayload, InputProps, Option };
+export type { User, Post, PostPayload, InputProps, Option, Comments };

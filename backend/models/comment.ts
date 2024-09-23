@@ -4,7 +4,7 @@ import { Document } from "mongoose";
 interface IComment extends Document {
   createdAt: Date;
   updatedAt: Date;
-  blogId: ObjectId;
+  postId: ObjectId;
   authorId: ObjectId;
   edited: boolean;
   content: string;
@@ -28,16 +28,16 @@ const commentSchema = new mongoose.Schema<IComment>(
       type: Date,
       default: Date.now(),
     },
-    blogId: {
-      type: String,
-      required: [true, "post id is required!"],
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      //required: [true, "post id is required!"],
     },
     content: {
       type: String,
       required: [true, "content is Required"],
     },
     authorId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: [true, "Author is required"],
     },
     edited: {

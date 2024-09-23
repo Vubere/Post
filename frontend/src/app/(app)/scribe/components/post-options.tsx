@@ -19,7 +19,7 @@ type Props = {
 export default function PostOptions({ open, onCancel, postDetails, resetDetails }: Props) {
   const accessOptions = [{ label: "All", value: "subscribers,followers,public" }, { label: "Subscribers", value: "subscribers" }, { label: "Followers", value: "subscribers,followers" }];
   const paywallOptions = [{ label: "All(including subscribers)", value: "subscribers,followers,public" }, { label: "Followers", value: "followers,public" }, { label: "Public", value: "public" }];
-  const typeOptions = [{ label: "Blog", value: "blog" }, { label: "Essay", value: "Essay" }, { label: "Short Story", value: "short story" }];
+  const typeOptions = [{ label: "Post", value: "post" }, { label: "Essay", value: "Essay" }, { label: "Short Story", value: "short story" }];
   const { register, formState, control, setValue, getValues, reset } = useForm();
   const [sendPost, {
     isLoading

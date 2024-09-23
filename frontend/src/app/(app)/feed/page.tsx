@@ -17,7 +17,7 @@ export default function Bookmarks() {
   const bookmarks = data?.data || [];
 
   return (
-    <PageContainer title="Dashboard" loading={isLoading}>
+    <PageContainer loading={isLoading}>
 
       <Tab items={[
         {

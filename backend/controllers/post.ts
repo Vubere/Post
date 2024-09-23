@@ -9,7 +9,7 @@ import {
   validateObjectKeys,
 } from "../lib/utils";
 import { wrapModuleFunctionsInAsyncErrorHandler } from "../lib/utils/aynsc-error-handler";
-import { BlogConfirmRequest } from "../lib/types";
+import { PostConfirmRequest } from "../lib/types";
 import CustomError from "../lib/utils/custom-error";
 import User from "../models/user";
 
@@ -20,6 +20,10 @@ const postApiFeaturesAggregation = (
   query: Record<any, any>,
   authorQuery?: Record<string, any>
 ) => {
+  query.status =
+    query.status !== undefined && !isNaN(+query.status)
+      ? Number(query.status)
+      : 1;
   return new ApiFeaturesAggregation(
     {
       from: "users",
@@ -34,27 +38,27 @@ const postApiFeaturesAggregation = (
   );
 };
 
-async function createBlog(
-  req: BlogConfirmRequest,
+async function createPost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
   req.body.author = req.requesterId;
-  const newBlog = await Post.create(req.body);
+  const newPost = await Post.create(req.body);
 
   res
     .status(STATUS_CODES.success.Created)
-    .json(jsend("success", newBlog, "post posted successful!"));
+    .json(jsend("success", newPost, "post posted successful!"));
 }
 
 async function getAllPosts(
-  req: BlogConfirmRequest,
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
-  const blogQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
+  const postQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
 
-  const post = await blogQuery;
+  const post = await postQuery;
   res.status(STATUS_CODES.success.OK).json(
     jsend("success!", post, "successfully fetched posts!", {
       count: post?.length,
@@ -62,31 +66,31 @@ async function getAllPosts(
   );
 }
 async function getPostFromFollowings(
-  req: BlogConfirmRequest,
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
-  const blogQuery = postApiFeaturesAggregation(req.query, {
+  const postQuery = postApiFeaturesAggregation(req.query, {
     $or: [
       { "authorDetails.followers": req.requesterId },
       { "authorDetails._id": req.requesterId },
     ],
   }).aggregate();
 
-  const post = await blogQuery;
+  const post = await postQuery;
   res.status(STATUS_CODES.success.OK).json(
     jsend("success!", post, "successfully fetched posts!", {
       count: post.length,
     })
   );
 }
-async function getBlog(req: BlogConfirmRequest, res: Response) {
+async function getPost(req: PostConfirmRequest, res: Response) {
   const post = await Post.findById(req.post?.id)?.populate("author");
   res
     .status(STATUS_CODES.success.OK)
     .json(jsend("success", post, "post fetched successfully!"));
 }
-async function deleteBlog(req: BlogConfirmRequest, res: Response) {
+async function deletePost(req: PostConfirmRequest, res: Response) {
   if (req.params.id === req.post.id) {
     await Post.findByIdAndUpdate(
       req.post._id,
@@ -106,16 +110,16 @@ function validateUpdateRequestBody(body: Record<string, any>) {
   }
   return true;
 }
-async function updateBlog(
-  req: BlogConfirmRequest,
+async function updatePost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
   const post = await Post.findById(req.post._id);
   if (post !== null) {
-    const { id, ...blogDataToUpdate } = req.body;
-    const validated = validateUpdateRequestBody(blogDataToUpdate);
-    if (typeof blogDataToUpdate !== "object") {
+    const { id, ...postDataToUpdate } = req.body;
+    const validated = validateUpdateRequestBody(postDataToUpdate);
+    if (typeof postDataToUpdate !== "object") {
       next(
         new CustomError(
           "invalid post body sent!",
@@ -134,9 +138,9 @@ async function updateBlog(
       return;
     }
 
-    const blogDetails = await Post.findByIdAndUpdate(
+    const postDetails = await Post.findByIdAndUpdate(
       req.post._id,
-      blogDataToUpdate,
+      postDataToUpdate,
       {
         runValidators: true,
       }
@@ -144,14 +148,14 @@ async function updateBlog(
 
     res
       .status(STATUS_CODES.success.OK)
-      .json(jsend("success!", blogDetails, "post updated successfully"));
+      .json(jsend("success!", postDetails, "post updated successfully"));
     return;
   }
   next(new CustomError("post not found", STATUS_CODES.clientError.Not_Found));
 }
 
-async function praiseBlog(
-  req: BlogConfirmRequest,
+async function praisePost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -180,8 +184,8 @@ async function praiseBlog(
     );
   }
 }
-async function viewBlog(
-  req: BlogConfirmRequest,
+async function viewPost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -196,8 +200,8 @@ async function viewBlog(
     .json(jsend("success", undefined, `viewed post ${post.title}`));
   return;
 }
-async function clickBlog(
-  req: BlogConfirmRequest,
+async function clickPost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -212,8 +216,8 @@ async function clickBlog(
     .json(jsend("success", undefined, `clicked on post ${post.title}`));
   return;
 }
-async function readBlog(
-  req: BlogConfirmRequest,
+async function readPost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -228,8 +232,8 @@ async function readBlog(
     .json(jsend("success", undefined, `readed post ${post.title}`));
   return;
 }
-async function unpraiseBlog(
-  req: BlogConfirmRequest,
+async function unpraisePost(
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -261,7 +265,7 @@ async function unpraiseBlog(
   }
 }
 async function addToBookmarks(
-  req: BlogConfirmRequest,
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -293,7 +297,7 @@ async function addToBookmarks(
   }
 }
 async function removeFromBookmarks(
-  req: BlogConfirmRequest,
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -330,7 +334,7 @@ async function removeFromBookmarks(
 }
 
 async function addPaywall(
-  req: BlogConfirmRequest,
+  req: PostConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -352,31 +356,31 @@ async function addPaywall(
     .status(STATUS_CODES.success.OK)
     .json(jsend("success", undefined, "post paywall settings updated!"));
 }
-async function getLikes(...args: [BlogConfirmRequest, Response, NextFunction]) {
+async function getLikes(...args: [PostConfirmRequest, Response, NextFunction]) {
   const [req, , next] = args;
   req.query.praises = req.requesterId;
   next();
 }
 async function getUserPost(
-  ...args: [BlogConfirmRequest, Response, NextFunction]
+  ...args: [PostConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
   req.query.author = new Types.ObjectId(req.requesterId) as any;
   next();
 }
 async function getBookmarks(
-  ...args: [BlogConfirmRequest, Response, NextFunction]
+  ...args: [PostConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
   req.query.bookmarkedBy = new Types.ObjectId(req.requesterId) as any;
   next();
 }
-async function isRequestersBlog(
-  ...args: [BlogConfirmRequest, Response, NextFunction]
+async function isRequestersPost(
+  ...args: [PostConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  const blogId = req.body.id || req.params.id;
-  const post = await Post.findById(blogId).select("author");
+  const postId = req.body.id || req.params.id;
+  const post = await Post.findById(postId).select("author");
   if (post?.author?.toString() !== req.requesterId) {
     next(
       new CustomError(
@@ -389,25 +393,25 @@ async function isRequestersBlog(
   next();
 }
 
-const blogExports = {
-  createBlog,
+const postExports = {
+  createPost,
   getAllPosts,
   getUserPost,
-  updateBlog,
-  getBlog,
-  deleteBlog,
-  praiseBlog,
-  unpraiseBlog,
+  updatePost,
+  getPost,
+  deletePost,
+  praisePost,
+  unpraisePost,
   addPaywall,
   getLikes,
-  isRequestersBlog,
+  isRequestersPost,
   getBookmarks,
   addToBookmarks,
   removeFromBookmarks,
-  viewBlog,
-  clickBlog,
-  readBlog,
+  viewPost,
+  clickPost,
+  readPost,
   getPostFromFollowings,
 };
 
-export default wrapModuleFunctionsInAsyncErrorHandler(blogExports);
+export default wrapModuleFunctionsInAsyncErrorHandler(postExports);

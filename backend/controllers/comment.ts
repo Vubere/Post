@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Comment from "../models/comment";
-import ApiFeatures from "../lib/utils/api-features";
+import ApiFeatures, { ApiFeaturesAggregation } from "../lib/utils/api-features";
 import {
   STATUS_CODES,
   UPDATABLE_COMMENT_DATA,
@@ -11,9 +11,28 @@ import { wrapModuleFunctionsInAsyncErrorHandler } from "../lib/utils/aynsc-error
 import { CommentConfirmRequest } from "../lib/types";
 import CustomError from "../lib/utils/custom-error";
 import User from "../models/user";
+import Post from "../models/post";
+import { Types } from "mongoose";
 
 const commentApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(Comment.find(), query);
+};
+const commentApiFeaturesAggregation = (
+  query: Record<any, any>,
+  authorQuery?: Record<string, any>
+) => {
+  return new ApiFeaturesAggregation(
+    {
+      from: "users",
+      localField: "authorId",
+      foreignField: "_id",
+      as: "authorDetails",
+    },
+    Comment,
+    query,
+    "$authorDetails",
+    authorQuery
+  );
 };
 
 async function comment(
@@ -21,11 +40,19 @@ async function comment(
   res: Response,
   next: NextFunction
 ) {
-  const newBlog = await Comment.create(req.body);
-
+  const newComment = await Comment.create(req.body);
+  try {
+    await Post.findByIdAndUpdate(req.body.postId, {
+      $push: {
+        comments: newComment._id,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+  }
   res
     .status(STATUS_CODES.success.Created)
-    .json(jsend("success", newBlog, "comment posted successful!"));
+    .json(jsend("success", newComment, "comment posted successful!"));
 }
 async function replyComment(
   req: CommentConfirmRequest,
@@ -36,26 +63,24 @@ async function replyComment(
     return next(
       new CustomError("failed to pass the comment being replied to!", 400)
     );
-  const newBlog = await Comment.create(req.body);
+  const newComment = await Comment.create(req.body);
 
   res
     .status(STATUS_CODES.success.Created)
-    .json(jsend("success", newBlog, "comment posted successful!"));
+    .json(jsend("success", newComment, "comment posted successful!"));
 }
-async function getBlogComments(
+async function getPostComments(
   req: CommentConfirmRequest,
   res: Response,
   next: NextFunction
 ) {
-  if (!req.query.blogId)
-    return next(new CustomError("field blogId is missing", 400));
-  const commentQuery = commentApiFeatures(req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .pagination();
+  if (!req.query.postId)
+    return next(new CustomError("field postId is missing", 400));
+  else req.query.postId = new Types.ObjectId(req.query.postId as string) as any;
 
-  const comment = await commentQuery.query;
+  const commentQuery = commentApiFeaturesAggregation(req.query, {}).aggregate();
+
+  const comment = await commentQuery;
   res.status(STATUS_CODES.success.OK).json(
     jsend("success!", comment, "successfully fetched comments!", {
       count: comment.length,
@@ -70,11 +95,11 @@ async function getComment(req: CommentConfirmRequest, res: Response) {
 }
 async function deleteComment(req: CommentConfirmRequest, res: Response) {
   if (req.params.id === req.comment.id) {
-    await Comment.findByIdAndUpdate(
-      req.comment._id,
-      { active: false },
-      { runValidators: true }
-    );
+    await Comment.findByIdAndDelete(req.comment._id);
+    await Post.findByIdAndUpdate(req.comment.postId, {
+      $pull: { comments: req.comment.id },
+    });
+
     res.status(204).json(jsend("success", undefined, "comment deleted!"));
   }
 }
@@ -116,7 +141,7 @@ async function updateComment(
       return;
     }
 
-    const blogDetails = await Comment.findByIdAndUpdate(
+    const postDetails = await Comment.findByIdAndUpdate(
       req.comment._id,
       commentDataToUpdate,
       {
@@ -126,7 +151,7 @@ async function updateComment(
 
     res
       .status(STATUS_CODES.success.OK)
-      .json(jsend("success!", blogDetails, "comment updated successfully"));
+      .json(jsend("success!", postDetails, "comment updated successfully"));
     return;
   }
   next(
@@ -334,8 +359,8 @@ async function isRequestersComment(
   ...args: [CommentConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  const blogId = req.body.id || req.params.id;
-  const comment = await Comment.findById(blogId).select("authorId");
+  const postId = req.body.id || req.params.id;
+  const comment = await Comment.findById(postId).select("authorId");
   if (comment?.authorId !== req.requesterId) {
     next(
       new CustomError(
@@ -348,9 +373,9 @@ async function isRequestersComment(
   next();
 }
 
-const blogExports = {
+const postExports = {
   comment,
-  getBlogComments,
+  getPostComments,
   updateComment,
   getComment,
   deleteComment,
@@ -367,4 +392,4 @@ const blogExports = {
   readComment,
 };
 
-export default wrapModuleFunctionsInAsyncErrorHandler(blogExports);
+export default wrapModuleFunctionsInAsyncErrorHandler(postExports);
