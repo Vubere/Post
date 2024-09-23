@@ -25,15 +25,29 @@ const postApiFeaturesAggregation = (
       ? Number(query.status)
       : 1;
   return new ApiFeaturesAggregation(
-    {
-      from: "users",
-      localField: "author",
-      foreignField: "_id",
-      as: "authorDetails",
-    },
+    [
+      {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+      {
+        from: "posts",
+        localField: "postReshared",
+        foreignField: "_id",
+        as: "sharedPostDetails",
+      },
+    ],
     Post,
     query,
-    "$authorDetails",
+    [
+      "$authorDetails",
+      {
+        path: "$sharedPostDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    ],
     authorQuery
   );
 };
@@ -85,10 +99,12 @@ async function getPostFromFollowings(
   );
 }
 async function getPost(req: PostConfirmRequest, res: Response) {
-  const post = await Post.findById(req.post?.id)?.populate("author");
+  req.query._id = new Types.ObjectId(req.post.id) as any;
+  const postQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
+  const post = await postQuery;
   res
     .status(STATUS_CODES.success.OK)
-    .json(jsend("success", post, "post fetched successfully!"));
+    .json(jsend("success", post?.[0], "post fetched successfully!"));
 }
 async function deletePost(req: PostConfirmRequest, res: Response) {
   if (req.params.id === req.post.id) {

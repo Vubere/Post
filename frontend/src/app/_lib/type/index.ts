@@ -56,6 +56,7 @@ interface Post {
   views?: Array<string>;
   clicks?: Array<string>;
   reads?: Array<string>;
+  sharedPostDetails?: Post;
   categories?: Array<string>;
   isPaywalled?: boolean;
   paywallFee?: string;
@@ -79,6 +80,8 @@ interface Post {
   commentsCount?: number;
   tipsCount?: number;
   sharesCount?: number;
+  postReshared?: string;
+  postType?: "post" | "reshare";
 }
 interface Comments {
   createdAt?: Date;
@@ -110,6 +113,8 @@ interface PostPayload {
   userAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
   content: string;
   coverPhoto: string;
+  postReshared?: string;
+  postType?: "post" | "reshare";
 }
 
 type Multi = {

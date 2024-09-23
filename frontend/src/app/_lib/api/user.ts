@@ -127,7 +127,7 @@ export const userApi = createApi({
       providesTags: ["Users"],
     }),
     getUser: builder.query<"User", string>({
-      query: (id) => ({ url: `/analytics` }),
+      query: (id) => ({ url: `/${id}` }),
       providesTags: (result, err, id) => [{ type: "User", id }],
     }),
     getUserAnalytics: builder.query({
@@ -231,6 +231,7 @@ export const {
   useGetFollowingQuery,
   useGetProfileQuery,
   useLazyGetProfileQuery,
+  useLazyGetUserQuery,
   util: { getRunningQueriesThunk },
 } = userApi;
 

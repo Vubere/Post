@@ -3,7 +3,8 @@ import { Document } from "mongoose";
 import User from "./user";
 
 interface IPost extends Document {
-  type: "post";
+  type?: "Post" | "Essay" | "Short story" | "Article";
+  postType: "post" | "reshare";
   createdAt: Date;
   updatedAt: Date;
   author: ObjectId;
@@ -31,35 +32,16 @@ interface IPost extends Document {
   version?: number;
   deleted?: boolean;
   theme?: string;
+  postReshared?: ObjectId;
 }
 
-interface IReshare extends Document {
-  type: "reshare";
-  createdAt: Date;
-  updatedAt: Date;
-  author: ObjectId;
-  status: 0 | 1; //"Draft"|"Published"
-  edited: boolean;
-  content: string;
-  praises?: Array<ObjectId>;
-  views?: Array<ObjectId>;
-  clicks?: Array<ObjectId>;
-  reads?: Array<ObjectId>;
-  userAccess?: Array<"all" | "followers" | "subscribers">;
-  comments?: Array<{ id: ObjectId; userId: ObjectId }>;
-  tips?: Array<{ userId: ObjectId; amount: Number }>;
-  notifications?: boolean;
-  resharedBy?: Array<ObjectId>;
-  bookmarkedBy?: Array<ObjectId>;
-  version?: number;
-  deleted?: boolean;
-}
+interface IReshare extends Document {}
 
-const postSchema = new mongoose.Schema<IPost | IReshare>(
+const postSchema = new mongoose.Schema<IPost>(
   {
     type: {
       type: String,
-      default: "post",
+      default: "Essay",
     },
     createdAt: {
       type: Date,
@@ -69,6 +51,14 @@ const postSchema = new mongoose.Schema<IPost | IReshare>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
       required: [true, "author is required!"],
+    },
+    postReshared: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "posts",
+    },
+    postType: {
+      type: String,
+      default: "post",
     },
     updatedAt: {
       type: Date,

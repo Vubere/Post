@@ -1,9 +1,5 @@
 
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { store } from "@/app/_lib/store";
-import { Provider } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import dynamic from "next/dynamic";
 

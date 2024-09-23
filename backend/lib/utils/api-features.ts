@@ -72,13 +72,13 @@ class ApiFeaturesAggregation {
   model: any | null = null;
   queryStr: string | null = null;
   unwind: string | Record<string, any> | null = null;
-  lookup: Lookup | null = null;
+  lookup: Lookup | Array<Lookup> | null = null;
   lookupQuery: Record<string, any> | null = null;
   constructor(
-    lookup: Lookup,
+    lookup: Lookup | Array<Lookup>,
     model: any,
     queryItem: any,
-    unwind?: string | Record<string, any>,
+    unwind?: string | Record<string, any> | (Record<string, any> | string)[],
     lookupQuery?: Record<string, any>
   ) {
     this.lookup = lookup;
@@ -93,10 +93,17 @@ class ApiFeaturesAggregation {
     if (this.lookup === null) {
       throw new Error("document to lookup not passed!");
     }
-
-    aggregateArray.push({ $lookup: this.lookup });
+    if (Array.isArray(this.lookup)) {
+      this.lookup.map((lu) => aggregateArray.push({ $lookup: lu }));
+    } else {
+      aggregateArray.push({ $lookup: this.lookup });
+    }
     if (this.unwind) {
-      aggregateArray.push({ $unwind: this.unwind });
+      if (Array.isArray(this.unwind)) {
+        this.unwind.map((lu) => aggregateArray.push({ $unwind: lu }));
+      } else {
+        aggregateArray.push({ $unwind: this.unwind });
+      }
     }
 
     aggregateArray.push({
