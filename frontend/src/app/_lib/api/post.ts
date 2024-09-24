@@ -139,7 +139,7 @@ export const postApi = createApi({
     }),
     viewPost: builder.mutation({
       query: (id: string) => ({
-        url: `/unsubscribe/${id}`,
+        url: `/view/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Subscriptions"],

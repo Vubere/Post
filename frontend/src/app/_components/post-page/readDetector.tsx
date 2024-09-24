@@ -1,20 +1,22 @@
 "use client";
 
 import { useReadPostMutation } from "@/app/_lib/api/post";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 const ReadDetect = ({ reads, id }: { reads: string[], id: string }) => {
   const readIndicatorRef = useRef<HTMLDivElement | null>(null);
   const [readPost] = useReadPostMutation();
+  const [read, setRead] = useState(false);
 
   useEffect(() => {
     const postContainer = readIndicatorRef.current;
-    if (postContainer) {
+    if (postContainer && !read) {
       const observer = new IntersectionObserver(([entry]) => {
         const viewed = reads?.includes(id);
         if (!viewed) {
           readPost(id);
+          setRead(true)
         }
       });
       observer.observe(postContainer);
@@ -22,7 +24,7 @@ const ReadDetect = ({ reads, id }: { reads: string[], id: string }) => {
         observer.disconnect();
       };
     }
-  }, [readIndicatorRef]);
+  }, [readIndicatorRef, read]);
 
   return (
     <div ref={readIndicatorRef} />

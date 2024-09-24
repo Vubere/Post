@@ -208,7 +208,7 @@ async function viewPost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $addToSet: { views: requesterId },
+    $push: { views: requesterId },
   });
 
   res
@@ -224,7 +224,7 @@ async function clickPost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $addToSet: { clicks: requesterId },
+    $push: { clicks: requesterId },
   });
 
   res
@@ -240,7 +240,7 @@ async function readPost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $addToSet: { reads: requesterId },
+    $push: { reads: requesterId },
   });
 
   res

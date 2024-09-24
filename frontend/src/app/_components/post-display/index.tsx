@@ -29,6 +29,7 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
   const [getUser, { isLoading }] = useLazyGetUserQuery();
   const [viewPost] = useViewPostMutation();
   const [clickPost] = useClickPostMutation();
+  const [seen, setSeen] = useState(false);
 
   const postClicked = (id?: string) => {
     const clicked = post.clicks?.includes(id || info?._id || info?.id || "");
@@ -54,11 +55,12 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
 
   useEffect(() => {
     const postContainer = postContainerRef.current;
-    if (postContainer) {
+    if (postContainer && !seen) {
       const observer = new IntersectionObserver(([entry]) => {
         const viewed = post.views?.includes(info?._id || info?.id || "");
         if (!viewed) {
           viewPost((post._id || post.id) as string);
+          setSeen(true);
         }
       });
       observer.observe(postContainer);
@@ -66,7 +68,7 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
         observer.disconnect();
       };
     }
-  }, [postContainerRef.current]);
+  }, [postContainerRef.current, seen]);
 
   if (isLoading) {
     return (
