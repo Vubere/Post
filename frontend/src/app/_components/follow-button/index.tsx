@@ -15,7 +15,6 @@ export default function FollowButton({ user }: { user: User }) {
   const [followingBool, setIsFollowingBool] = useState(isFollowing);
   const [follow, { isLoading: followingProcessing }] = useFollowUserMutation();
   const [unfollow, { isLoading: unfollowingProcessing }] = useUnfollowUserMutation();
-  console.log(user, isFollowing);
 
   useEffect(() => {
     setIsFollowingBool(isFollowing);

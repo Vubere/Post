@@ -1,10 +1,11 @@
-
+"use client";
 import { Post, User } from "@/app/_lib/type";
 import Image from "next/image";
 import { Familjen_Grotesk, Jacques_Francois, Merriweather as Mw, Roboto as Rb, Bree_Serif } from "next/font/google";
 import { TYPE_CLASSNAME } from "@/app/_lib/utils/constants";
 import PostDisplay from "../post-display";
 import ReadDetect from "./readDetector";
+import { useRef } from "react";
 
 const Default = Familjen_Grotesk({
   weight: ["400", "400", "700"],
@@ -39,13 +40,14 @@ const themes = {
 export default function PostPage(props: Partial<Post>) {
   const { content, coverPhoto, authorDetails, author, type, title, theme, reads, id, _id } = props;
   const au = (authorDetails?.firstName ? authorDetails : author) as unknown as User;
+  const ref = useRef<HTMLDivElement | null>(null)
 
   const themeClassName = theme && themes[theme] ? themes[theme].className : themes["Default"].className;
 
   return (
     <>
       {props?.postType !== "reshare" ?
-        <div className={`${themeClassName} w-full h-auto bg-transparent`}>
+        <div className={`${themeClassName} w-full h-auto bg-transparent`} ref={ref}>
           {coverPhoto && <div className="w-full h-[200px] sm:h-[250px] md:h-[300px] overflow-hidden relative rounded-[30px] mb-[15px]">
             <Image src={coverPhoto} alt={title ?? ""} fill objectFit="cover" objectPosition="center" />
           </div>}
@@ -59,10 +61,15 @@ export default function PostPage(props: Partial<Post>) {
 
 
           <div className="[&_p]:text-grey-400 [&_p]:text-[12px] xs:[&_p]:text-[14px] sm:[&_p]:text-[16px] [&_a]:text-[#44f]" dangerouslySetInnerHTML={{ __html: (content ?? "").replace(/&lt;/g, "<") }} />
+          <ReadDetect reads={reads as string[]} id={(id || _id) as string} />
+
         </div> : (
-          <PostDisplay isAuthorPost={false} hideReaction {...(props as Post)} />
+          <div ref={ref}>
+
+            <PostDisplay isAuthorPost={false} hideReaction {...(props as Post)} />
+            <ReadDetect reads={reads as string[]} id={(id || _id) as string} />
+          </div>
         )}
-      <ReadDetect reads={reads as string[]} id={(id || _id) as string} />
     </>
   )
 }

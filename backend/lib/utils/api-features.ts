@@ -29,7 +29,6 @@ class ApiFeatures {
       "page",
       "limit",
     ]);
-    console.log(queryObj);
     if (this.query) {
       this.query = this.query.find(queryObj);
     }

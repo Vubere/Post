@@ -55,17 +55,16 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
   useEffect(() => {
     const postContainer = postContainerRef.current;
     if (postContainer) {
-      const scrolledIntoView = function () {
-        const position = postContainer.getBoundingClientRect();
-        if (position.top >= 0 && position.bottom <= window.innerHeight) {
-          const viewed = post.views?.includes(info?._id || info?.id || "");
-          if (!viewed) {
-            viewPost((post._id || post.id) as string);
-          }
+      const observer = new IntersectionObserver(([entry]) => {
+        const viewed = post.views?.includes(info?._id || info?.id || "");
+        if (!viewed) {
+          viewPost((post._id || post.id) as string);
         }
-      }
-      window.addEventListener('scroll', scrolledIntoView);
-      return () => window.removeEventListener('scroll', scrolledIntoView);
+      });
+      observer.observe(postContainer);
+      return () => {
+        observer.disconnect();
+      };
     }
   }, [postContainerRef.current]);
 

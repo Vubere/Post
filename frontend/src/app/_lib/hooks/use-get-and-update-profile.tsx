@@ -17,7 +17,6 @@ export default function useGetAndUpdateProfile() {
     const token = localStorage.getItem(LS_TOKEN_NAME);
     if (token) {
       getUser(token).then((res: any) => {
-        console.log(res)
         if (res.status === "rejected") {
           return;
         }

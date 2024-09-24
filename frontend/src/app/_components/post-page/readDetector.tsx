@@ -1,7 +1,7 @@
 "use client";
 
 import { useReadPostMutation } from "@/app/_lib/api/post";
-import { useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 
 
 const ReadDetect = ({ reads, id }: { reads: string[], id: string }) => {
@@ -9,21 +9,20 @@ const ReadDetect = ({ reads, id }: { reads: string[], id: string }) => {
   const [readPost] = useReadPostMutation();
 
   useEffect(() => {
-    const readIndicator = readIndicatorRef.current;
-    if (readIndicator) {
-      const scrolledIntoView = function () {
-        const position = readIndicator.getBoundingClientRect();
-        if (position.top >= 0 && position.bottom <= window.innerHeight) {
-          const read = reads?.includes(id || "");
-          if (!read) {
-            readPost(id);
-          }
+    const postContainer = readIndicatorRef.current;
+    if (postContainer) {
+      const observer = new IntersectionObserver(([entry]) => {
+        const viewed = reads?.includes(id);
+        if (!viewed) {
+          readPost(id);
         }
-      }
-      window.addEventListener('scroll', scrolledIntoView);
-      return () => window.removeEventListener('scroll', scrolledIntoView);
+      });
+      observer.observe(postContainer);
+      return () => {
+        observer.disconnect();
+      };
     }
-  }, [readIndicatorRef.current]);
+  }, [readIndicatorRef]);
 
   return (
     <div ref={readIndicatorRef} />

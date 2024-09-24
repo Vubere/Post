@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: Args) {
 export default async function Following({ params }: Args) {
   const data = await getUser(params.id);
   const followingData = await getFollowing(params.id);
-  console.log(followingData)
+
   return (
     <PageContainer title={`Users ${data?.data?.username} follows`}>
       <ListUsers users={followingData?.data || []} />

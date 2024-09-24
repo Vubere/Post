@@ -178,11 +178,11 @@ async function praisePost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $push: { praises: requesterId },
+    $addToSet: { praises: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { praises: post.id },
+      $addToSet: { praises: post.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -208,7 +208,7 @@ async function viewPost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $push: { views: requesterId },
+    $addToSet: { views: requesterId },
   });
 
   res
@@ -224,7 +224,7 @@ async function clickPost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $push: { clicks: requesterId },
+    $addToSet: { clicks: requesterId },
   });
 
   res
@@ -240,7 +240,7 @@ async function readPost(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $push: { reads: requesterId },
+    $addToSet: { reads: requesterId },
   });
 
   res
@@ -270,7 +270,7 @@ async function unpraisePost(
     return;
   } catch (err) {
     await Post.findByIdAndUpdate(post._id, {
-      $push: { praises: requesterId },
+      $addToSet: { praises: requesterId },
     });
     next(
       new CustomError(
@@ -288,11 +288,11 @@ async function addToBookmarks(
   const post = req.post;
   const requesterId = req.requesterId;
   await Post.findByIdAndUpdate(post._id, {
-    $push: { bookmarkedBy: requesterId },
+    $addToSet: { bookmarkedBy: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { bookmarks: post.id },
+      $addToSet: { bookmarks: post.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -338,7 +338,7 @@ async function removeFromBookmarks(
     return;
   } catch (err) {
     await Post.findByIdAndUpdate(post._id, {
-      $push: { bookmarkedBy: requesterId },
+      $addToSet: { bookmarkedBy: requesterId },
     });
     next(
       new CustomError(
@@ -385,6 +385,7 @@ async function getUserPost(
   req.query.author = new Types.ObjectId(id as string) as any;
   next();
 }
+
 async function getBookmarks(
   ...args: [PostConfirmRequest, Response, NextFunction]
 ) {

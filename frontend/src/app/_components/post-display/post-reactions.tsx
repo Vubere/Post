@@ -30,7 +30,6 @@ interface PostReactionProp extends Partial<Post> {
 }
 
 export default function PostReactions({ showViews, showReads, isPostPage, ...post }: PostReactionProp) {
-  console.log(post)
   const { info } = useAppSelector((state: RootState) => state.user);
   const router = useRouter();
   const authorId = info?._id || info?.id || "";

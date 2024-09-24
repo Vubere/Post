@@ -146,14 +146,14 @@ export const postApi = createApi({
     }),
     readPost: builder.mutation({
       query: (id: string) => ({
-        url: `/unsubscribe/${id}`,
+        url: `/read/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Subscriptions"],
     }),
     paywallPost: builder.mutation({
       query: (id: string) => ({
-        url: `/unsubscribe/${id}`,
+        url: `/paywall/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Subscriptions"],

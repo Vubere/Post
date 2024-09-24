@@ -65,7 +65,6 @@ const Notification = ({ className, userInfo }: Props) => {
 
     updateNotifications({ notificationAccess: vals?.notificationAccess?.split(",") })
       .then((res) => {
-        console.log(res)
         if (["success", "success!"].includes(res?.data?.status)) {
           toast.success(res?.data?.message || "success");
           return;

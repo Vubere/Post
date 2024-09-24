@@ -72,7 +72,6 @@ function CommentForm({ postId, authorId, validate }: { postId: string, authorId:
       postId,
       authorId
     }).then(res => {
-      console.log(res)
       reset()
       validate();
     })

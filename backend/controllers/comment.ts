@@ -43,7 +43,7 @@ async function comment(
   const newComment = await Comment.create(req.body);
   try {
     await Post.findByIdAndUpdate(req.body.postId, {
-      $push: {
+      $addToSet: {
         comments: newComment._id,
       },
     });
@@ -66,7 +66,7 @@ async function replyComment(
     );
   const newComment = await Comment.create(req.body);
   await Comment.findByIdAndUpdate(commentId, {
-    $push: {
+    $addToSet: {
       replies: newComment._id,
     },
   });
@@ -190,11 +190,11 @@ async function praiseComment(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $push: { praises: requesterId },
+    $addToSet: { praises: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { praises: comment.id },
+      $addToSet: { praises: comment.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -222,7 +222,7 @@ async function viewComment(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $push: { views: requesterId },
+    $addToSet: { views: requesterId },
   });
 
   res
@@ -238,7 +238,7 @@ async function clickComment(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $push: { clicks: requesterId },
+    $addToSet: { clicks: requesterId },
   });
 
   res
@@ -254,7 +254,7 @@ async function readComment(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $push: { reads: requesterId },
+    $addToSet: { reads: requesterId },
   });
 
   res
@@ -284,7 +284,7 @@ async function unpraiseComment(
     return;
   } catch (err) {
     await Comment.findByIdAndUpdate(comment._id, {
-      $push: { praises: requesterId },
+      $addToSet: { praises: requesterId },
     });
     next(
       new CustomError(
@@ -302,11 +302,11 @@ async function addToBookmarks(
   const comment = req.comment;
   const requesterId = req.requesterId;
   await Comment.findByIdAndUpdate(comment._id, {
-    $push: { bookmarkedBy: requesterId },
+    $addToSet: { bookmarkedBy: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { bookmarks: comment.id },
+      $addToSet: { bookmarks: comment.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -352,7 +352,7 @@ async function removeFromBookmarks(
     return;
   } catch (err) {
     await Comment.findByIdAndUpdate(comment._id, {
-      $push: { bookmarkedBy: requesterId },
+      $addToSet: { bookmarkedBy: requesterId },
     });
     next(
       new CustomError(

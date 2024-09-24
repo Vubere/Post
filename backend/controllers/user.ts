@@ -162,11 +162,11 @@ async function viewProfile(
   const user = req.user;
   const requesterId = req.requesterId;
   await User.findByIdAndUpdate(user._id, {
-    $push: { profileViews: requesterId },
+    $addToSet: { profileViews: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { viewedProfiles: user.id },
+      $addToSet: { viewedProfiles: user.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -194,11 +194,11 @@ async function subscribe(
   const user = req.user;
   const requesterId = req.requesterId;
   await User.findByIdAndUpdate(user._id, {
-    $push: { subscriptions: requesterId },
+    $addToSet: { subscriptions: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { subscribers: user.id },
+      $addToSet: { subscribers: user.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -240,7 +240,7 @@ async function unsubscribe(
     return;
   } catch (err) {
     await User.findByIdAndUpdate(user._id, {
-      $push: { subscriptions: requesterId },
+      $addToSet: { subscriptions: requesterId },
     });
     next(
       new CustomError(
@@ -258,11 +258,11 @@ async function followUser(
   const user = req.user;
   const requesterId = req.requesterId;
   await User.findByIdAndUpdate(user._id, {
-    $push: { followers: requesterId },
+    $addToSet: { followers: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { following: user.id },
+      $addToSet: { following: user.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -304,7 +304,7 @@ async function unfollowUser(
     return;
   } catch (err) {
     await User.findByIdAndUpdate(user._id, {
-      $push: { followers: requesterId },
+      $addToSet: { followers: requesterId },
     });
     next(
       new CustomError(
@@ -323,11 +323,11 @@ async function blockUser(
   const user = req.user;
   const requesterId = req.requesterId;
   await User.findByIdAndUpdate(user._id, {
-    $push: { blockedBy: requesterId },
+    $addToSet: { blockedBy: requesterId },
   });
   try {
     await User.findByIdAndUpdate(requesterId, {
-      $push: { blocked: user.id },
+      $addToSet: { blocked: user.id },
     });
     res
       .status(STATUS_CODES.success.OK)
@@ -369,7 +369,7 @@ async function unblockUser(
     return;
   } catch (err) {
     await User.findByIdAndUpdate(user._id, {
-      $push: { blockedBy: requesterId },
+      $addToSet: { blockedBy: requesterId },
     });
     next(
       new CustomError(
@@ -396,7 +396,6 @@ async function updatePrivacySettings(
         STATUS_CODES.clientError.Bad_Request
       )
     );
-  console.log(requesterId);
   await User.findByIdAndUpdate(requesterId, body);
 
   res

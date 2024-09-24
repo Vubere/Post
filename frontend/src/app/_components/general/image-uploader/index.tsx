@@ -56,7 +56,6 @@ export default function ImageUploader({ url, setUrl, className, text, removeLink
 
   const onClick = () => {
     if (inputRef.current) {
-      console.log(inputRef.current)
       inputRef.current.click();
     }
   }
