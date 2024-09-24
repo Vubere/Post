@@ -1,16 +1,22 @@
 import { cookies } from "next/headers";
-import AccountPage from ".";
+import AccountPage from "..";
 
 
 
-export const revalidate = 5;
-async function getProfile() {
+type Params = {
+  id: string
+}
+interface AccountArgs {
+  params: Params
+}
+export const revalidate = 1;
+async function getUser(id: string) {
   try {
     const cookieStore = cookies();
     const token = cookieStore.get("token")?.value;
-    if (token) {
+    if (token && id) {
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/profile`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/${id}`, {
         headers: {
           authorization: `Bearer ${token}`
         }
@@ -30,8 +36,8 @@ async function getProfile() {
   }
 }
 
-export async function generateMetadata() {
-  const user = await getProfile();
+export async function generateMetadata({ params }: AccountArgs) {
+  const user = await getUser(params.id);
   const name = user?.data?.fullName ? `${user?.data?.fullName || ""}` : "Account";
   const biography = user?.data?.biography
   return {
@@ -41,9 +47,12 @@ export async function generateMetadata() {
 }
 
 
-export default async function Account() {
-  const user = await getProfile();
+export default async function Account({ params }: AccountArgs) {
+  const user = await getUser(params.id);
   const userInfo = user?.data;
+  if (user?.status === "failed") {
+    return <div>Error fetching post, reload page!</div>
+  }
   return (
     <AccountPage userInfo={userInfo} />
   )

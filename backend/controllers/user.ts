@@ -457,28 +457,38 @@ async function getFollowing(
   ...args: [UserConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.followers = { $in: req.requesterId };
+  const userId = req.query.userId || req.requesterId;
+  if (req.query.userId) delete req.query["userId"];
+  req.query.followers = { $in: [userId as string] };
   next();
 }
 async function getFollowers(
   ...args: [UserConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.following = { $in: req.requesterId };
+  const userId = req.query.userId || req.requesterId;
+  if (req.query.userId) delete req.query["userId"];
+
+  req.query.following = { $in: userId as string };
   next();
 }
 async function getSubscribers(
   ...args: [UserConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.subscriptions = { $in: req.requesterId };
+  const userId = req.query.userId || req.requesterId;
+  if (req.query.userId) delete req.query["userId"];
+
+  req.query.subscriptions = { $in: [userId as string] };
   next();
 }
 async function getSubscriptions(
   ...args: [UserConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.subscribers = { $in: req.requesterId };
+  const userId = req.query.userId || req.requesterId;
+  if (req.query.userId) delete req.query["userId"];
+  req.query.subscribers = { $in: [userId as string] };
   next();
 }
 
@@ -488,7 +498,10 @@ async function getUserAnalytics(
   const [req, res, next] = args;
   const fields =
     "praises posts profileViews followers following subscribers subscribed bookmarks viewedProfiles";
-  const user = await User.findById(req.requesterId).select(fields);
+  const userId = req.query.userId || req.requesterId;
+  if (req.query.userId) delete req.query["userId"];
+
+  const user = await User.findById(userId as string).select(fields);
   const post = await Post.aggregate([
     {
       $match: {

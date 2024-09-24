@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Connect",
   description: `Connect with other members of the Collections community.`,
 }
+export const revalidate = 1;
 const getUsers = async () => {
   try {
     const cookieStore = cookies();
@@ -35,8 +36,8 @@ const getUsers = async () => {
 
 export default async function Connect() {
   const data = await getUsers();
-  console.log(data)
+
   return (
-    <ConnectPage />
+    <ConnectPage users={data?.data} />
   )
 }

@@ -374,14 +374,15 @@ async function addPaywall(
 }
 async function getLikes(...args: [PostConfirmRequest, Response, NextFunction]) {
   const [req, , next] = args;
-  req.query.praises = req.requesterId;
+  req.query.praises = req.query.userId || req.requesterId;
   next();
 }
 async function getUserPost(
   ...args: [PostConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.author = new Types.ObjectId(req.requesterId) as any;
+  const id = req.query.userId || req.requesterId;
+  req.query.author = new Types.ObjectId(id as string) as any;
   next();
 }
 async function getBookmarks(

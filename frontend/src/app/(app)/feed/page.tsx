@@ -8,50 +8,98 @@ import { Post } from "@/app/_lib/type";
 import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
 
 
-export default function Bookmarks() {
+export default function Feed() {
   const { data, isLoading } = useGetPostsFeedQuery({})
   const { data: popularData, isLoading: popularDataLoading } = useGetPostsPopularQuery({})
   const { data: followingsData, isLoading: followingsDataLoading } = useGetPostFromFollowingsQuery({})
   const { data: interestData, isLoading: interestDataLoading } = useGetPostFromInterestQuery({});
 
-  const bookmarks = data?.data || [];
+  const feed = data?.data || [];
+  const popular = popularData?.data || [];
+  const following = followingsData?.data || [];
+  const interest = interestData?.data || [];
 
   return (
-    <PageContainer loading={isLoading}>
-
+    <PageContainer>
       <Tab items={[
         {
           title: "Feed",
-          content: <></>,
-          loading: false
+          content: (
+            <>
+              <div>
+                {feed?.map((item: Post) => (
+                  <PostDisplay isAuthorPost {...item} />
+                ))}
+              </div>
+              {(!feed.length && !isLoading) ?
+                <div className={"w-full" + SECTION_CLASSNAME}>
+                  <Empty />
+                </div>
+                : null
+              }
+            </>
+          ),
+          loading: isLoading
         },
         {
           title: "Following",
-          content: <></>,
-          loading: false
+          content: (
+            <>
+              <div>
+                {following?.map((item: Post) => (
+                  <PostDisplay isAuthorPost {...item} />
+                ))}
+              </div>
+              {(!following.length && !isLoading) ?
+                <div className={"w-full" + SECTION_CLASSNAME}>
+                  <Empty />
+                </div>
+                : null
+              }
+            </>
+          ),
+          loading: followingsDataLoading
         },
         {
           title: "Interest",
-          content: <></>,
-          loading: false
+          content: (
+            <>
+              <div>
+                {interest?.map((item: Post) => (
+                  <PostDisplay isAuthorPost {...item} />
+                ))}
+              </div>
+              {(!interest.length && !isLoading) ?
+                <div className={"w-full" + SECTION_CLASSNAME}>
+                  <Empty />
+                </div>
+                : null
+              }
+            </>
+          ),
+          loading: interestDataLoading
         },
         {
           title: "Top",
-          content: <></>,
-          loading: false
+          content: (
+            <>
+              <div>
+                {popular?.map((item: Post) => (
+                  <PostDisplay isAuthorPost {...item} />
+                ))}
+              </div>
+              {(!popular.length && !isLoading) ?
+                <div className={"w-full" + SECTION_CLASSNAME}>
+                  <Empty />
+                </div>
+                : null
+              }
+            </>
+          ),
+          loading: popularDataLoading
         },
       ]} loading={isLoading} />
-      <div>
-        {bookmarks?.map((item: Post) => (
-          <PostDisplay isAuthorPost {...item} />
-        ))}
-      </div>
-      {(!bookmarks.length && !isLoading) ?
-        <div className={"w-full" + SECTION_CLASSNAME}>
-          <Empty />
-        </div>
-        : null
-      }
+
     </PageContainer >
   )
 }

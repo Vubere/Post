@@ -49,7 +49,6 @@ const idIdentifier = asyncErrorHandlerIds(
     value: any
   ) => {
     const user = await User.findById(value);
-    console.log(value, user);
     if (!user) {
       next(
         new CustomError(`User not found`, STATUS_CODES.clientError.Not_Found)

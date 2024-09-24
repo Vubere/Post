@@ -20,4 +20,6 @@ export enum ROUTES {
   post = "/post",
   postId = ROUTES.post + "/:id",
   connect = "/connect",
+  following = "/following/:id",
+  followers = "/followers/:id",
 }

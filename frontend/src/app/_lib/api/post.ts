@@ -65,15 +65,22 @@ export const postApi = createApi({
       providesTags: (result, err, id) => [{ type: "Post", id }],
     }),
     getPraise: builder.query({
-      query: () => "/praises",
-      providesTags: ["Praises"],
+      query: (params?: Record<string, any>) => ({
+        url: "/praises",
+        params,
+      }),
+      providesTags: (result, err, params) => [
+        { type: "Post", ...(params || {}) },
+      ],
     }),
     getUserPost: builder.query({
       query: (data?: Record<string, any>) => ({
         url: "/requester",
         params: data,
       }),
-      providesTags: ["Praises"],
+      providesTags: (result, err, params) => [
+        { type: "Post", ...(params || {}) },
+      ],
     }),
     praisePost: builder.mutation({
       query: (id: string) => ({
