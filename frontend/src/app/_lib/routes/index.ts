@@ -19,4 +19,5 @@ export enum ROUTES {
   scribeId = ROUTES.scribe + "/:id",
   post = "/post",
   postId = ROUTES.post + "/:id",
+  connect = "/connect",
 }

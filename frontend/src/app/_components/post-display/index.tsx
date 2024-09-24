@@ -9,8 +9,11 @@ import { ROUTES } from "@/app/_lib/routes";
 import { Popover, Skeleton } from "antd"
 import PostReactions from "./post-reactions";
 import { TYPE_CLASSNAME } from "@/app/_lib/utils/constants";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLazyGetUserQuery } from "@/app/_lib/api/user";
+import { useClickPostMutation, useViewPostMutation } from "@/app/_lib/api/post";
+import { useAppSelector } from "@/app/_lib/store/hooks";
+import { RootState } from "@/app/_lib/store";
 
 
 interface PostDisplay extends Post {
@@ -20,14 +23,24 @@ interface PostDisplay extends Post {
 }
 
 export default function PostDisplay({ isAuthorPost, hideReaction, className, ...post }: PostDisplay) {
+  const { info } = useAppSelector((state: RootState) => state.user)
   const author = post?.authorDetails || post?.author;
   const [fetchedAuthor, setFetchedAuthor] = useState<null | User>(null);
   const [getUser, { isLoading }] = useLazyGetUserQuery();
+  const [viewPost] = useViewPostMutation();
+  const [clickPost] = useClickPostMutation();
+
+  const postClicked = (id?: string) => {
+    const clicked = post.clicks?.includes(id || info?._id || info?.id || "");
+    if (!clicked) {
+      clickPost((post._id || post.id) as string);
+    }
+  }
+  const postContainerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (author !== undefined && typeof author === "string") {
       getUser(author)
         .then(res => {
-          console.log(res)
           const status = (res.data as any)?.status
           if (status === "success") {
             const user = (res.data as any)?.data as User;
@@ -38,6 +51,24 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
       setFetchedAuthor(author as User)
     }
   }, [author]);
+
+  useEffect(() => {
+    const postContainer = postContainerRef.current;
+    if (postContainer) {
+      const scrolledIntoView = function () {
+        const position = postContainer.getBoundingClientRect();
+        if (position.top >= 0 && position.bottom <= window.innerHeight) {
+          const viewed = post.views?.includes(info?._id || info?.id || "");
+          if (!viewed) {
+            viewPost((post._id || post.id) as string);
+          }
+        }
+      }
+      window.addEventListener('scroll', scrolledIntoView);
+      return () => window.removeEventListener('scroll', scrolledIntoView);
+    }
+  }, [postContainerRef.current]);
+
   if (isLoading) {
     return (
       <Skeleton />
@@ -45,7 +76,7 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
   }
 
   return (
-    <article className={"px-2 " + className}>
+    <article className={"px-2 " + className} ref={postContainerRef}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 relative">
 
@@ -87,16 +118,16 @@ export default function PostDisplay({ isAuthorPost, hideReaction, className, ...
             <h2 className="text-[24px] xs:text-[28px] lg:text-[34px] font-bold leading-[110%]">{post?.title}</h2>
             <p className="text-[12px] xs:text-[14px] sm:text-[16px] md:text-[18px] text-[#373737aa]">{post?.synopsis}</p>
 
-            <Link href={ROUTES.postId.replace(":id", `${post.id || post._id}`)} className="underline font-medium italic text-[#22bb99]">Read</Link>
+            <Link href={ROUTES.postId.replace(":id", `${post.id || post._id}`)} className="underline font-medium italic text-[#22bb99]" onClick={() => postClicked()}>Read</Link>
           </div>
         ) : <div>
           <p className="text-[14px] xs:text-[16px] sm:text-[18px] md:text-[21px] text-[#373737] pb-2">
-            <Link href={ROUTES.postId.replace(":id", `${post.id || post._id}`)} className="block">
+            <Link href={ROUTES.postId.replace(":id", `${post.id || post._id}`)} className="block" onClick={() => postClicked()}>
               {post?.content}</Link>
           </p>
           <div className="w-[95%] mx-auto h-full pl-2 border-l-4 border-[#0005]  ">
             {post.sharedPostDetails ? (
-              <Link href={ROUTES.postId.replace(":id", `/${post?.sharedPostDetails?.id || post?.sharedPostDetails?._id}`)} className="block">
+              <Link href={ROUTES.postId.replace(":id", `/${post?.sharedPostDetails?.id || post?.sharedPostDetails?._id}`)} className="block" onClick={() => postClicked(post?.sharedPostDetails?.id || post?.sharedPostDetails?._id)}>
                 <PostDisplay {...(post?.sharedPostDetails as Post)} hideReaction isAuthorPost={false} />
               </Link>
             ) : null}

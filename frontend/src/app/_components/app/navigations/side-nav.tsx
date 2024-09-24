@@ -20,6 +20,8 @@ import draft from "@/assets/icons/dashboard/drafts.png"
 import draftActive from "@/assets/icons/dashboard/draftsActive.png"
 import fb from "@/assets/icons/dashboard/fb.svg"
 import fbActive from "@/assets/icons/dashboard/fbActive.svg"
+import users from "@/assets/icons/dashboard/users.png"
+import usersActive from "@/assets/icons/dashboard/usersActive.png"
 import notif from "@/assets/icons/dashboard/notif.png"
 import notifActive from "@/assets/icons/dashboard/notifActive.png"
 import settings from "@/assets/icons/dashboard/settings.svg";
@@ -53,6 +55,12 @@ const overviewLinks = [
     iconActive: analyticsActive,
     link: ROUTES.analytics
   },
+  {
+    title: "Connect",
+    icon: users,
+    iconActive: usersActive,
+    link: ROUTES.connect
+  },
 ]
 const personalLinks = [
   {
@@ -70,7 +78,7 @@ const personalLinks = [
   {
     title: "Settings",
     icon: settings,
-    iconActive: accountActive,
+    iconActive: settingsActive,
     link: ROUTES.settings
   },
 ]
