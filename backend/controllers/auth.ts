@@ -19,7 +19,7 @@ function validateRequestBody(
   arrayOfValues: string[]
 ) {
   const bodyKeys = Object.keys(body);
-  const arr = [];
+  const arr: string[] = [];
   for (let value of arrayOfValues) {
     if (!bodyKeys.includes(value)) {
       arr.push(value);
