@@ -23,12 +23,13 @@ export const postApi = createApi({
     "Feed",
     "Interest",
     "Popular",
-    "Praises",
+    "Post",
     "Subscriptions",
     "Bookmarks",
     "Following",
     "Popular",
   ],
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     createPost: builder.mutation({
       query: (data: PostPayload) => ({
@@ -59,6 +60,7 @@ export const postApi = createApi({
         params,
       }),
       providesTags: ["Post"],
+      keepUnusedDataFor: 20,
     }),
     getPost: builder.query({
       query: (id) => `/${id}`,
@@ -72,6 +74,7 @@ export const postApi = createApi({
       providesTags: (result, err, params) => [
         { type: "Post", ...(params || {}) },
       ],
+      keepUnusedDataFor: 20,
     }),
     getUserPost: builder.query({
       query: (data?: Record<string, any>) => ({
@@ -87,14 +90,14 @@ export const postApi = createApi({
         url: `/praise/${id}`,
         method: "POST",
       }),
-      invalidatesTags: ["Praises", "Interest"],
+      invalidatesTags: ["Post", "Interest"],
     }),
     unpraisePost: builder.mutation({
       query: (id: string) => ({
         url: `/praise/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Praises"],
+      invalidatesTags: ["Post"],
     }),
     getPostFromFollowings: builder.query({
       query: (params?: Record<string, any>) => ({
@@ -102,6 +105,7 @@ export const postApi = createApi({
         params,
       }),
       providesTags: ["Following"],
+      keepUnusedDataFor: 20,
     }),
     getPostFromInterest: builder.query({
       query: (params?: Record<string, any>) => ({
@@ -109,6 +113,7 @@ export const postApi = createApi({
         params,
       }),
       providesTags: ["Interest"],
+      keepUnusedDataFor: 20,
     }),
     getPostsFeed: builder.query({
       query: (params?: Record<string, any>) => ({
@@ -116,6 +121,7 @@ export const postApi = createApi({
         params,
       }),
       providesTags: ["Feed"],
+      keepUnusedDataFor: 20,
     }),
     getPostsPopular: builder.query({
       query: (params?: Record<string, any>) => ({
@@ -123,24 +129,26 @@ export const postApi = createApi({
         params,
       }),
       providesTags: ["Popular"],
+      keepUnusedDataFor: 20,
     }),
     getBookmarks: builder.query({
       query: () => "/bookmarks",
-      providesTags: ["Bookmarks"],
+      providesTags: ["Bookmarks", "Post"],
+      keepUnusedDataFor: 20,
     }),
     bookmarkPost: builder.mutation<"Bookmarks", string>({
       query: (id: string) => ({
         url: `/bookmark/${id}`,
         method: "POST",
       }),
-      invalidatesTags: ["Bookmarks"],
+      invalidatesTags: ["Bookmarks", "Post"],
     }),
     unBookmarkPost: builder.mutation<"Bookmarks", string>({
       query: (id: string) => ({
         url: `/bookmark/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Bookmarks"],
+      invalidatesTags: ["Bookmarks", "Post"],
     }),
     clickPost: builder.mutation({
       query: (id: string) => ({

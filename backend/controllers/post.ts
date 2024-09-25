@@ -375,6 +375,7 @@ async function addPaywall(
 async function getLikes(...args: [PostConfirmRequest, Response, NextFunction]) {
   const [req, , next] = args;
   req.query.praises = req.query.userId || req.requesterId;
+  console.log(req.query.praises);
   next();
 }
 async function getUserPost(
@@ -390,7 +391,7 @@ async function getBookmarks(
   ...args: [PostConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  req.query.bookmarkedBy = new Types.ObjectId(req.requesterId) as any;
+  req.query.bookmarkedBy = req.requesterId as any;
   next();
 }
 async function isRequestersPost(

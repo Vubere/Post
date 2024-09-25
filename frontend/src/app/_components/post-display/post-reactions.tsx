@@ -5,11 +5,13 @@ import reads from "@/assets/icons/read.png";
 import readYes from "@/assets/icons/readYes.png";
 import praise from "@/assets/icons/praise.png";
 import praised from "@/assets/icons/praised.png";
+import bookmarkIcon from "@/assets/icons/bookmark.png";
+import bookmarked from "@/assets/icons/bookmarked.png";
 import repost from "@/assets/icons/repost.png";
 import reposted from "@/assets/icons/reposted.png";
 import comment from "@/assets/icons/comment.svg";
 import { useEffect, useState } from "react";
-import { useCreatePostMutation, usePraisePostMutation, useUnpraisePostMutation } from "@/app/_lib/api/post";
+import { useBookmarkPostMutation, useCreatePostMutation, usePraisePostMutation, useUnBookmarkPostMutation, useUnpraisePostMutation } from "@/app/_lib/api/post";
 import { useAppSelector } from "@/app/_lib/store/hooks";
 import { RootState } from "@/app/_lib/store";
 import { useRouter } from "next/navigation";
@@ -36,27 +38,34 @@ export default function PostReactions({ showViews, showReads, isPostPage, ...pos
 
   const rpc = post?.resharedBy?.length || 0;
   const lc = post?.praises?.length || 0;
+  const lb = post?.bookmarkedBy?.length || 0;
   const isSeen = !!post?.views?.includes(authorId);
   const isRead = !!post?.reads?.includes(authorId);
+  const isBookmarked = !!post?.bookmarkedBy?.includes(authorId);
   const isPraised = !!post?.praises?.includes(authorId);
   const isReposted = !!post?.resharedBy?.includes(authorId);
   const [praiseCount, setPraiseCount] = useState(lc);
+  const [bookmarkedCount, setBookmarkedCount] = useState(lb);
   const [repostCount, setRepostCount] = useState(rpc);
   const [praiseBool, setPraiseBool] = useState(false);
+  const [bookmarkedBool, setBookmarkedBool] = useState(false);
   const [repostBool, setRepostBool] = useState(false);
   const [praisePost] = usePraisePostMutation();
   const [unpraisePost] = useUnpraisePostMutation();
   const [share, { isLoading: isResharing }] = useCreatePostMutation();
-  const [unsharePost] = useUnpraisePostMutation();
+  const [bookmark] = useBookmarkPostMutation();
+  const [unbookmark] = useUnBookmarkPostMutation();
   const [showReshareModal, setShowReshareModal] = useState(false);
   const [reshareContent, setReshareContent] = useState("");
 
   useEffect(() => {
     setPraiseBool(isPraised);
+    setBookmarkedBool(isBookmarked);
     setRepostBool(isReposted);
+    setBookmarkedCount(lb);
     setRepostCount(rpc);
     setPraiseCount(lc);
-  }, [rpc, lc, isPraised, isReposted]);
+  }, [rpc, lc, isPraised, isReposted, lb, isBookmarked]);
 
   const reshareContentSubmit = () => {
 
@@ -106,6 +115,36 @@ export default function PostReactions({ showViews, showReads, isPostPage, ...pos
             },
             tooltip: "reads"
           }] : []),
+          {
+            icon: bookmarkedBool ? bookmarked : bookmarkIcon,
+            number: bookmarkedCount,
+            onClick: () => {
+              if (!bookmarkedBool) {
+                setBookmarkedBool(true);
+                setBookmarkedCount(prev => prev + 1);
+                bookmark(post._id as string)
+                  .then((res) => {
+                    const err = res?.error as any;
+                    if (err && ["error", "failed"].includes(err?.data?.status)) {
+                      setBookmarkedBool(false);
+                      setBookmarkedCount(prev => prev - 1);
+                    }
+                  });
+              } else {
+                setBookmarkedBool(false);
+                setBookmarkedCount(prev => prev !== 0 ? prev - 1 : prev);
+                unbookmark(post._id as string)
+                  .then((res) => {
+                    const err = res?.error as any;
+                    if (err && ["error", "failed"].includes(err?.data?.status)) {
+                      setPraiseBool(true);
+                      setPraiseCount(prev => prev + 1);
+                    }
+                  });
+              }
+            },
+            tooltip: "bookmark"
+          },
           {
             icon: comment,
             number: post?.comments?.length || 0,

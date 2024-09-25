@@ -23,6 +23,7 @@ interface PostDisplay extends Post {
 }
 
 export default function PostDisplay({ hideReaction, className, ...post }: PostDisplay) {
+  console.log(post)
   const { info } = useAppSelector((state: RootState) => state.user)
   const author = post?.authorDetails || post?.author;
   const isAuthorPost = typeof author === "string" ? author === info?._id : author?._id === info?._id;
@@ -76,7 +77,7 @@ export default function PostDisplay({ hideReaction, className, ...post }: PostDi
       <Skeleton />
     )
   }
-
+  console.log(post?.categories?.join(", "));
   return (
     <article className={"px-2 " + className} ref={postContainerRef}>
       <div className="flex items-center justify-between mb-4">
@@ -114,6 +115,9 @@ export default function PostDisplay({ hideReaction, className, ...post }: PostDi
         post?.postType !== "reshare" ? (
 
           <div className="flex flex-col gap-1">
+            {(post?.categories?.length || 0) > 0 && <div className="flex flex-wrap gap-2 text-[12px] xs:text-[14px] sm:text-[16px] md:text-[18px] text-[#373737aa] mb-2">
+              {post?.categories?.map((category, index) => <Link key={index} href={ROUTES.category.replace(":name", category)} className="underline  font-medium text-[#22bb99]">#{category}</Link>)}
+            </div>}
             {post?.coverPhoto && <div className="relative w-full rounded-[8px] h-[200px] overflow-hidden mb-2 sm:mb-4">
               <Image src={post?.coverPhoto} alt={post?.title} fill objectFit="cover" objectPosition="center" />
             </div>}

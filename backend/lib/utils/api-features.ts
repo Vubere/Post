@@ -150,7 +150,13 @@ class ApiFeaturesAggregation {
       return `$${match}`;
     });
 
-    const queryObj = omit(this.queryItem, ["sort", "fields", "page", "limit"]);
+    const queryObj = omit(this.queryItem, [
+      "sort",
+      "fields",
+      "page",
+      "limit",
+      "userId",
+    ]);
 
     /* queryObj.status =
       queryObj.status !== undefined && !isNaN(+queryObj.status)

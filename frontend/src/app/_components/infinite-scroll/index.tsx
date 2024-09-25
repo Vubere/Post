@@ -33,7 +33,7 @@ const InfiniteScroll: React.FC<Props> = ({
   };
 
   const loadDataFromStorage = () => {
-    if (storageKey) {
+    if (storageKey && !initialData) {
       const savedData = localStorage.getItem(storageKey);
       if (savedData) {
         const parsedData = JSON.parse(savedData);

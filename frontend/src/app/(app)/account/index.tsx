@@ -17,6 +17,7 @@ import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
 import FollowButton from "@/app/_components/follow-button";
 import InfiniteScroll from "@/app/_components/infinite-scroll";
 import { loadMoreItems } from "@/app/_lib/services";
+import Empty from "@/app/_components/empty";
 
 
 export default function Account({ userInfo }: { userInfo: User }) {
@@ -40,29 +41,35 @@ export default function Account({ userInfo }: { userInfo: User }) {
   const Items = [
     {
       content:
-        <InfiniteScroll
-          limit={10}
-          isLoading={userPostLoading || userPostFetching}
-          error={false}
-          storageKey={"account-posts"}
-          loadMore={(page) => loadMoreItems(page, getUserPost, 10, { userId: userInfo._id || userInfo.id })}
-          initialData={userPostArray}
-          hasMore={userPostArray.count < 10}
-          Element={PostDisplay}
-        />, title: "Posts", loading: userPostLoading
+        userPostArray.length > 0 ?
+          <InfiniteScroll
+            limit={10}
+            isLoading={userPostLoading || userPostFetching}
+            error={false}
+            storageKey={"account-posts"}
+            loadMore={(page) => loadMoreItems(page, getUserPost, 10, { userId: userInfo._id || userInfo.id })}
+            initialData={userPostArray}
+            hasMore={userPostArray.count < 10}
+            Element={PostDisplay}
+          />
+          : <Empty text="No Posts" />
+      , title: "Posts", loading: userPostLoading
     },
     {
       content:
-        <InfiniteScroll
-          limit={10}
-          isLoading={praisedPostLoading || praisedPostFetching}
-          error={false}
-          storageKey={"account-praises"}
-          loadMore={(page) => loadMoreItems(page, getPraise, 10, { userId: userInfo._id || userInfo.id })}
-          initialData={praisedPostArray}
-          hasMore={praisedPostArray.count < 10}
-          Element={PostDisplay}
-        />, title: "Praises", loading: praisedPostLoading
+        praisedPostArray.length > 0 ?
+          <InfiniteScroll
+            limit={10}
+            isLoading={praisedPostLoading || praisedPostFetching}
+            error={false}
+            storageKey={"account-praises"}
+            loadMore={(page) => loadMoreItems(page, getPraise, 10, { userId: userInfo._id || userInfo.id })}
+            initialData={praisedPostArray}
+            hasMore={praisedPostArray.count < 10}
+            Element={PostDisplay}
+          />
+          : <Empty text="No Praises" />
+      , title: "Praises", loading: praisedPostLoading
     },
   ]
 
