@@ -115,7 +115,7 @@ export default function SignupForm() {
       </div>
       <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} loading={isLoading || googleLoading} className="mb-1 max-w-[400px]" />
       <div className="mt-4 w-full max-w-[400px]">
-        <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Already have an account? <Link className="hover:underline hover:text-blue-300" href={ROUTES.signup}>Login</Link></p>
+        <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Already have an account? <Link className="hover:underline hover:text-blue-300" href={ROUTES.login}>Login</Link></p>
       </div>
     </section>
   )
