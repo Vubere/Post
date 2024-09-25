@@ -40,8 +40,8 @@ export default function CheckLoginStatus() {
         localStorage.clear();
       })
     } else {
-      if (publicRoutes.includes(pathname)) {
-        router.push(ROUTES.dashboard);
+      if (!publicRoutes.includes(pathname)) {
+        router.push(ROUTES.home);
       }
     }
   }, [pathname])
