@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/app/_components/general/button";
-import Input from "@/app/input";
+import Input from "@/app/_components/input";
 import { useLoginMutation } from "@/app/_lib/api/user";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form } from "antd";
