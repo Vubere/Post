@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "npm install",
     "build": "npx tsc",
-    "start": "node dist/server.js",
+    "start": "node server.js",
     "dev": "nodemon"
   },
   "keywords": [
