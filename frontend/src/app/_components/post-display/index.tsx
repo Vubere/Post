@@ -17,14 +17,15 @@ import { RootState } from "@/app/_lib/store";
 
 
 interface PostDisplay extends Post {
-  isAuthorPost: boolean;
+  isAuthorPost?: boolean;
   className?: string,
   hideReaction?: boolean,
 }
 
-export default function PostDisplay({ isAuthorPost, hideReaction, className, ...post }: PostDisplay) {
+export default function PostDisplay({ hideReaction, className, ...post }: PostDisplay) {
   const { info } = useAppSelector((state: RootState) => state.user)
   const author = post?.authorDetails || post?.author;
+  const isAuthorPost = typeof author === "string" ? author === info?._id : author?._id === info?._id;
   const [fetchedAuthor, setFetchedAuthor] = useState<null | User>(null);
   const [getUser, { isLoading }] = useLazyGetUserQuery();
   const [viewPost] = useViewPostMutation();

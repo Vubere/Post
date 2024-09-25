@@ -9,22 +9,34 @@ import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
 import { useAppSelector } from "@/app/_lib/store/hooks";
 import Empty from "../empty";
+import { useLazyGetAllUsersQuery } from "@/app/_lib/api/user";
+import InfiniteScroll from "../infinite-scroll";
+import { loadMoreItems } from "@/app/_lib/services";
 
 
-export default function ListUsers({ users }: { users: User[] }) {
+export default function ListUsers({ users, query }: { users: User[], query?: Record<string, any> }) {
+  const [getUsers, { isLoading }] = useLazyGetAllUsersQuery();
 
   return <>
     {
       users?.length ?
-        users.map((user) => (
-          <UserDisplay user={user} />
-        )) :
+        <InfiniteScroll
+          limit={20}
+          isLoading={isLoading}
+          error={false}
+          storageKey={"connect-users"}
+          loadMore={(page) => loadMoreItems(page, getUsers, 20, query)}
+          initialData={users}
+          hasMore={users?.length < 20}
+          Element={UserDisplay}
+        />
+        :
         <Empty text="No Users here" />
     }
   </>
 }
 
-const UserDisplay = ({ user }: { user: User }) => {
+const UserDisplay = ({ ...user }: User) => {
   const { info } = useAppSelector(state => state.user);
 
   return (

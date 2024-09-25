@@ -17,3 +17,21 @@ export async function saveTokenAsCookie(token: string) {
     console.error("Error saving token as cookie:", error.message);
   }
 }
+
+export const loadMoreItems = async (
+  page: number,
+  fetch: any,
+  limit = 10,
+  params?: Record<string, any>
+) => {
+  try {
+    const data = await fetch({
+      page,
+      limit,
+      ...(params || {}),
+    });
+    return data.data?.data || [];
+  } catch (err) {
+    return [];
+  }
+};

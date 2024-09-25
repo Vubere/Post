@@ -226,6 +226,7 @@ export const {
   useGetUserAnalyticsQuery,
   useGetUserQuery,
   useGetAllUsersQuery,
+  useLazyGetAllUsersQuery,
   useGetBlockedUsersQuery,
   useGetFollowersQuery,
   useGetFollowingQuery,

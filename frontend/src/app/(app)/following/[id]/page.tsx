@@ -74,7 +74,9 @@ export default async function Following({ params }: Args) {
 
   return (
     <PageContainer title={`Users ${data?.data?.username} follows`}>
-      <ListUsers users={followingData?.data || []} />
+      <ListUsers users={followingData?.data || []} query={{
+        followers: params.id
+      }} />
     </PageContainer>
   )
 }

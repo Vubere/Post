@@ -13,7 +13,7 @@ const getUsers = async () => {
     const token = cookieStore.get("token")?.value;
     if (token) {
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users?page=1&limit=20`, {
         headers: {
           authorization: `Bearer ${token}`
         }

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { RootState } from "@/app/_lib/store";
 import Button from "@/app/_components/general/button";
 import Tab from "@/app/_components/tab";
-import { useGetAllPostsQuery, useGetPraiseQuery, useGetUserPostQuery } from "@/app/_lib/api/post";
+import { useGetAllPostsQuery, useGetPraiseQuery, useGetUserPostQuery, useLazyGetPraiseQuery, useLazyGetUserPostQuery } from "@/app/_lib/api/post";
 import { useMemo } from "react";
 import PostDisplay from "@/app/_components/post-display";
 import { Post, User } from "@/app/_lib/type";
@@ -15,6 +15,8 @@ import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
 import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
 import FollowButton from "@/app/_components/follow-button";
+import InfiniteScroll from "@/app/_components/infinite-scroll";
+import { loadMoreItems } from "@/app/_lib/services";
 
 
 export default function Account({ userInfo }: { userInfo: User }) {
@@ -24,22 +26,44 @@ export default function Account({ userInfo }: { userInfo: User }) {
   const { data: userPost, isLoading: userPostLoading } = useGetUserPostQuery({
     userId: userInfo._id || userInfo.id
   });
+  const [getUserPost, { isLoading: userPostFetching }] = useLazyGetUserPostQuery();
+  const [getPraise, { isLoading: praisedPostFetching }] = useLazyGetPraiseQuery();
   const { data: praisedPost, isLoading: praisedPostLoading } = useGetPraiseQuery({
     userId: userInfo._id || userInfo.id
   });
 
-  const praisedPostArray = praisedPost?.data;
-  const userPostArray = userPost?.data;
+  const userPostArray = userPost?.data || [];
+  const praisedPostArray = praisedPost?.data || [];
 
   const extraSections = userInfo?.profileSections;
 
-
-  const LikesContent = useMemo(() => (praisedPostArray || []).map((data: Post) => <PostDisplay {...(data as Post)} isAuthorPost={userInfo?.id === data.author} className={SECTION_CLASSNAME} />), [praisedPostArray, praisedPostLoading]);
-  const UserPostContent = useMemo(() => (userPostArray || []).map((data: Post) => <PostDisplay {...(data as Post)} isAuthorPost className={SECTION_CLASSNAME} />), [userPostArray, userPostLoading]);
-
   const Items = [
-    { content: UserPostContent, title: "Posts", loading: userPostLoading },
-    { content: LikesContent, title: "Likes", loading: praisedPostLoading },
+    {
+      content:
+        <InfiniteScroll
+          limit={10}
+          isLoading={userPostLoading || userPostFetching}
+          error={false}
+          storageKey={"account-posts"}
+          loadMore={(page) => loadMoreItems(page, getUserPost, 10, { userId: userInfo._id || userInfo.id })}
+          initialData={userPostArray}
+          hasMore={userPostArray.count < 10}
+          Element={PostDisplay}
+        />, title: "Posts", loading: userPostLoading
+    },
+    {
+      content:
+        <InfiniteScroll
+          limit={10}
+          isLoading={praisedPostLoading || praisedPostFetching}
+          error={false}
+          storageKey={"account-praises"}
+          loadMore={(page) => loadMoreItems(page, getPraise, 10, { userId: userInfo._id || userInfo.id })}
+          initialData={praisedPostArray}
+          hasMore={praisedPostArray.count < 10}
+          Element={PostDisplay}
+        />, title: "Praises", loading: praisedPostLoading
+    },
   ]
 
   return (

@@ -105,7 +105,18 @@ class ApiFeaturesAggregation {
         aggregateArray.push({ $unwind: this.unwind });
       }
     }
-
+    const page = Number(this.queryItem?.page)
+      ? Number(this.queryItem?.page)
+      : 1;
+    const limit = Number(this.queryItem?.limit)
+      ? Number(this.queryItem?.limit)
+      : 10;
+    aggregateArray.push({
+      $skip: (page - 1) * limit,
+    });
+    aggregateArray.push({
+      $limit: limit,
+    });
     aggregateArray.push({
       $sort: {
         [this.queryItem?.sort || "createdAt"]:

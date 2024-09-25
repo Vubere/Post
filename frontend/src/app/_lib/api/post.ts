@@ -97,19 +97,31 @@ export const postApi = createApi({
       invalidatesTags: ["Praises"],
     }),
     getPostFromFollowings: builder.query({
-      query: () => "/following",
+      query: (params?: Record<string, any>) => ({
+        url: "/following",
+        params,
+      }),
       providesTags: ["Following"],
     }),
     getPostFromInterest: builder.query({
-      query: () => "/interest",
+      query: (params?: Record<string, any>) => ({
+        url: "/interest",
+        params,
+      }),
       providesTags: ["Interest"],
     }),
     getPostsFeed: builder.query({
-      query: () => "/feed",
+      query: (params?: Record<string, any>) => ({
+        url: "/feed",
+        params,
+      }),
       providesTags: ["Feed"],
     }),
     getPostsPopular: builder.query({
-      query: () => "/popular",
+      query: (params?: Record<string, any>) => ({
+        url: "/popular",
+        params,
+      }),
       providesTags: ["Popular"],
     }),
     getBookmarks: builder.query({
@@ -164,12 +176,18 @@ export const postApi = createApi({
 export const {
   useGetAllPostsQuery,
   useGetBookmarksQuery,
+  useLazyGetBookmarksQuery,
   useGetPraiseQuery,
+  useLazyGetPraiseQuery,
   useGetPostFromFollowingsQuery,
+  useLazyGetPostFromFollowingsQuery,
   useGetPostFromInterestQuery,
+  useLazyGetPostFromInterestQuery,
   useGetPostQuery,
   useGetPostsFeedQuery,
+  useLazyGetPostsFeedQuery,
   useGetPostsPopularQuery,
+  useLazyGetPostsPopularQuery,
   useCreatePostMutation,
   usePraisePostMutation,
   useBookmarkPostMutation,
@@ -182,6 +200,7 @@ export const {
   useUnpraisePostMutation,
   useUnBookmarkPostMutation,
   useGetUserPostQuery,
+  useLazyGetUserPostQuery,
 } = postApi;
 export const {
   createPost,
