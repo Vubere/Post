@@ -16,5 +16,5 @@
     "skipLibCheck": true
   },
   "include": ["**/*"],
-  "exclude": ["node_modules", "./", "tsconfig.json"]
+  "exclude": ["node_modules", "tsconfig.json"]
 }
