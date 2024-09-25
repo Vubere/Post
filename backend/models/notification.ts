@@ -2,7 +2,6 @@ import mongoose, { ObjectId } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import { Document } from "mongoose";
-import { string } from "yup";
 
 interface INotification extends Document {
   createdAt: Date;
