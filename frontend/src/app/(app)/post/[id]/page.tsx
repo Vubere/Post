@@ -11,7 +11,7 @@ type Params = {
 interface EditPost {
   params: Params
 }
-export const validate = 1;
+export const revalidate = 1;
 async function getPost(id: string) {
   try {
     const cookieStore = cookies();
