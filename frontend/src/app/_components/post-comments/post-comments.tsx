@@ -22,7 +22,7 @@ interface CommentReactionProps extends Partial<Comments> {
   showViews?: boolean,
   validate?: () => void,
   showReads?: boolean,
-  isPostPage?: boolean
+  isPostPage?: boolean,
 }
 
 export default function CommentReaction({ showViews, showReads, isPostPage, validate, ...comment }: CommentReactionProps) {
@@ -51,6 +51,7 @@ export default function CommentReaction({ showViews, showReads, isPostPage, vali
       commentRepliedTo: (comment.id || comment._id) as string,
       content: reply,
       authorId: (info?._id || info?.id) as string,
+      ownerId: comment?.authorId
     })
       .then((res) => {
         const data = res?.data;

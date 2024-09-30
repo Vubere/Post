@@ -17,6 +17,7 @@ const asyncErrorHandlerIds = (func: any) => {
     next: NextFunction,
     value: any
   ) {
+    console.log(next);
     func(req, res, next, value).catch((err: any) => next(err));
   };
 };

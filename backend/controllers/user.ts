@@ -17,6 +17,8 @@ import CustomError from "../lib/utils/custom-error";
 import { signToken } from "../lib/utils/token";
 import { hashPassword } from "../lib/helpers";
 import Post from "../models/post";
+import NotificationController from "./notifications";
+import { createNotification } from "./notifications";
 
 const UserApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(User.find(), query);
@@ -200,6 +202,12 @@ async function subscribe(
     await User.findByIdAndUpdate(requesterId, {
       $addToSet: { subscribers: user.id },
     });
+    await createNotification({
+      content: `${user.username} subscribed to you!`,
+      type: "subscription",
+      userId: user._id,
+      notificationOrigin: requesterId as string,
+    });
     res
       .status(STATUS_CODES.success.OK)
       .json(
@@ -263,6 +271,12 @@ async function followUser(
   try {
     await User.findByIdAndUpdate(requesterId, {
       $addToSet: { following: user.id },
+    });
+    await createNotification({
+      content: `${user.username} followed you!`,
+      type: "follow",
+      userId: user._id,
+      notificationOrigin: requesterId as string,
     });
     res
       .status(STATUS_CODES.success.OK)

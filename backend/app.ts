@@ -6,6 +6,7 @@ import userRouter from "./routers/user";
 import authRouter from "./routers/auth";
 import postRouter from "./routers/post";
 import commentRouter from "./routers/comment";
+import notificationRoter from "./routers/notifications";
 import authController from "./controllers/auth";
 import rateLimit from "express-rate-limit";
 
@@ -44,11 +45,13 @@ app.use(cors());
 const baseRootUsers = "/api/users";
 const baseRootPosts = "/api/posts";
 const baseRootComments = "/api/comments";
+const baseRootNotification = "/api/notifications";
 app.post(baseRootUsers + "/login", authController.Login);
 app.use(baseRootUsers, authRouter);
 app.use(baseRootUsers, authController.ProtectRoutes, userRouter);
 app.use(baseRootPosts, authController.ProtectRoutes, postRouter);
 app.use(baseRootComments, authController.ProtectRoutes, commentRouter);
+app.use(baseRootNotification, authController.ProtectRoutes, notificationRoter);
 app.all("*", (...args) => {
   const [req, , next] = args;
   const error = new CustomError(

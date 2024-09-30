@@ -14,13 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const post_1 = __importDefault(require("../controllers/post"));
-const auth_1 = __importDefault(require("../controllers/auth"));
 const post_2 = __importDefault(require("../models/post"));
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const utils_1 = require("../lib/utils");
 const { createPost, getAllPosts, updatePost, getPost, deletePost, praisePost, unpraisePost, getUserPost, addPaywall, getLikes, isRequestersPost, getBookmarks, addToBookmarks, removeFromBookmarks, getPostFromFollowings, viewPost, clickPost, readPost, } = post_1.default;
 const router = express_1.default.Router();
 router.param("id", (req, res, next, value) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!value.match(/^[0-9a-fA-F]{24}$/)) {
+        return next(new custom_error_1.default(`invalid id`, utils_1.STATUS_CODES.clientError.Bad_Request));
+    }
     const post = yield post_2.default.findById(value);
     if (!post) {
         next(new custom_error_1.default(`post not found`, utils_1.STATUS_CODES.clientError.Not_Found));
@@ -48,7 +50,9 @@ router
     .route("/feed")
     .get(function (...args) {
     const [req, , next] = args;
-    next();
+    console.log(next);
+    if (next)
+        next();
 }, getAllPosts);
 router
     .route("/interest")
@@ -67,5 +71,5 @@ router
     .route("/:id")
     .patch(isRequestersPost, updatePost)
     .get(getPost)
-    .delete(auth_1.default.AuthenticatePassword, isRequestersPost, deletePost);
+    .delete(isRequestersPost, deletePost);
 exports.default = router;

@@ -34,7 +34,7 @@ export default function PostComments({ _id, ...post }: Post) {
   return (
     <section className="mt-12 sm:mt-20">
       <div>
-        <CommentForm postId={(_id || post.id) as string} authorId={(info?.id || info?._id) as string} validate={refetch} />
+        <CommentForm postId={(_id || post.id) as string} authorId={(info?.id || info?._id) as string} ownerId={post.authorDetails?._id || post?.author} validate={refetch} />
         {!comments.length ? (
           <div className="my-4">
             <Empty text="No comments" />
@@ -59,7 +59,7 @@ const schema = yup.object({
   content: yup.string().required("come on bro??? you have to write a text to comment!").trim()
 })
 
-function CommentForm({ postId, authorId, validate }: { postId: string, authorId: string, validate: any }) {
+function CommentForm({ postId, ownerId, authorId, validate }: { postId: string, authorId: string, validate: any, ownerId?: string }) {
   const [comment, { isLoading: isCommenting }] = useCreateCommentMutation();
   const { handleSubmit, reset, ...state } = useForm({
     resolver: yupResolver(schema),
@@ -88,9 +88,10 @@ interface CommentDisplay extends Comments {
   isAuthorComment: boolean;
   className?: string,
   validate?: () => void;
+  hideReactions?: boolean;
 }
 
-export function CommentDisplay({ isAuthorComment, className, validate, ...comment }: CommentDisplay) {
+export function CommentDisplay({ isAuthorComment, hideReactions, className, validate, ...comment }: CommentDisplay) {
 
 
   return (
@@ -128,7 +129,7 @@ export function CommentDisplay({ isAuthorComment, className, validate, ...commen
       <div className="flex flex-col gap-1">
         <p className="text-[12px] xs:text-[14px] sm:text-[16px] md:text-[18px] text-[#373737aa]">{comment?.content}</p>
       </div>
-      <CommentReaction {...comment} validate={validate} />
+      {!hideReactions && <CommentReaction {...comment} validate={validate} />}
     </article>
   )
 }

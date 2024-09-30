@@ -13,8 +13,13 @@ const notificationSchema = new mongoose_1.default.Schema({
         type: Date,
         default: Date.now(),
     },
+    metadata: {
+        type: mongoose_1.default.Schema.Types.Mixed,
+        default: {},
+    },
     userId: {
-        type: String,
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "users",
         required: [true, "user id is required!"],
     },
     content: {
@@ -22,7 +27,8 @@ const notificationSchema = new mongoose_1.default.Schema({
         required: [true, "content is required!"],
     },
     notificationOrigin: {
-        type: String,
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "users",
         required: [true, "origin of notification is required!"],
     },
     type: {
@@ -32,6 +38,7 @@ const notificationSchema = new mongoose_1.default.Schema({
             "praise",
             "comment",
             "tip",
+            "reshare",
             "subscription",
             "paywall",
             "milestone",

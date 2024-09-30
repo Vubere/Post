@@ -48,6 +48,11 @@ const idIdentifier = asyncErrorHandlerIds(
     next: NextFunction,
     value: any
   ) => {
+    if (!value.match(/^[0-9a-fA-F]{24}$/)) {
+      return next(
+        new CustomError(`invalid id`, STATUS_CODES.clientError.Bad_Request)
+      );
+    }
     const user = await User.findById(value);
     if (!user) {
       next(

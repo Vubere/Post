@@ -21,6 +21,9 @@ const utils_1 = require("../lib/utils");
 const { comment, getPostComments, updateComment, getComment, deleteComment, praiseComment, unpraiseComment, getLikes, isRequestersComment, getBookmarks, addToBookmarks, removeFromBookmarks, viewComment, getCommentReplies, clickComment, replyComment, readComment, } = comment_1.default;
 const router = express_1.default.Router();
 router.param("id", (req, res, next, value) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!value.match(/^[0-9a-fA-F]{24}$/)) {
+        return next(new custom_error_1.default(`invalid id`, utils_1.STATUS_CODES.clientError.Bad_Request));
+    }
     const comment = yield comment_2.default.findById(value);
     if (!comment) {
         next(new custom_error_1.default(`comment not found`, utils_1.STATUS_CODES.clientError.Not_Found));

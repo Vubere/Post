@@ -14,12 +14,14 @@ interface INotification extends Document {
     | "praise"
     | "comment"
     | "tip"
+    | "reshare"
     | "subscription"
     | "paywall"
     | "milestone"
     | "post"
     | "reply";
   unread?: boolean;
+  metadata?: Record<string, any>;
 }
 
 const notificationSchema = new mongoose.Schema<INotification>(
@@ -32,8 +34,13 @@ const notificationSchema = new mongoose.Schema<INotification>(
       type: Date,
       default: Date.now(),
     },
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: [true, "user id is required!"],
     },
     content: {
@@ -41,7 +48,8 @@ const notificationSchema = new mongoose.Schema<INotification>(
       required: [true, "content is required!"],
     },
     notificationOrigin: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: [true, "origin of notification is required!"],
     },
     type: {
@@ -51,6 +59,7 @@ const notificationSchema = new mongoose.Schema<INotification>(
         "praise",
         "comment",
         "tip",
+        "reshare",
         "subscription",
         "paywall",
         "milestone",

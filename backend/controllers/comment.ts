@@ -13,6 +13,8 @@ import CustomError from "../lib/utils/custom-error";
 import User from "../models/user";
 import Post from "../models/post";
 import { Types } from "mongoose";
+import { createNotification } from "./notifications";
+import { omit } from "lodash";
 
 const commentApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(Comment.find(), query);
@@ -40,8 +42,17 @@ async function comment(
   res: Response,
   next: NextFunction
 ) {
-  const newComment = await Comment.create(req.body);
+  const body = omit(req.body, "ownerId");
+  const newComment = await Comment.create(body);
   try {
+    if (req.requesterId !== newComment.authorId)
+      createNotification({
+        content: `commented on your post!`,
+        type: "comment",
+        userId: req.body?.ownerId,
+        notificationOrigin: req.requesterId as string,
+        metadata: { commentId: newComment._id },
+      });
     await Post.findByIdAndUpdate(req.body.postId, {
       $addToSet: {
         comments: newComment._id,
@@ -64,12 +75,21 @@ async function replyComment(
     return next(
       new CustomError("failed to pass the comment being replied to!", 400)
     );
-  const newComment = await Comment.create(req.body);
+  const body = omit(req.body, "ownerId");
+  const newComment = await Comment.create(body);
   await Comment.findByIdAndUpdate(commentId, {
     $addToSet: {
       replies: newComment._id,
     },
   });
+  if (req.requesterId !== newComment.authorId)
+    createNotification({
+      content: `replied to your comment!`,
+      type: "comment",
+      userId: req.body?.ownerId,
+      notificationOrigin: req.requesterId as string,
+      metadata: { commentId: newComment._id },
+    });
 
   res
     .status(STATUS_CODES.success.Created)

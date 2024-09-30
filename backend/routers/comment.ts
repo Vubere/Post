@@ -31,6 +31,11 @@ const router = express.Router();
 router.param(
   "id",
   async (req: CommentConfirmRequest, res: Response, next, value) => {
+    if (!value.match(/^[0-9a-fA-F]{24}$/)) {
+      return next(
+        new CustomError(`invalid id`, STATUS_CODES.clientError.Bad_Request)
+      );
+    }
     const comment = await Comment.findById(value);
 
     if (!comment) {

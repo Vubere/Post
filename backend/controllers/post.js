@@ -53,6 +53,7 @@ const utils_1 = require("../lib/utils");
 const aynsc_error_handler_1 = require("../lib/utils/aynsc-error-handler");
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const user_1 = __importDefault(require("../models/user"));
+const notifications_1 = require("./notifications");
 const postApiFeatures = (query) => {
     return new api_features_1.default(post_1.default.find(), query);
 };
@@ -84,8 +85,19 @@ const postApiFeaturesAggregation = (query, authorQuery) => {
 };
 function createPost(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         req.body.author = req.requesterId;
         const newPost = yield post_1.default.create(req.body);
+        if (((_a = req.body) === null || _a === void 0 ? void 0 : _a.postType) === "reshare") {
+            if (req.requesterId !== newPost.author)
+                yield (0, notifications_1.createNotification)({
+                    content: `reshared your post!`,
+                    type: "reshare",
+                    userId: req.requesterId,
+                    notificationOrigin: newPost.author,
+                    metadata: { postId: newPost.id },
+                });
+        }
         res
             .status(utils_1.STATUS_CODES.success.Created)
             .json((0, utils_1.jsend)("success", newPost, "post posted successful!"));
@@ -121,7 +133,7 @@ function getPost(req, res) {
         const post = yield postQuery;
         res
             .status(utils_1.STATUS_CODES.success.OK)
-            .json((0, utils_1.jsend)("success", post === null || post === void 0 ? void 0 : post[0], "post fetched successfully!"));
+            .json((0, utils_1.jsend)("success", (post === null || post === void 0 ? void 0 : post[0]) || post, "post fetched successfully!"));
     });
 }
 function deletePost(req, res) {
@@ -177,6 +189,14 @@ function praisePost(req, res, next) {
             yield user_1.default.findByIdAndUpdate(requesterId, {
                 $addToSet: { praises: post.id },
             });
+            if (req.requesterId !== post.author)
+                yield (0, notifications_1.createNotification)({
+                    content: `praised your post!`,
+                    type: "praise",
+                    userId: post.author,
+                    notificationOrigin: requesterId,
+                    metadata: { postId: post._id },
+                });
             res
                 .status(utils_1.STATUS_CODES.success.OK)
                 .json((0, utils_1.jsend)("success", undefined, `successfully praised ${post.title}`));
@@ -207,9 +227,9 @@ function clickPost(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const post = req.post;
         const requesterId = req.requesterId;
-        yield post_1.default.findByIdAndUpdate(post._id, {
+        const data = yield post_1.default.findByIdAndUpdate(post._id, {
             $push: { clicks: requesterId },
-        });
+        }).populate("author");
         res
             .status(utils_1.STATUS_CODES.success.OK)
             .json((0, utils_1.jsend)("success", undefined, `clicked on post ${post.title}`));

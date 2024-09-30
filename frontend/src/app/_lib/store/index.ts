@@ -6,6 +6,7 @@ import storage from "redux-persist/lib/storage";
 import { userApi } from "@/app/_lib/api/user";
 import { postApi } from "@/app/_lib/api/post";
 import { commentApi } from "../api/comment";
+import { notificationApi } from "../api/notification";
 
 const persistConfig = {
   key: "collections-root",
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   [postApi.reducerPath]: postApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
   [commentApi.reducerPath]: commentApi.reducer,
+  [notificationApi.reducerPath]: notificationApi.reducer,
 });
 
 //@ts-ignore
@@ -28,7 +30,8 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       userApi.middleware,
       postApi.middleware,
-      commentApi.middleware
+      commentApi.middleware,
+      notificationApi.middleware
     ),
 });
 setupListeners(store.dispatch);

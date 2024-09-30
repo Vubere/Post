@@ -20,6 +20,7 @@ const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const token_1 = require("../lib/utils/token");
 const helpers_1 = require("../lib/helpers");
 const post_1 = __importDefault(require("../models/post"));
+const notifications_1 = require("./notifications");
 const UserApiFeatures = (query) => {
     return new api_features_1.default(user_1.default.find(), query);
 };
@@ -156,6 +157,12 @@ function subscribe(req, res, next) {
             yield user_1.default.findByIdAndUpdate(requesterId, {
                 $addToSet: { subscribers: user.id },
             });
+            yield (0, notifications_1.createNotification)({
+                content: `${user.username} subscribed to you!`,
+                type: "subscription",
+                userId: user._id,
+                notificationOrigin: requesterId,
+            });
             res
                 .status(utils_1.STATUS_CODES.success.OK)
                 .json((0, utils_1.jsend)("success", undefined, `successfully subscribed ${user.username}`));
@@ -203,6 +210,12 @@ function followUser(req, res, next) {
         try {
             yield user_1.default.findByIdAndUpdate(requesterId, {
                 $addToSet: { following: user.id },
+            });
+            yield (0, notifications_1.createNotification)({
+                content: `${user.username} followed you!`,
+                type: "follow",
+                userId: user._id,
+                notificationOrigin: requesterId,
             });
             res
                 .status(utils_1.STATUS_CODES.success.OK)

@@ -12,6 +12,7 @@ import { wrapModuleFunctionsInAsyncErrorHandler } from "../lib/utils/aynsc-error
 import { PostConfirmRequest } from "../lib/types";
 import CustomError from "../lib/utils/custom-error";
 import User from "../models/user";
+import { createNotification } from "./notifications";
 
 const postApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(Post.find(), query);
@@ -59,7 +60,16 @@ async function createPost(
 ) {
   req.body.author = req.requesterId;
   const newPost = await Post.create(req.body);
-
+  if (req.body?.postType === "reshare") {
+    if (req.requesterId !== newPost.author)
+      await createNotification({
+        content: `reshared your post!`,
+        type: "reshare",
+        userId: req.requesterId as string,
+        notificationOrigin: newPost.author,
+        metadata: { postId: newPost.id },
+      });
+  }
   res
     .status(STATUS_CODES.success.Created)
     .json(jsend("success", newPost, "post posted successful!"));
@@ -102,9 +112,10 @@ async function getPost(req: PostConfirmRequest, res: Response) {
   req.query._id = new Types.ObjectId(req.post.id) as any;
   const postQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
   const post = await postQuery;
+
   res
     .status(STATUS_CODES.success.OK)
-    .json(jsend("success", post?.[0], "post fetched successfully!"));
+    .json(jsend("success", post?.[0] || post, "post fetched successfully!"));
 }
 async function deletePost(req: PostConfirmRequest, res: Response) {
   if (req.params.id === req.post.id) {
@@ -184,6 +195,14 @@ async function praisePost(
     await User.findByIdAndUpdate(requesterId, {
       $addToSet: { praises: post.id },
     });
+    if (req.requesterId !== post.author)
+      await createNotification({
+        content: `praised your post!`,
+        type: "praise",
+        userId: post.author,
+        notificationOrigin: requesterId as string,
+        metadata: { postId: post._id },
+      });
     res
       .status(STATUS_CODES.success.OK)
       .json(jsend("success", undefined, `successfully praised ${post.title}`));
@@ -223,9 +242,9 @@ async function clickPost(
 ) {
   const post = req.post;
   const requesterId = req.requesterId;
-  await Post.findByIdAndUpdate(post._id, {
+  const data = await Post.findByIdAndUpdate(post._id, {
     $push: { clicks: requesterId },
-  });
+  }).populate("author");
 
   res
     .status(STATUS_CODES.success.OK)

@@ -80,16 +80,18 @@ class ApiFeaturesAggregation {
         this.lookupQuery = lookupQuery || null;
     }
     aggregate() {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c;
         const aggregateArray = [];
         if (this.lookup === null) {
             throw new Error("document to lookup not passed!");
         }
-        if (Array.isArray(this.lookup)) {
-            this.lookup.map((lu) => aggregateArray.push({ $lookup: lu }));
-        }
-        else {
-            aggregateArray.push({ $lookup: this.lookup });
+        if (this.lookup) {
+            if (Array.isArray(this.lookup)) {
+                this.lookup.map((lu) => aggregateArray.push({ $lookup: lu }));
+            }
+            else {
+                aggregateArray.push({ $lookup: this.lookup });
+            }
         }
         if (this.unwind) {
             if (Array.isArray(this.unwind)) {
@@ -99,21 +101,9 @@ class ApiFeaturesAggregation {
                 aggregateArray.push({ $unwind: this.unwind });
             }
         }
-        const page = Number((_a = this.queryItem) === null || _a === void 0 ? void 0 : _a.page)
-            ? Number((_b = this.queryItem) === null || _b === void 0 ? void 0 : _b.page)
-            : 1;
-        const limit = Number((_c = this.queryItem) === null || _c === void 0 ? void 0 : _c.limit)
-            ? Number((_d = this.queryItem) === null || _d === void 0 ? void 0 : _d.limit)
-            : 10;
-        aggregateArray.push({
-            $skip: (page - 1) * limit,
-        });
-        aggregateArray.push({
-            $limit: limit,
-        });
         aggregateArray.push({
             $sort: {
-                [((_e = this.queryItem) === null || _e === void 0 ? void 0 : _e.sort) || "createdAt"]: ((_f = this.queryItem) === null || _f === void 0 ? void 0 : _f.sortDirection) || -1,
+                [((_a = this.queryItem) === null || _a === void 0 ? void 0 : _a.sort) || "createdAt"]: ((_b = this.queryItem) === null || _b === void 0 ? void 0 : _b.sortDirection) || -1,
             },
         });
         const filters = this.filter();
@@ -126,7 +116,7 @@ class ApiFeaturesAggregation {
             $project: this.limitFields(),
         });
         if (this.queryItem && this.model) {
-            const page = Number((_g = this.queryItem) === null || _g === void 0 ? void 0 : _g.page)
+            const page = Number((_c = this.queryItem) === null || _c === void 0 ? void 0 : _c.page)
                 ? Number(this.queryItem.page)
                 : 1;
             const limit = Number(this.queryItem.limit)

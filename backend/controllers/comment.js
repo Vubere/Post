@@ -43,6 +43,8 @@ const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const user_1 = __importDefault(require("../models/user"));
 const post_1 = __importDefault(require("../models/post"));
 const mongoose_1 = require("mongoose");
+const notifications_1 = require("./notifications");
+const lodash_1 = require("lodash");
 const commentApiFeatures = (query) => {
     return new api_features_1.default(comment_1.default.find(), query);
 };
@@ -56,8 +58,18 @@ const commentApiFeaturesAggregation = (query, authorQuery) => {
 };
 function comment(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const newComment = yield comment_1.default.create(req.body);
+        var _a;
+        const body = (0, lodash_1.omit)(req.body, "ownerId");
+        const newComment = yield comment_1.default.create(body);
         try {
+            if (req.requesterId !== newComment.authorId)
+                (0, notifications_1.createNotification)({
+                    content: `commented on your post!`,
+                    type: "comment",
+                    userId: (_a = req.body) === null || _a === void 0 ? void 0 : _a.ownerId,
+                    notificationOrigin: req.requesterId,
+                    metadata: { commentId: newComment._id },
+                });
             yield post_1.default.findByIdAndUpdate(req.body.postId, {
                 $addToSet: {
                     comments: newComment._id,
@@ -74,15 +86,25 @@ function comment(req, res, next) {
 }
 function replyComment(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         const commentId = req.body.commentRepliedTo;
         if (!commentId)
             return next(new custom_error_1.default("failed to pass the comment being replied to!", 400));
-        const newComment = yield comment_1.default.create(req.body);
+        const body = (0, lodash_1.omit)(req.body, "ownerId");
+        const newComment = yield comment_1.default.create(body);
         yield comment_1.default.findByIdAndUpdate(commentId, {
             $addToSet: {
                 replies: newComment._id,
             },
         });
+        if (req.requesterId !== newComment.authorId)
+            (0, notifications_1.createNotification)({
+                content: `replied to your comment!`,
+                type: "comment",
+                userId: (_a = req.body) === null || _a === void 0 ? void 0 : _a.ownerId,
+                notificationOrigin: req.requesterId,
+                metadata: { commentId: newComment._id },
+            });
         res
             .status(utils_1.STATUS_CODES.success.Created)
             .json((0, utils_1.jsend)("success", newComment, "comment posted successful!"));

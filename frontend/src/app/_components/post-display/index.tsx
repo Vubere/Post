@@ -23,7 +23,6 @@ interface PostDisplay extends Post {
 }
 
 export default function PostDisplay({ hideReaction, className, ...post }: PostDisplay) {
-  console.log(post)
   const { info } = useAppSelector((state: RootState) => state.user)
   const author = post?.authorDetails || post?.author;
   const isAuthorPost = typeof author === "string" ? author === info?._id : author?._id === info?._id;
@@ -77,7 +76,6 @@ export default function PostDisplay({ hideReaction, className, ...post }: PostDi
       <Skeleton />
     )
   }
-  console.log(post?.categories?.join(", "));
   return (
     <article className={"px-2 " + className} ref={postContainerRef}>
       <div className="flex items-center justify-between mb-4">

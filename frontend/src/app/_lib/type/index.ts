@@ -100,6 +100,7 @@ interface Comments {
   reads?: number;
   replies?: Array<{ id: string; userId: string }>;
   notifications?: boolean;
+  ownerId?: string;
   bookmarkedBy?: Array<string>;
 }
 interface PostPayload {
@@ -173,5 +174,35 @@ type InputProps = {
   twHeight?: string;
 } & MultiSelect &
   Multi;
-
-export type { User, Post, PostPayload, InputProps, Option, Comments };
+interface Notification {
+  id: string;
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  ownerDetails?: User;
+  notificationOriginDetails?: User;
+  content: string;
+  notificationOrigin: string;
+  metadata?: Record<string, any>;
+  type:
+    | "follow"
+    | "praise"
+    | "comment"
+    | "tip"
+    | "subscription"
+    | "paywall"
+    | "milestone"
+    | "post"
+    | "reply";
+  unread?: boolean;
+}
+export type {
+  User,
+  Post,
+  PostPayload,
+  InputProps,
+  Option,
+  Comments,
+  Notification,
+};

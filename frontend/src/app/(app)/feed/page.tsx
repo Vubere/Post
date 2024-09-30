@@ -27,7 +27,7 @@ export default function Feed() {
   const popular = popularData?.data || [];
   const following = followingsData?.data || [];
   // const interest = interestData?.data || [];
-
+  console.log(isLoading, isFetchingFeed)
   return (
     <PageContainer>
       <Tab items={[
@@ -43,7 +43,7 @@ export default function Feed() {
                 storageKey={"feed"}
                 loadMore={(page) => loadMoreItems(page, getPostsFeed)}
                 initialData={feed}
-                hasMore={data?.count < 10}
+                hasMore={feed?.length === 10}
                 Element={PostDisplay}
               />}
 

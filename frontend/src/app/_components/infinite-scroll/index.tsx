@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ReactElement, ComponentType, useCallback, useRef } from 'react';
 import InView from '../in-view';
+import { Spin } from 'antd';
 
 interface Props {
   hasMore: boolean;
@@ -24,6 +25,7 @@ const InfiniteScroll: React.FC<Props> = ({
 }) => {
   const [data, setData] = useState<any[]>(initialData || []);
   const [, setPage] = useState(1);
+  const [toFetch, setToFetch] = useState(hasMore)
   const pageCount = useRef(1);
 
   const saveDataToStorage = (data: any[]) => {
@@ -44,6 +46,7 @@ const InfiniteScroll: React.FC<Props> = ({
 
   async function loadMoreData(page: number) {
     const response = await loadMore(page);
+    setToFetch(response?.length === (limit || 10));
     const newData = [...data, ...response];
     setData(newData);
     saveDataToStorage(newData);
@@ -64,14 +67,16 @@ const InfiniteScroll: React.FC<Props> = ({
     }
   }, [storageKey]);
 
+  console.log(isLoading)
+
   return (
     <div className="flex flex-col gap-4 w-full">
       {data.map((item, index) => (
         <Element key={index + item._id} {...item} />
       ))}
-      {isLoading && <div className="text-black text-[24px] font-bold animate-pulse text-center">Loading...</div>}
+      {isLoading && <Spin />}
       {error && <div>Error loading data</div>}
-      {hasMore && !isLoading && <InView action={action} />}
+      {toFetch && !isLoading && <InView action={action} />}
     </div>
   );
 };

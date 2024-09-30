@@ -27,7 +27,7 @@ export default function ListUsers({ users, query }: { users: User[], query?: Rec
           storageKey={"connect-users"}
           loadMore={(page) => loadMoreItems(page, getUsers, 20, query)}
           initialData={users}
-          hasMore={users?.length < 20}
+          hasMore={users?.length === 20}
           Element={UserDisplay}
         />
         :

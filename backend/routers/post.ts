@@ -32,6 +32,11 @@ const router = express.Router();
 router.param(
   "id",
   async (req: PostConfirmRequest, res: Response, next, value) => {
+    if (!value.match(/^[0-9a-fA-F]{24}$/)) {
+      return next(
+        new CustomError(`invalid id`, STATUS_CODES.clientError.Bad_Request)
+      );
+    }
     const post = await Post.findById(value);
 
     if (!post) {
@@ -69,7 +74,8 @@ router
   .route("/feed")
   .get(function (...args: [PostConfirmRequest, Response, NextFunction]) {
     const [req, , next] = args;
-    next();
+    console.log(next);
+    if (next) next();
   }, getAllPosts);
 router
   .route("/interest")
@@ -89,6 +95,6 @@ router
   .route("/:id")
   .patch(isRequestersPost, updatePost)
   .get(getPost)
-  .delete(authControllers.AuthenticatePassword, isRequestersPost, deletePost);
+  .delete(isRequestersPost, deletePost);
 
 export default router;

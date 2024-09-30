@@ -29,6 +29,9 @@ router
     next();
 }, getAllUsers);
 const idIdentifier = (0, aynsc_error_handler_1.asyncErrorHandlerIds)((req, res, next, value) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!value.match(/^[0-9a-fA-F]{24}$/)) {
+        return next(new custom_error_1.default(`invalid id`, utils_1.STATUS_CODES.clientError.Bad_Request));
+    }
     const user = yield user_2.default.findById(value);
     if (!user) {
         next(new custom_error_1.default(`User not found`, utils_1.STATUS_CODES.clientError.Not_Found));
