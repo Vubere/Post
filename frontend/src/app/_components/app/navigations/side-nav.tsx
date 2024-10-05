@@ -28,6 +28,8 @@ import settings from "@/assets/icons/dashboard/settings.svg";
 import settingsActive from "@/assets/icons/dashboard/settingsActive.svg";
 import trendingIcon from "@/assets/icons/dashboard/trendingIcon.svg"
 import arrowRightIcon from "@/assets/icons/arrow-right.png";
+import chatIcon from "@/assets/icons/dashboard/chat.png";
+import chatActiveIcon from "@/assets/icons/dashboard/chat-active.png";
 import { useEffect, useRef } from "react";
 
 const overviewLinks = [
@@ -68,6 +70,12 @@ const personalLinks = [
     icon: account,
     iconActive: accountActive,
     link: ROUTES.account
+  },
+  {
+    title: "Chat",
+    icon: chatIcon,
+    iconActive: chatActiveIcon,
+    link: ROUTES.chat
   },
   {
     title: "Notifications",

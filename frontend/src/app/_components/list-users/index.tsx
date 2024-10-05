@@ -12,9 +12,9 @@ import Empty from "../empty";
 import { useLazyGetAllUsersQuery } from "@/app/_lib/api/user";
 import InfiniteScroll from "../infinite-scroll";
 import { loadMoreItems } from "@/app/_lib/services";
+import chatIcon from "@/assets/icons/dashboard/chat.png";
 
-
-export default function ListUsers({ users, query }: { users: User[], query?: Record<string, any> }) {
+export default function ListUsers({ users, query, showChat, showFollow }: { users: User[], query: any, showChat?: boolean, showFollow?: boolean }) {
   const [getUsers, { isLoading }] = useLazyGetAllUsersQuery();
 
   return <>
@@ -29,16 +29,21 @@ export default function ListUsers({ users, query }: { users: User[], query?: Rec
           initialData={users}
           hasMore={users?.length === 20}
           Element={UserDisplay}
+          componentExtraProps={{ showFollow, showChat }}
         />
         :
         <Empty text="No Users here" />
     }
   </>
 }
+interface Props extends User {
+  showFollow?: boolean;
+  showChat?: boolean;
+}
 
-const UserDisplay = ({ ...user }: User) => {
+const UserDisplay = ({ showFollow = true, showChat = false, ...user }: Props) => {
   const { info } = useAppSelector(state => state.user);
-
+  console.log(showChat)
   return (
     <div className="flex justify-between items-center max-w-[270px]">
       <Link href={ROUTES.accountId.replace(":id", user._id || "")} className="flex items-center gap-2 relative">
@@ -53,9 +58,12 @@ const UserDisplay = ({ ...user }: User) => {
       </Link>
       {info?._id === user._id ?
         <Link href={ROUTES.account} className="underline text-[12px] sm:text-[14px] italic hover:text-blue-300">Go to Profile</Link>
-        :
-        <FollowButton user={user} />
-      }
+        : (showFollow ?
+          <FollowButton user={user} /> : null
+        )}
+      {showChat ?
+        <Link href={ROUTES.chatId.replace(":id", user._id || "")} className="relative w-[30px] h-[30px]"><Image src={chatIcon} alt="" objectFit="cover" objectPosition="center" fill /></Link>
+        : null}
     </div>
   )
 }

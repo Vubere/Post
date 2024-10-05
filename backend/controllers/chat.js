@@ -80,13 +80,9 @@ function getMessages(chatId, userId) {
             {
                 $match: {
                     chatId,
-                    $or: [
-                        { senderId: new mongoose_1.default.Types.ObjectId(userId) },
-                        { receiverId: new mongoose_1.default.Types.ObjectId(userId) },
-                    ],
                 },
             },
-            { $sort: { sentAt: -1 } },
+            { $sort: { sentAt: 1 } },
             {
                 $lookup: {
                     from: "users",
@@ -103,20 +99,19 @@ function getMessages(chatId, userId) {
                     as: "receiver",
                 },
             },
-            { $unwind: "$sender" },
-            { $unwind: "$receiver" },
+            { $unwind: { path: "$sender", preserveNullAndEmptyArrays: true } },
+            { $unwind: { path: "$receiver", preserveNullAndEmptyArrays: true } },
         ]);
         return messages || [];
     });
 }
 const getLatestMessages = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = new mongoose_1.default.Types.ObjectId(userId);
+    console.log("latest messages", userId, id);
     const messages = yield chat_1.default.aggregate([
         {
             $match: {
-                $or: [
-                    { senderId: new mongoose_1.default.Types.ObjectId(userId) },
-                    { receiverId: new mongoose_1.default.Types.ObjectId(userId) },
-                ],
+                $or: [{ senderId: id }, { receiverId: id }],
             },
         },
         {
@@ -126,6 +121,11 @@ const getLatestMessages = (userId) => __awaiter(void 0, void 0, void 0, function
             $group: {
                 _id: "$chatId",
                 sentAt: { $first: "$sentAt" },
+                senderId: { $first: "$senderId" },
+                receiverId: { $first: "$receiverId" },
+                message: { $first: "$message" },
+                time: { $first: "$time" },
+                read: { $first: "$read" },
             },
         },
         {
@@ -145,10 +145,10 @@ const getLatestMessages = (userId) => __awaiter(void 0, void 0, void 0, function
             },
         },
         {
-            $unwind: "$sender",
+            $unwind: { path: "$sender", preserveNullAndEmptyArrays: true },
         },
         {
-            $unwind: "$receiver",
+            $unwind: { path: "$receiver", preserveNullAndEmptyArrays: true },
         },
     ]);
     return messages;
@@ -183,6 +183,7 @@ function deleteChat(chatId, userId) {
 }
 const socketManager = (socket) => {
     socket.on("view_chat_list", (userId) => {
+        console.log("view_chat_list", userId);
         getLatestMessages(userId)
             .then((res) => {
             console.log("success", res);
@@ -216,14 +217,17 @@ const socketManager = (socket) => {
         var { chatId } = _a, data = __rest(_a, ["chatId"]);
         sendChat(data)
             .then((res) => {
+            console.log(res);
             socket.to(chatId).emit("receive_message", res);
+            socket.emit("receive_message", res);
         })
             .catch((err) => {
-            socket.to(socket.id).emit(JSON.stringify({
+            console.log(err);
+            socket.to(chatId).emit("receive_message", {
                 status: "failed",
                 message: "an error occurred!",
                 error: err,
-            }));
+            });
         });
     });
     socket.on("delete_message", ({ id, userId, room, chatId, }) => {

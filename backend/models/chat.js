@@ -18,13 +18,11 @@ const chatSchema = new mongoose_1.default.Schema({
         required: [true, "message is required!"],
     },
     senderId: {
-        unique: true,
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "sender id is required!"],
     },
     receiverId: {
-        unique: true,
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "receiver id is required!"],
@@ -37,6 +35,10 @@ const chatSchema = new mongoose_1.default.Schema({
         type: String,
         required: [true, "chat id is required"],
     },
+    time: {
+        type: Date,
+        default: Date.now(),
+    },
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -45,5 +47,5 @@ chatSchema.pre(/find/, function (next) {
     this.find().select("-__v");
     next();
 });
-const Chat = mongoose_1.default.models.comments || mongoose_1.default.model("chats", chatSchema);
+const Chat = mongoose_1.default.models.chats || mongoose_1.default.model("chats", chatSchema);
 exports.default = Chat;

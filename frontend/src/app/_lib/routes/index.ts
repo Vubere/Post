@@ -23,5 +23,6 @@ export enum ROUTES {
   following = "/following/:id",
   category = "/catogery?name=:name",
   followers = "/followers/:id",
-  chat = "/chat/:id",
+  chat = "/chat",
+  chatId = ROUTES.chat + "/:id",
 }

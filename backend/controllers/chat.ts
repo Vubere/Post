@@ -57,13 +57,9 @@ export async function getMessages(chatId: string, userId: string) {
     {
       $match: {
         chatId,
-        $or: [
-          { senderId: new mongoose.Types.ObjectId(userId) },
-          { receiverId: new mongoose.Types.ObjectId(userId) },
-        ],
       },
     },
-    { $sort: { sentAt: -1 } },
+    { $sort: { sentAt: 1 } },
     {
       $lookup: {
         from: "users",
@@ -80,19 +76,18 @@ export async function getMessages(chatId: string, userId: string) {
         as: "receiver",
       },
     },
-    { $unwind: "$sender" },
-    { $unwind: "$receiver" },
+    { $unwind: { path: "$sender", preserveNullAndEmptyArrays: true } },
+    { $unwind: { path: "$receiver", preserveNullAndEmptyArrays: true } },
   ]);
   return messages || [];
 }
 const getLatestMessages = async (userId: string) => {
+  const id = new mongoose.Types.ObjectId(userId);
+  console.log("latest messages", userId, id);
   const messages = await Chat.aggregate([
     {
       $match: {
-        $or: [
-          { senderId: new mongoose.Types.ObjectId(userId) },
-          { receiverId: new mongoose.Types.ObjectId(userId) },
-        ],
+        $or: [{ senderId: id }, { receiverId: id }],
       },
     },
     {
@@ -102,6 +97,11 @@ const getLatestMessages = async (userId: string) => {
       $group: {
         _id: "$chatId",
         sentAt: { $first: "$sentAt" },
+        senderId: { $first: "$senderId" },
+        receiverId: { $first: "$receiverId" },
+        message: { $first: "$message" },
+        time: { $first: "$time" },
+        read: { $first: "$read" },
       },
     },
     {
@@ -121,10 +121,10 @@ const getLatestMessages = async (userId: string) => {
       },
     },
     {
-      $unwind: "$sender",
+      $unwind: { path: "$sender", preserveNullAndEmptyArrays: true },
     },
     {
-      $unwind: "$receiver",
+      $unwind: { path: "$receiver", preserveNullAndEmptyArrays: true },
     },
   ]);
 
@@ -170,6 +170,7 @@ export const socketManager = (
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   socket.on("view_chat_list", (userId: string) => {
+    console.log("view_chat_list", userId);
     getLatestMessages(userId)
       .then((res) => {
         console.log("success", res);
@@ -216,19 +217,26 @@ export const socketManager = (
       senderId: string;
       receiverId: string;
       read?: boolean;
+      time: string;
     }) => {
       sendChat(data)
         .then((res) => {
+          console.log(res);
           socket.to(chatId).emit("receive_message", res);
+          socket.emit("receive_message", res);
         })
         .catch((err) => {
-          socket.to(socket.id).emit(
-            JSON.stringify({
-              status: "failed",
-              message: "an error occurred!",
-              error: err,
-            })
-          );
+          console.log(err);
+          socket.to(chatId).emit("receive_message", {
+            status: "failed",
+            message: "an error occurred!",
+            error: err,
+          });
+          /* socket.emit("receive_message", {
+            status: "failed",
+            message: "an error occurred!",
+            error: err,
+          }); */
         });
     }
   );

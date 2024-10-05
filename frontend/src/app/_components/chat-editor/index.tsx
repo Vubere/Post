@@ -1,40 +1,40 @@
 import { Form, notification } from "antd";
-import React, { FormEvent, useMemo, useRef, useState } from "react";
+import React, { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import ReactQuill, { type ReactQuillProps } from "react-quill";
 import { useUploadThing } from "@/app/api/uploadthing/hooks";
 import { NormalInput } from "../input";
 import Button from "../general/button";
 import { User } from "@/app/_lib/type";
+import sendIcon from "@/assets/icons/dashboard/send.png";
 import 'react-quill/dist/quill.snow.css';
+import Image from "next/image";
 
 interface EditorProps extends ReactQuillProps {
   chatId: string;
   user: User | null;
   otherUser: User | undefined;
-  chatOnChange: (v: any) => void;
+  sendMessage: (chat: string) => void;
   chat: string;
+  setChat: React.Dispatch<React.SetStateAction<string>>;
 }
-function ChatEditor(props: EditorProps) {
+function ChatEditor({ sendMessage, chat, setChat }: EditorProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const quillRef = useRef<ReactQuill | null>(null);
-  const {
-    chatId,
-    user,
-    otherUser,
-    chatOnChange,
-    chat
-  } = props;
+
   const [linkValue, setLinkValue] = useState({
     text: "",
     href: "",
   });
+  const send = useCallback(() => {
+    sendMessage(chat);
+  }, [chat, sendMessage]);
   const [showLinkInsert, setShowLinkInsert] = useState(false);
 
   const { startUpload, isUploading } = useUploadThing("imageUploader", {
     onClientUploadComplete: (res) => {
       const url = res[0].url;
 
-      chatOnChange(
+      setChat(
         (prev: string) => (prev || "") + `<p><img src="${url}" alt=""/></p>`
       );
     },
@@ -76,7 +76,7 @@ function ChatEditor(props: EditorProps) {
     });
   };
   const insertLink = (v: FormEvent) => {
-    chatOnChange(
+    setChat(
       (prev: string) =>
         (prev || "") + `<a href="${linkValue.href}">${linkValue.text}</a>`
     );
@@ -85,7 +85,7 @@ function ChatEditor(props: EditorProps) {
 
   return (
     <>
-      <div className="w-full absolute left-0 bottom-0 z-[15]">
+      <div className="w-full absolute left-0 bottom-0 z-[15] bg-white">
         <section className="text-editor relative">
           <div
             className={`absolute z-[11] top-0 left-0 w-screen h-screen flex justify-center items-center ${!showLinkInsert && "hidden"
@@ -142,10 +142,10 @@ function ChatEditor(props: EditorProps) {
                 text="inserting image"
               />
             )}
-            <div>
+            <div className="grid grid-cols-[1fr_40px]">
 
               <ReactQuill
-                onChange={chatOnChange}
+                onChange={setChat}
                 value={chat}
                 readOnly={isUploading}
                 placeholder={"Send a message..."}
@@ -155,6 +155,11 @@ function ChatEditor(props: EditorProps) {
                 ref={quillRef}
                 className="![&.quill]:border ![&.quill]:border-gray-200 ![&.quill]:rounded-t-[10px] ![&_.ql-editor]:max-h-[80px] ![&.quill_div.ql-container]:border ![&.quill_.ql-container]:border-red-400 ![&_.ql-editor]:min-h-[80px] ![&_.ql-editor]:overflow-y-auto"
               />
+              <div className="w-full h-full flex items-center justify-center">
+                <button className="relative w-[20px] h-[20px] " onClick={send}>
+                  <Image src={sendIcon} alt="" objectFit="contain" objectPosition="center" fill />
+                </button>
+              </div>
             </div>
             <div id="toolbar" className="border-b border-gray-200 bg-gray-50">
               <button className="ql-image" onClick={openSelectImage} />

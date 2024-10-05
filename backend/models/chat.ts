@@ -9,6 +9,7 @@ interface IChat extends Document {
   receiverId: ObjectId;
   read: boolean;
   chatId: string;
+  time: Date;
 }
 
 const chatSchema = new mongoose.Schema<IChat>(
@@ -26,13 +27,11 @@ const chatSchema = new mongoose.Schema<IChat>(
       required: [true, "message is required!"],
     },
     senderId: {
-      unique: true,
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "sender id is required!"],
     },
     receiverId: {
-      unique: true,
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "receiver id is required!"],
@@ -44,6 +43,10 @@ const chatSchema = new mongoose.Schema<IChat>(
     chatId: {
       type: String,
       required: [true, "chat id is required"],
+    },
+    time: {
+      type: Date,
+      default: Date.now(),
     },
   },
   {
@@ -58,6 +61,6 @@ chatSchema.pre(/find/, function (next) {
   next();
 });
 
-const Chat = mongoose.models.comments || mongoose.model("chats", chatSchema);
+const Chat = mongoose.models.chats || mongoose.model("chats", chatSchema);
 
 export default Chat;
