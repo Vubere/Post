@@ -1,12 +1,10 @@
 "use client";
-import Empty from "@/app/_components/empty";
 import PageContainer from "@/app/_components/general/page-container";
 import ListUsers from "@/app/_components/list-users";
 import { useGetFollowingQuery, useLazyGetFollowingQuery } from "@/app/_lib/api/user";
 import { ROUTES } from "@/app/_lib/routes";
 import { useAppSelector } from "@/app/_lib/store/hooks";
 import { User } from "@/app/_lib/type";
-import e from "express";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
