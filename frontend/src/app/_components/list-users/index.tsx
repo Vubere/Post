@@ -14,7 +14,7 @@ import InfiniteScroll from "../infinite-scroll";
 import { loadMoreItems } from "@/app/_lib/services";
 import chatIcon from "@/assets/icons/dashboard/chat.png";
 
-export default function ListUsers({ users, query, showChat, showFollow }: { users: User[], query: any, showChat?: boolean, showFollow?: boolean }) {
+export default function ListUsers({ users, query, showChat, showFollow }: { users: User[], query?: any, showChat?: boolean, showFollow?: boolean }) {
   const [getUsers, { isLoading }] = useLazyGetAllUsersQuery();
 
   return <>
