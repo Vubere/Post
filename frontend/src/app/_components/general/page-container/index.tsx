@@ -12,10 +12,10 @@ export default function PageContainer({ title, loading, children }: Props) {
 
   if (loading) {
     return (
-      <>
+      <div className="w-full flex flex-col gap-4">
         <Skeleton />
         <Skeleton />
-      </>
+      </div>
     )
   }
 

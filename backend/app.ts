@@ -52,14 +52,7 @@ app.use(baseRootUsers, authController.ProtectRoutes, userRouter);
 app.use(baseRootPosts, authController.ProtectRoutes, postRouter);
 app.use(baseRootComments, authController.ProtectRoutes, commentRouter);
 app.use(baseRootNotification, authController.ProtectRoutes, notificationRoter);
-app.all("*", (...args) => {
-  const [req, , next] = args;
-  const error = new CustomError(
-    "route not found: " + req.url,
-    STATUS_CODES.clientError.Not_Found
-  );
-  next(error);
-});
+
 app.use(errorController);
 
 export default app;

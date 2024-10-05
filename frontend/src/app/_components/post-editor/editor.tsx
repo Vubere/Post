@@ -10,6 +10,7 @@ import { RootState } from "@/app/_lib/store";
 import ImageUploader from "../general/image-uploader";
 import cancel from "@/assets/icons/cancel.png";
 import PostPage from "../post-page";
+import 'react-quill/dist/quill.snow.css';
 
 const themes = ["Roboto", "BreeSerif", "Jacques", "Merriweather", "Default"] as const;
 
@@ -200,6 +201,8 @@ function Editor(props: EditorProps) {
                 <option value="#d0d1d2" />
                 <option selected />
               </select>
+              <button className="ql-code" />
+              <button className="ql-blockquote" />
               <button className="ql-link" onClick={handleLinkInsertion} />
               <button className="ql-image" onClick={openSelectImage} />
             </div>

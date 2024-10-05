@@ -126,7 +126,7 @@ export const userApi = createApi({
       }),
       providesTags: ["Users"],
     }),
-    getUser: builder.query<"User", string>({
+    getUser: builder.query({
       query: (id) => ({ url: `/${id}` }),
       providesTags: (result, err, id) => [{ type: "User", id }],
     }),
@@ -230,6 +230,7 @@ export const {
   useGetBlockedUsersQuery,
   useGetFollowersQuery,
   useGetFollowingQuery,
+  useLazyGetFollowingQuery,
   useGetProfileQuery,
   useLazyGetProfileQuery,
   useLazyGetUserQuery,

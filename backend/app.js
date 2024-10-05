@@ -13,14 +13,12 @@ const comment_1 = __importDefault(require("./routers/comment"));
 const notifications_1 = __importDefault(require("./routers/notifications"));
 const auth_2 = __importDefault(require("./controllers/auth"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
-const custom_error_1 = __importDefault(require("./lib/utils/custom-error"));
 const error_1 = __importDefault(require("./controllers/error"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 const xss_clean_1 = __importDefault(require("xss-clean"));
 const hpp_1 = __importDefault(require("hpp"));
-const utils_1 = require("./lib/utils");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const limiter = (0, express_rate_limit_1.default)({
@@ -48,10 +46,5 @@ app.use(baseRootUsers, auth_2.default.ProtectRoutes, user_1.default);
 app.use(baseRootPosts, auth_2.default.ProtectRoutes, post_1.default);
 app.use(baseRootComments, auth_2.default.ProtectRoutes, comment_1.default);
 app.use(baseRootNotification, auth_2.default.ProtectRoutes, notifications_1.default);
-app.all("*", (...args) => {
-    const [req, , next] = args;
-    const error = new custom_error_1.default("route not found: " + req.url, utils_1.STATUS_CODES.clientError.Not_Found);
-    next(error);
-});
 app.use(error_1.default);
 exports.default = app;

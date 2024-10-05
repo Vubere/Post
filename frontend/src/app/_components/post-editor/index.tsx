@@ -2,7 +2,6 @@
 import Button from "@/app/_components/general/button";
 import Editor from "@/app/_components/post-editor/editor";
 import { useEffect, useState } from "react";
-import 'react-quill/dist/quill.snow.css';
 import PostOptions from "./post-options";
 import { toast } from "react-toastify";
 import { isEmpty } from "lodash";

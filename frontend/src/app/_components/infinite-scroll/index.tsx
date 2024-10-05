@@ -11,6 +11,7 @@ interface Props {
   initialData: any[];
   Element: ComponentType<any>;
   limit?: number;
+  componentExtraProps?: Record<string, any>;
 }
 
 const InfiniteScroll: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const InfiniteScroll: React.FC<Props> = ({
   error,
   limit,
   storageKey,
+  componentExtraProps,
 }) => {
   const [data, setData] = useState<any[]>(initialData || []);
   const [, setPage] = useState(1);
@@ -72,7 +74,7 @@ const InfiniteScroll: React.FC<Props> = ({
   return (
     <div className="flex flex-col gap-4 w-full">
       {data.map((item, index) => (
-        <Element key={index + item._id} {...item} />
+        <Element key={index + item._id} {...(componentExtraProps || {})} {...item} />
       ))}
       {isLoading && <Spin />}
       {error && <div>Error loading data</div>}

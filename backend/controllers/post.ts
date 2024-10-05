@@ -13,6 +13,7 @@ import { PostConfirmRequest } from "../lib/types";
 import CustomError from "../lib/utils/custom-error";
 import User from "../models/user";
 import { createNotification } from "./notifications";
+import Category from "../models/category";
 
 const postApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(Post.find(), query);
@@ -70,9 +71,30 @@ async function createPost(
         metadata: { postId: newPost.id },
       });
   }
+  const categories = req.body?.categories;
   res
     .status(STATUS_CODES.success.Created)
     .json(jsend("success", newPost, "post posted successful!"));
+  //this part
+  if (categories) {
+    setImmediate(async () => {
+      try {
+        for (let category of categories) {
+          const categoryCheck = await Category.findOne({ name: category });
+          if (!categoryCheck) {
+            const newCategory = await Category.create({ name: category });
+            newPost.categories.push(newCategory._id);
+          } else {
+            await Category.findByIdAndUpdate(categoryCheck._id, {
+              $inc: { usage: 1 },
+            });
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  }
 }
 
 async function getAllPosts(

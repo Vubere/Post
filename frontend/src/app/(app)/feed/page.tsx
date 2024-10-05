@@ -16,9 +16,9 @@ export default function Feed() {
     limit: 10
   });
   const [getPostsFeed, { isLoading: isFetchingFeed }] = useLazyGetPostsFeedQuery();
-  const { data: popularData, isLoading: popularDataLoading } = useGetPostsPopularQuery({});
+  const { data: popularData, isLoading: popularDataLoading, refetch: refetchPopular } = useGetPostsPopularQuery({});
   const [getPostPopular, { isLoading: isFetchingPopular }] = useLazyGetPostsPopularQuery();
-  const { data: followingsData, isLoading: followingsDataLoading } = useGetPostFromFollowingsQuery({})
+  const { data: followingsData, isLoading: followingsDataLoading, refetch: refetchFollowings } = useGetPostFromFollowingsQuery({})
   const [getPostsFollowing, { isLoading: isFetchingFollowing }] = useLazyGetPostFromFollowingsQuery();
   // const { data: interestData, isLoading: interestDataLoading } = useGetPostFromInterestQuery({});
   // const [getPostInterest, { isLoading: isFetchingInterest }] = useLazyGetPostFromInterestQuery();
@@ -45,6 +45,7 @@ export default function Feed() {
                 initialData={feed}
                 hasMore={feed?.length === 10}
                 Element={PostDisplay}
+                componentExtraProps={{ validate: refetch }}
               />}
 
               {(!feed.length && !isLoading) ?
@@ -71,6 +72,7 @@ export default function Feed() {
                 initialData={following}
                 hasMore={data?.count < 10}
                 Element={PostDisplay}
+                componentExtraProps={{ validate: refetchFollowings }}
               />}
 
               {(!following.length && !isLoading) ?
@@ -114,6 +116,7 @@ export default function Feed() {
               initialData={popular}
               hasMore={data?.count < 10}
               Element={PostDisplay}
+              componentExtraProps={{ validate: refetchPopular }}
             />}
               {(!popular.length && !isLoading) ?
                 <div className={"w-full" + SECTION_CLASSNAME}> <Empty /></div>

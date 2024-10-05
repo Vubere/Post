@@ -8,7 +8,6 @@ const asyncErrorHandler = (func) => {
 };
 const asyncErrorHandlerIds = (func) => {
     return function (req, res, next, value) {
-        console.log(next);
         func(req, res, next, value).catch((err) => next(err));
     };
 };

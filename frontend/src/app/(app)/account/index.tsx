@@ -18,6 +18,7 @@ import FollowButton from "@/app/_components/follow-button";
 import InfiniteScroll from "@/app/_components/infinite-scroll";
 import { loadMoreItems } from "@/app/_lib/services";
 import Empty from "@/app/_components/empty";
+import chatIcon from "@/assets/icons/dashboard/chat.png"
 
 
 export default function Account({ userInfo }: { userInfo: User }) {
@@ -93,8 +94,11 @@ export default function Account({ userInfo }: { userInfo: User }) {
                 <Image src={editIcon} alt="edit" objectFit="cover" objectPosition="center" fill />
               </Link>
             </div>) : (<div className="absolute right-0 xs:right-2 top-4 xs:top-6 sm:top-8 z-[4]" >
-              <div className="w-full flex justify-end">
-
+              <div className="w-full flex gap-2 justify-end">
+                <Link className="block relative w-[30px] h-[30px]" href={ROUTES.chat.replace(":id", userInfo._id as string)} title="chat">
+                  <Image
+                    src={chatIcon} fill objectFit="cover" objectPosition="center" alt="chat" />
+                </Link>
                 <FollowButton user={userInfo} />
               </div>
 

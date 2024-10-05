@@ -54,6 +54,7 @@ const aynsc_error_handler_1 = require("../lib/utils/aynsc-error-handler");
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const user_1 = __importDefault(require("../models/user"));
 const notifications_1 = require("./notifications");
+const category_1 = __importDefault(require("../models/category"));
 const postApiFeatures = (query) => {
     return new api_features_1.default(post_1.default.find(), query);
 };
@@ -85,7 +86,7 @@ const postApiFeaturesAggregation = (query, authorQuery) => {
 };
 function createPost(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a;
+        var _a, _b;
         req.body.author = req.requesterId;
         const newPost = yield post_1.default.create(req.body);
         if (((_a = req.body) === null || _a === void 0 ? void 0 : _a.postType) === "reshare") {
@@ -98,9 +99,31 @@ function createPost(req, res, next) {
                     metadata: { postId: newPost.id },
                 });
         }
+        const categories = (_b = req.body) === null || _b === void 0 ? void 0 : _b.categories;
         res
             .status(utils_1.STATUS_CODES.success.Created)
             .json((0, utils_1.jsend)("success", newPost, "post posted successful!"));
+        if (categories) {
+            setImmediate(() => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    for (let category of categories) {
+                        const categoryCheck = yield category_1.default.findOne({ name: category });
+                        if (!categoryCheck) {
+                            const newCategory = yield category_1.default.create({ name: category });
+                            newPost.categories.push(newCategory._id);
+                        }
+                        else {
+                            yield category_1.default.findByIdAndUpdate(categoryCheck._id, {
+                                $inc: { usage: 1 },
+                            });
+                        }
+                    }
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }));
+        }
     });
 }
 function getAllPosts(req, res, next) {
