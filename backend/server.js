@@ -28,6 +28,7 @@ const io = new socket_io_1.Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
+        credentials: true,
     },
 });
 io.on("connection", chat_1.socketManager);
