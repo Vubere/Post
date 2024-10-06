@@ -21,7 +21,7 @@ import messageSent from "@/assets/icons/message-sent.png";
 import ScrollToBottom from "react-scroll-to-bottom";
 
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL).connect();
+let socket = io(process.env.NEXT_PUBLIC_SOCKET_URL).connect();
 
 export default function Chat() {
   const { info } = useAppSelector(state => state.user);
@@ -59,8 +59,8 @@ export default function Chat() {
       socket.on("chats", (data) => {
         if (Array.isArray(data) && data.length > 0) {
           setMessagesList(data);
-          setLoading(false);
         }
+        setLoading(false);
       });
     }
   }, [chatId]);
