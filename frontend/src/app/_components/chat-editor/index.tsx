@@ -85,7 +85,7 @@ function ChatEditor({ sendMessage, chat, setChat }: EditorProps) {
 
   return (
     <>
-      <div className="w-full absolute left-0 bottom-0 z-[15] bg-white">
+      <div className="w-full  z-[15] bg-white">
         <section className="text-editor relative">
           <div
             className={`absolute z-[11] top-0 left-0 w-screen h-screen flex justify-center items-center ${!showLinkInsert && "hidden"

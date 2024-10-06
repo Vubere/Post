@@ -67,8 +67,8 @@ export default function Chat() {
 
 
   return (
-    <PageContainer loading={loading} className="!pb-[0px] ">
-      <div className="h-full overflow-y-auto w-full overflow-y-auto pb-[60px] max-h-[calc(100%-200px)]">
+    <PageContainer loading={loading} className="!pb-[0px] relative overflow-hidden">
+      <div className="h-[calc(100vh-170px)] overflow-y-auto w-full overflow-y-auto pb-[60px] max-h-[calc(100%-170px)]">
 
         <div className="mb-4">
           <div className="flex flex-col gap-2 justify-center items-center">
