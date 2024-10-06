@@ -30,6 +30,7 @@ const io = new socket_io_1.Server(server, {
         methods: ["GET", "POST"],
         credentials: true,
     },
+    transports: ["websocket"],
 });
 io.on("connection", chat_1.socketManager);
 app_1.default.all("*", (...args) => {
