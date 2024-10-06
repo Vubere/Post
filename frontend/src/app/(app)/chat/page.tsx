@@ -12,7 +12,7 @@ import io from "socket.io-client";
 import avatar from "@/assets/icons/avatar.png";
 import dayjs from "dayjs";
 
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, { withCredentials: true }).connect();
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, { withCredentials: true, transports: ["websocket"] });
 
 export default function Chat() {
   const { info } = useAppSelector(state => state.user);
