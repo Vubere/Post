@@ -1,15 +1,10 @@
 "use client";
 import ChatEditor from "@/app/_components/chat-editor";
-import Empty from "@/app/_components/empty";
 import PageContainer from "@/app/_components/general/page-container";
-import ListUsers from "@/app/_components/list-users";
-import { useGetFollowingQuery, useGetUserQuery, useLazyGetFollowingQuery } from "@/app/_lib/api/user";
-import { ROUTES } from "@/app/_lib/routes";
+import { useGetUserQuery } from "@/app/_lib/api/user";
 import { useAppSelector } from "@/app/_lib/store/hooks";
-import { User } from "@/app/_lib/type";
 import dayjs from "dayjs";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import io from "socket.io-client";
@@ -18,7 +13,6 @@ import { Message } from "../page";
 import InView from "@/app/_components/in-view";
 import messageRead from "@/assets/icons/message-read.png";
 import messageSent from "@/assets/icons/message-sent.png";
-import ScrollToBottom from "react-scroll-to-bottom";
 
 
 let socket = io(process.env.NEXT_PUBLIC_SOCKET_URL).connect();
@@ -123,8 +117,8 @@ const MessageDisplay: React.FC<Message & { chatId: string }> = ({ message, read,
   }
 
   return (
-    <div className={`flex justify-end p-2 `}>
-      <div className={`${isUserMessage ? "justify-end bg-white text-gray-500 rounded-l-lg  " : "justify-start bg-blue-500 rounded-r-lg  text-blue "} rounded-b-lg shadow-xl  flex w-[300px] max-w-[80%] flex-col items-end p-2 py-1 `}>
+    <div className={`flex ${isUserMessage ? "justify-end rounded-l-lg  " : "justify-start  text-white "} p-2 `}>
+      <div className={`${isUserMessage ? "items-end bg-white text-gray-500 rounded-l-lg  " : "items-start bg-blue-300 rounded-r-lg  text-white "} rounded-b-lg shadow-xl  flex w-[300px] max-w-[80%] flex-col  p-2 py-1 `}>
         <p dangerouslySetInnerHTML={{ __html: message }} className={`text-[14px] sm:text-[16px] min-w-full`} />
         <div className="min-w-full flex justify-between items-center">
           {isUserMessage && <span className="block relative w-[14px] h-[14px]">
