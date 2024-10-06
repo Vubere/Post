@@ -17,7 +17,7 @@ import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
 
 
-let socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, { withCredentials: true }).connect();
+let socket = io(process.env.NEXT_PUBLIC_SOCKET_URL).connect();
 
 export default function Chat() {
   const { info } = useAppSelector(state => state.user);
