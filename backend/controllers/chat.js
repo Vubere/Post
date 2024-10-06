@@ -107,7 +107,6 @@ function getMessages(chatId, userId) {
 }
 const getLatestMessages = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const id = new mongoose_1.default.Types.ObjectId(userId);
-    console.log("latest messages", userId, id);
     const messages = yield chat_1.default.aggregate([
         {
             $match: {
