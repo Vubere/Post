@@ -95,9 +95,9 @@ export default function Account({ userInfo }: { userInfo: User }) {
               </Link>
             </div>) : (<div className="absolute right-0 xs:right-2 top-4 xs:top-6 sm:top-8 z-[4]" >
               <div className="w-full flex gap-2 justify-end">
-                <Link className="block relative w-[30px] h-[30px]" href={ROUTES.chat.replace(":id", userInfo._id as string)} title="chat">
+                <Link className="block relative w-[25px] h-[25px]" href={ROUTES.chatId.replace(":id", (userInfo._id || userInfo.id) as string)} title="chat">
                   <Image
-                    src={chatIcon} fill objectFit="cover" objectPosition="center" alt="chat" />
+                    src={chatIcon} fill objectFit="contain" objectPosition="center" alt="chat" />
                 </Link>
                 <FollowButton user={userInfo} />
               </div>
