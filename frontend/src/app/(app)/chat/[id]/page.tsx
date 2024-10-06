@@ -13,6 +13,8 @@ import { Message } from "../page";
 import InView from "@/app/_components/in-view";
 import messageRead from "@/assets/icons/message-read.png";
 import messageSent from "@/assets/icons/message-sent.png";
+import Link from "next/link";
+import { ROUTES } from "@/app/_lib/routes";
 
 
 let socket = io(process.env.NEXT_PUBLIC_SOCKET_URL).connect();
@@ -70,7 +72,7 @@ export default function Chat() {
     <PageContainer loading={loading} className="!pb-[0px] relative overflow-hidden">
       <div className="h-[calc(100vh-170px)] overflow-y-auto w-full overflow-y-auto pb-[60px] max-h-[calc(100%-170px)]">
 
-        <div className="mb-4">
+        <Link href={ROUTES.accountId.replace(":id", otherUserInfo?._id || "")} className="mb-4">
           <div className="flex flex-col gap-2 justify-center items-center">
             <div className="relative w-[40px] h-[40px]  rounded-full overflow-hidden">
 
@@ -81,7 +83,7 @@ export default function Chat() {
               <p className="text-[8px] sm:text-[11px] text-[#373737aa] italic">@{otherUserInfo?.username}</p>
             </div>
           </div>
-        </div>
+        </Link>
         {
           messagesList.length === 0 ? (
             <div className="flex flex-col items-center">

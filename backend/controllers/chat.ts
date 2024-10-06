@@ -83,7 +83,6 @@ export async function getMessages(chatId: string, userId: string) {
 }
 const getLatestMessages = async (userId: string) => {
   const id = new mongoose.Types.ObjectId(userId);
-  console.log("latest messages", userId, id);
   const messages = await Chat.aggregate([
     {
       $match: {
