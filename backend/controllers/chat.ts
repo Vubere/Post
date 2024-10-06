@@ -104,6 +104,9 @@ const getLatestMessages = async (userId: string) => {
       },
     },
     {
+      $sort: { sentAt: -1 },
+    },
+    {
       $lookup: {
         from: "users",
         localField: "senderId",

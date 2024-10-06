@@ -128,6 +128,9 @@ const getLatestMessages = (userId) => __awaiter(void 0, void 0, void 0, function
             },
         },
         {
+            $sort: { sentAt: -1 },
+        },
+        {
             $lookup: {
                 from: "users",
                 localField: "senderId",
