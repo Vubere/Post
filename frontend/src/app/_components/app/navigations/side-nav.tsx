@@ -2,7 +2,7 @@
 import { ROUTES } from "@/app/_lib/routes";
 import { RootState } from "@/app/_lib/store";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/hooks";
-import { Popover } from "antd";
+import { Popover, Skeleton } from "antd";
 import Link from "next/link";
 import Button from "@/app/_components/general/button";
 import { destroyUserState } from "@/app/_lib/store/user";
@@ -31,6 +31,7 @@ import arrowRightIcon from "@/assets/icons/arrow-right.png";
 import chatIcon from "@/assets/icons/dashboard/chat.png";
 import chatActiveIcon from "@/assets/icons/dashboard/chat-active.png";
 import { useEffect, useRef } from "react";
+import { useGetTopCategoriesQuery } from "@/app/_lib/api/post";
 
 const overviewLinks = [
   {
@@ -90,6 +91,7 @@ const personalLinks = [
     link: ROUTES.settings
   },
 ]
+const headingClass = "font-[600] text-[#111] font-[18px] leading-[27px] w-full text-left "
 
 
 
@@ -97,10 +99,6 @@ export default function SideNav() {
   const path = usePathname();
   const sideNavRef = useRef<HTMLDivElement | null>(null);
   const openSideNavRef = useRef<HTMLButtonElement | null>(null);
-  const { info } = useAppSelector((state: RootState) => state.user);
-  const topCategories = ["programming", "data science", "technology", "machine learning", "politics"]
-
-  const headingClass = "font-[600] text-[#111] font-[18px] leading-[27px] w-full text-left "
 
   useEffect(() => {
     const sideNavEl = sideNavRef.current;
@@ -158,20 +156,11 @@ export default function SideNav() {
               ))}
             </ul>
           </section>
-          <section className="flex flex-col gap-4 w-[80%] mb-6">
-            <h3 className={headingClass + " flex gap-1 leading-[110%]"}>Top Categories <Image src={trendingIcon} alt="" /></h3>
-            <ul className="flex flex-col gap-2 ">
-              {topCategories.map((category, i) => (
-                <li key={i}>
-                  <Link href={`${ROUTES.category.replace(":category", category)}`} className="hover:text-[#543ee0]">#{category}</Link>
-                </li>
-              ))
-              }
-            </ul>
-          </section>
+          <TopCategories />
+
           <section className="flex flex-col gap-4 w-[80%] mb-6">
 
-            <h3 className={headingClass}>Overview</h3>
+            <h3 className={headingClass}>Personal</h3>
             <ul className="flex flex-col gap-2 ">
               {personalLinks.map((link, i) => (
                 <li key={i}>
@@ -191,5 +180,27 @@ export default function SideNav() {
       </button>
     </>
 
+  )
+}
+
+function TopCategories() {
+  const { data, isLoading } = useGetTopCategoriesQuery({});
+  if (isLoading) {
+    return <Skeleton active />
+  }
+  const categories: string[] = data?.data || [];
+  if (categories.length === 0) return null;
+  return (
+    <section className="flex flex-col gap-4 w-[80%] mb-6">
+      <h3 className={headingClass + " flex gap-1 leading-[110%]"}>Top Categories <Image src={trendingIcon} alt="" /></h3>
+      <ul className="flex flex-col gap-2 ">
+        {categories.map((category, i) => (
+          <li key={i}>
+            <Link href={`${ROUTES.category.replace(":category", category)}`} className="hover:text-[#543ee0]">#{category}</Link>
+          </li>
+        ))
+        }
+      </ul>
+    </section>
   )
 }
