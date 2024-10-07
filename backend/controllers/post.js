@@ -408,7 +408,10 @@ function getCategories(req, res, next) {
 }
 function getTopCategories(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const categories = yield category_1.default.find({}).sort({ usage: -1 }).limit(5);
+        const categoriesData = yield category_1.default.find({}).sort({ usage: -1 }).limit(5);
+        const categories = categoriesData.map((category) => {
+            return category.name;
+        });
         res
             .status(utils_1.STATUS_CODES.success.OK)
             .json((0, utils_1.jsend)("success", categories, "categories fetched successfully!"));
