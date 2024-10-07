@@ -99,13 +99,13 @@ export default function SideNav() {
   const path = usePathname();
   const sideNavRef = useRef<HTMLDivElement | null>(null);
   const openSideNavRef = useRef<HTMLButtonElement | null>(null);
+  const classes = ["fixed"];
+  const btnClasses = ["transform", "rotate-180"]
 
   useEffect(() => {
     const sideNavEl = sideNavRef.current;
     const openSideNavEl = openSideNavRef.current;
     if (sideNavEl && openSideNavEl) {
-      const classes = ["fixed"];
-      const btnClasses = ["transform", "rotate-180"]
       const showNav = () => {
         if (sideNavEl.classList.contains("hidden")) {
           sideNavEl.classList.remove("hidden");
@@ -140,6 +140,16 @@ export default function SideNav() {
     }
   }, []);
 
+  const closeOnLinkClick = () => {
+    const sideNavEl = sideNavRef.current;
+    const openSideNavEl = openSideNavRef.current;
+    if (sideNavEl && openSideNavEl) {
+      sideNavEl.classList.add("hidden");
+      sideNavEl.classList.remove(...classes);
+      openSideNavEl.classList.remove(...btnClasses);
+    }
+  }
+
   return (
     <>
       <div className="text-black w-[100%] max-w-[285px] flex flex-col items-center overflow-y-auto pt-[80px]  bg-[#fff] shadow-xl  h-[100vh] w-full nsm:w-[85%] hidden sm:block shadow-xl pb-[10vh]  left-0 top-0 z-[8]" ref={sideNavRef} >
@@ -148,7 +158,7 @@ export default function SideNav() {
             <h3 className={headingClass}>Overview</h3>
             <ul className="flex flex-col gap-2 ">
               {overviewLinks.map((link, i) => (
-                <li key={i}>
+                <li key={i} onClick={closeOnLinkClick}>
                   <Link href={link.link} className={`flex gap-2 items-center ${path == link.link ? "text-[#543ee0]" : "hover:text-[#543ee0]"}`}>
                     <Image src={path == link.link ? link.iconActive : link.icon} alt={link.title} className="w-[20px] h-[20px]" /> {link.title}
                   </Link>
@@ -156,7 +166,7 @@ export default function SideNav() {
               ))}
             </ul>
           </section>
-          <TopCategories />
+          <TopCategories closeOnLinkClick={closeOnLinkClick} />
 
           <section className="flex flex-col gap-4 w-[80%] mb-6">
 
@@ -164,7 +174,7 @@ export default function SideNav() {
             <ul className="flex flex-col gap-2 ">
               {personalLinks.map((link, i) => (
                 <li key={i}>
-                  <Link href={link.link} className={`flex gap-2 items-center ${path == link.link ? "text-[#543ee0]" : "hover:text-[#543ee0]"}`}>
+                  <Link href={link.link} className={`flex gap-2 items-center ${path == link.link ? "text-[#543ee0]" : "hover:text-[#543ee0]"}`} onClick={closeOnLinkClick}>
                     <Image src={path == link.link ? link.iconActive : link.icon} alt={link.title} className="w-[20px] h-[20px]" /> {link.title}
                   </Link>
                 </li>
@@ -183,7 +193,7 @@ export default function SideNav() {
   )
 }
 
-function TopCategories() {
+function TopCategories({ closeOnLinkClick }: { closeOnLinkClick: () => void }) {
   const { data, isLoading } = useGetTopCategoriesQuery({});
   if (isLoading) {
     return <Skeleton active />
@@ -195,7 +205,7 @@ function TopCategories() {
       <h3 className={headingClass + " flex gap-1 leading-[110%]"}>Top Categories <Image src={trendingIcon} alt="" /></h3>
       <ul className="flex flex-col gap-2 ">
         {categories.map((category, i) => (
-          <li key={i}>
+          <li key={i} onClick={closeOnLinkClick}>
             <Link href={`${ROUTES.category.replace(":category", category)}`} className="hover:text-[#543ee0]">#{category}</Link>
           </li>
         ))
