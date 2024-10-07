@@ -470,7 +470,10 @@ async function getTopCategories(
   res: Response,
   next: NextFunction
 ) {
-  const categories = await Category.find({}).sort({ usage: -1 }).limit(5);
+  const categoriesData = await Category.find({}).sort({ usage: -1 }).limit(5);
+  const categories = categoriesData.map((category) => {
+    return category.name;
+  });
   res
     .status(STATUS_CODES.success.OK)
     .json(jsend("success", categories, "categories fetched successfully!"));
