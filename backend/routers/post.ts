@@ -25,6 +25,8 @@ const {
   viewPost,
   clickPost,
   readPost,
+  getCategories,
+  getTopCategories,
 } = postControllers;
 const router = express.Router();
 
@@ -90,6 +92,8 @@ router
     next();
   }, getAllPosts);
 router.route("/following").get(getPostFromFollowings);
+router.route("/categories").get(getCategories);
+router.route("/top-categories").get(getTopCategories);
 
 router
   .route("/:id")

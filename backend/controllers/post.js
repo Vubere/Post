@@ -395,6 +395,25 @@ function isRequestersPost(...args) {
         next();
     });
 }
+function getCategories(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const categoriesData = yield category_1.default.find({}).sort({ usage: -1 });
+        const categories = categoriesData.map((category) => {
+            return category.name;
+        });
+        res
+            .status(utils_1.STATUS_CODES.success.OK)
+            .json((0, utils_1.jsend)("success", categories, "categories fetched successfully!"));
+    });
+}
+function getTopCategories(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const categories = yield category_1.default.find({}).sort({ usage: -1 }).limit(5);
+        res
+            .status(utils_1.STATUS_CODES.success.OK)
+            .json((0, utils_1.jsend)("success", categories, "categories fetched successfully!"));
+    });
+}
 const postExports = {
     createPost,
     getAllPosts,
@@ -414,5 +433,7 @@ const postExports = {
     clickPost,
     readPost,
     getPostFromFollowings,
+    getCategories,
+    getTopCategories,
 };
 exports.default = (0, aynsc_error_handler_1.wrapModuleFunctionsInAsyncErrorHandler)(postExports);

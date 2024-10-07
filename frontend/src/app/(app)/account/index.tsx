@@ -25,12 +25,10 @@ export default function Account({ userInfo }: { userInfo: User }) {
   const { info } = useAppSelector(state => state.user);
 
   const isUserAccount = info?._id === userInfo?._id;
-  const { data: userPost, isLoading: userPostLoading } = useGetUserPostQuery({
+  const { data: userPost, isLoading: userPostLoading, refetch } = useGetUserPostQuery({
     userId: userInfo._id || userInfo.id
   });
-  const [getUserPost, { isLoading: userPostFetching }] = useLazyGetUserPostQuery();
-  const [getPraise, { isLoading: praisedPostFetching }] = useLazyGetPraiseQuery();
-  const { data: praisedPost, isLoading: praisedPostLoading } = useGetPraiseQuery({
+  const { data: praisedPost, isLoading: praisedPostLoading, refetch: refetchPraise } = useGetPraiseQuery({
     userId: userInfo._id || userInfo.id
   });
 
@@ -41,36 +39,17 @@ export default function Account({ userInfo }: { userInfo: User }) {
 
   const Items = [
     {
-      content:
-        userPostArray.length > 0 ?
-          <InfiniteScroll
-            limit={10}
-            isLoading={userPostLoading || userPostFetching}
-            error={false}
-            storageKey={"account-posts"}
-            loadMore={(page) => loadMoreItems(page, getUserPost, 10, { userId: userInfo._id || userInfo.id })}
-            initialData={userPostArray}
-            hasMore={userPostArray.count < 10}
-            Element={PostDisplay}
-          />
-          : <Empty text="No Posts" />
-      , title: "Posts", loading: userPostLoading
+      content: <UserPost userId={(userInfo._id || userInfo.id) as string} initialData={userPostArray} initialDataLoading={userPostLoading} refetch={refetch} />,
+      title: "Posts", loading: userPostLoading
     },
     {
-      content:
-        praisedPostArray.length > 0 ?
-          <InfiniteScroll
-            limit={10}
-            isLoading={praisedPostLoading || praisedPostFetching}
-            error={false}
-            storageKey={"account-praises"}
-            loadMore={(page) => loadMoreItems(page, getPraise, 10, { userId: userInfo._id || userInfo.id })}
-            initialData={praisedPostArray}
-            hasMore={praisedPostArray.count < 10}
-            Element={PostDisplay}
-          />
-          : <Empty text="No Praises" />
-      , title: "Praises", loading: praisedPostLoading
+      content: <PraisedPost
+        userId={(userInfo._id || userInfo.id) as string}
+        initialData={praisedPostArray}
+        initialDataLoading={praisedPostLoading}
+        refetch={refetchPraise}
+      />,
+      title: "Praises", loading: praisedPostLoading
     },
   ]
 
@@ -141,5 +120,63 @@ export default function Account({ userInfo }: { userInfo: User }) {
 
       </div>
     </PageContainer>
+  )
+}
+
+
+function UserPost({ userId, initialData, initialDataLoading, refetch }: { userId: string, initialData: any[], initialDataLoading: boolean, refetch: () => any }) {
+  const [getUserPosts, { isLoading: isLoadingPost, isFetching: isFetchingPost }] = useLazyGetUserPostQuery();
+  const feedLoading = isLoadingPost || isFetchingPost || initialDataLoading;
+  return (
+    <>
+      {
+        initialData.length > 0 && <InfiniteScroll
+          limit={10}
+          isLoading={feedLoading}
+          className="!gap-1"
+          error={false}
+          storageKey={"user-post"}
+          loadMore={(page) => loadMoreItems(page, getUserPosts, 10, { userId })}
+          initialData={initialData}
+          hasMore={initialData?.length === 10}
+          Element={PostDisplay}
+          componentExtraProps={{ validate: refetch }}
+        />}
+
+      {(!initialData.length && !initialDataLoading) ?
+        <div className={"w-full" + SECTION_CLASSNAME}>
+          <Empty text="No Posts" />
+        </div>
+        : null
+      }
+    </>
+  )
+}
+function PraisedPost({ userId, initialData, initialDataLoading, refetch }: { userId: string, initialData: any[], initialDataLoading: boolean, refetch: () => any }) {
+  const [getPraise, { isLoading: praisedPostFetching, isFetching: praisedPostLoading }] = useLazyGetPraiseQuery();
+  const praiseLoading = praisedPostFetching || praisedPostLoading || initialDataLoading;
+  return (
+    <>
+      {
+        initialData.length > 0 && <InfiniteScroll
+          limit={10}
+          isLoading={praiseLoading}
+          className="!gap-1"
+          error={false}
+          storageKey={"user-post"}
+          loadMore={(page) => loadMoreItems(page, getPraise, 10, { userId })}
+          initialData={initialData}
+          hasMore={initialData?.length === 10}
+          Element={PostDisplay}
+          componentExtraProps={{ validate: refetch }}
+        />}
+
+      {(!initialData.length && !initialDataLoading) ?
+        <div className={"w-full" + SECTION_CLASSNAME}>
+          <Empty text="No Praised Posts" />
+        </div>
+        : null
+      }
+    </>
   )
 }

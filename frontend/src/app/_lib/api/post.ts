@@ -28,6 +28,7 @@ export const postApi = createApi({
     "Bookmarks",
     "Following",
     "Popular",
+    "Categories",
   ],
   refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
@@ -178,11 +179,21 @@ export const postApi = createApi({
       }),
       invalidatesTags: ["Subscriptions"],
     }),
+    getCategories: builder.query({
+      query: () => "/categories",
+      providesTags: ["Categories"],
+      keepUnusedDataFor: 20,
+    }),
+    getTopCategories: builder.query({
+      query: () => "/top-categories",
+      providesTags: ["Categories"],
+    }),
   }),
 });
 
 export const {
   useGetAllPostsQuery,
+  useLazyGetAllPostsQuery,
   useGetBookmarksQuery,
   useLazyGetBookmarksQuery,
   useGetPraiseQuery,
@@ -193,6 +204,8 @@ export const {
   useLazyGetPostFromInterestQuery,
   useGetPostQuery,
   useGetPostsFeedQuery,
+  useGetCategoriesQuery,
+  useGetTopCategoriesQuery,
   useLazyGetPostsFeedQuery,
   useGetPostsPopularQuery,
   useLazyGetPostsPopularQuery,

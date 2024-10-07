@@ -66,7 +66,7 @@ export default function PostPage(props: Partial<Post>) {
         </div> : (
           <div ref={ref}>
 
-            <PostDisplay isAuthorPost={false} hideReaction {...(props as Post)} />
+            <PostDisplay isAuthorPost={false} hideReaction shadow={false} {...(props as Post)} />
             <ReadDetect reads={reads as string[]} id={(id || _id) as string} />
           </div>
         )}

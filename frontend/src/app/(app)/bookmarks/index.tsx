@@ -21,6 +21,7 @@ export default function Bookmarks() {
           limit={10}
           isLoading={isLoading || isFetchingBookmarks}
           error={false}
+          className="!gap-1"
           storageKey={"feed"}
           loadMore={(page) => loadMoreItems(page, getBookmarks)}
           initialData={bookmarks}

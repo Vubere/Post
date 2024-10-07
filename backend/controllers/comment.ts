@@ -103,7 +103,6 @@ async function getPostComments(
   if (!req.query.postId)
     return next(new CustomError("field postId is missing", 400));
   else req.query.postId = new Types.ObjectId(req.query.postId as string) as any;
-
   const commentQuery = commentApiFeaturesAggregation(req.query, {}).aggregate();
 
   const comment = await commentQuery;
@@ -137,14 +136,12 @@ async function getComment(req: CommentConfirmRequest, res: Response) {
     .json(jsend("success", comment, "comment fetched successfully!"));
 }
 async function deleteComment(req: CommentConfirmRequest, res: Response) {
-  if (req.params.id === req.comment.id) {
-    await Comment.findByIdAndDelete(req.comment._id);
-    await Post.findByIdAndUpdate(req.comment.postId, {
-      $pull: { comments: req.comment.id },
-    });
+  await Comment.findByIdAndDelete(req.comment._id);
+  await Post.findByIdAndUpdate(req.comment.postId, {
+    $pull: { comments: req.comment.id },
+  });
 
-    res.status(204).json(jsend("success", undefined, "comment deleted!"));
-  }
+  res.status(204).json(jsend("success", undefined, "comment deleted!"));
 }
 
 function validateUpdateRequestBody(body: Record<string, any>) {

@@ -11,6 +11,7 @@ interface Props {
   initialData: any[];
   Element: ComponentType<any>;
   limit?: number;
+  className?: string;
   componentExtraProps?: Record<string, any>;
 }
 
@@ -22,6 +23,7 @@ const InfiniteScroll: React.FC<Props> = ({
   Element,
   error,
   limit,
+  className,
   storageKey,
   componentExtraProps,
 }) => {
@@ -47,38 +49,45 @@ const InfiniteScroll: React.FC<Props> = ({
   };
 
   async function loadMoreData(page: number) {
-    const response = await loadMore(page);
-    setToFetch(response?.length === (limit || 10));
-    const newData = [...data, ...response];
-    setData(newData);
-    saveDataToStorage(newData);
+    try {
+
+      const response = await loadMore(page);
+      setToFetch(response?.length === (limit || 10));
+      const newData = [...data, ...response];
+      setData(newData);
+      saveDataToStorage(newData);
+    } catch (err) {
+      console.log(err)
+    }
   };
 
-  const action = () => {
-    if (hasMore && !isLoading && data.length >= (limit || 10)) {
+  const action = useCallback(() => {
+    if (hasMore && !isLoading && data.length === (limit || 10)) {
       const pageNext = pageCount.current + 1;
       setPage(pageNext);
       loadMoreData(pageNext);
       pageCount.current = pageNext;
     }
-  };
+  }, [hasMore, isLoading, data, limit]);
 
   useEffect(() => {
     if (storageKey) {
       loadDataFromStorage();
     }
   }, [storageKey]);
-
-  console.log(isLoading)
-
+  useEffect(() => {
+    if (initialData.length > 0) {
+      setData(initialData);
+    }
+  }, [initialData]);
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className={`flex flex-col gap-4 w-full h-full  ${className}`}>
       {data.map((item, index) => (
         <Element key={index + item._id} {...(componentExtraProps || {})} {...item} />
       ))}
-      {isLoading && <Spin />}
+      {isLoading && <div className="text-center animate-ping font-bold text-[23px] text-[#373737] max-w-[270px] mx-auto h-[40px]">...</div>}
       {error && <div>Error loading data</div>}
-      {toFetch && !isLoading && <InView action={action} />}
+      {toFetch && !isLoading && action && <InView action={action} />}
     </div>
   );
 };

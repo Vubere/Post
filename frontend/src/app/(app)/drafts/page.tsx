@@ -21,6 +21,7 @@ export default function Drafts() {
       {drafts.length > 0 &&
         <InfiniteScroll
           limit={10}
+          className="!gap-1"
           isLoading={isLoading || isFetching}
           error={false}
           storageKey={"drafts"}

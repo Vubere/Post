@@ -98,7 +98,7 @@ export default function SideNav() {
   const sideNavRef = useRef<HTMLDivElement | null>(null);
   const openSideNavRef = useRef<HTMLButtonElement | null>(null);
   const { info } = useAppSelector((state: RootState) => state.user);
-  const trendingTags = ["programming", "data science", "technology", "machine learning", "politics"]
+  const topCategories = ["programming", "data science", "technology", "machine learning", "politics"]
 
   const headingClass = "font-[600] text-[#111] font-[18px] leading-[27px] w-full text-left "
 
@@ -159,11 +159,11 @@ export default function SideNav() {
             </ul>
           </section>
           <section className="flex flex-col gap-4 w-[80%] mb-6">
-            <h3 className={headingClass + " flex gap-1"}>Trending Tags <Image src={trendingIcon} alt="" /></h3>
+            <h3 className={headingClass + " flex gap-1 leading-[110%]"}>Top Categories <Image src={trendingIcon} alt="" /></h3>
             <ul className="flex flex-col gap-2 ">
-              {trendingTags.map((tags, i) => (
+              {topCategories.map((category, i) => (
                 <li key={i}>
-                  <Link href={tags} className="hover:text-[#543ee0]">#{tags}</Link>
+                  <Link href={`${ROUTES.category.replace(":category", category)}`} className="hover:text-[#543ee0]">#{category}</Link>
                 </li>
               ))
               }

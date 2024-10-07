@@ -21,7 +21,7 @@ export enum ROUTES {
   postId = ROUTES.post + "/:id",
   connect = "/connect",
   following = "/following/:id",
-  category = "/catogery?name=:name",
+  category = "/category/:category",
   followers = "/followers/:id",
   chat = "/chat",
   chatId = ROUTES.chat + "/:id",

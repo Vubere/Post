@@ -452,6 +452,29 @@ async function isRequestersPost(
   }
   next();
 }
+async function getCategories(
+  req: PostConfirmRequest,
+  res: Response,
+  next: NextFunction
+) {
+  const categoriesData = await Category.find({}).sort({ usage: -1 });
+  const categories = categoriesData.map((category) => {
+    return category.name;
+  });
+  res
+    .status(STATUS_CODES.success.OK)
+    .json(jsend("success", categories, "categories fetched successfully!"));
+}
+async function getTopCategories(
+  req: PostConfirmRequest,
+  res: Response,
+  next: NextFunction
+) {
+  const categories = await Category.find({}).sort({ usage: -1 }).limit(5);
+  res
+    .status(STATUS_CODES.success.OK)
+    .json(jsend("success", categories, "categories fetched successfully!"));
+}
 
 const postExports = {
   createPost,
@@ -472,6 +495,8 @@ const postExports = {
   clickPost,
   readPost,
   getPostFromFollowings,
+  getCategories,
+  getTopCategories,
 };
 
 export default wrapModuleFunctionsInAsyncErrorHandler(postExports);

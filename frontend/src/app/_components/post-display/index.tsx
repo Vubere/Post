@@ -20,9 +20,10 @@ interface PostDisplay extends Post {
   isAuthorPost?: boolean;
   className?: string,
   hideReaction?: boolean,
+  shadow?: boolean
 }
 
-export default function PostDisplay({ hideReaction, className, ...post }: PostDisplay) {
+export default function PostDisplay({ hideReaction, className, shadow = true, ...post }: PostDisplay) {
   const { info } = useAppSelector((state: RootState) => state.user)
   const author = post?.authorDetails || post?.author;
   const isAuthorPost = typeof author === "string" ? author === info?._id : author?._id === info?._id;
@@ -77,7 +78,7 @@ export default function PostDisplay({ hideReaction, className, ...post }: PostDi
     )
   }
   return (
-    <article className={"px-2 " + className} ref={postContainerRef}>
+    <article className={`p-2 px-4 ${shadow ? "shadow-[#37373744] shadow-[0_4px_12px_rgba(0,0,0,0.1)]" : ""} ${className}`} ref={postContainerRef}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 relative">
 
@@ -132,7 +133,7 @@ export default function PostDisplay({ hideReaction, className, ...post }: PostDi
           <div className="w-[95%] mx-auto h-full pl-2 border-l-4 border-[#0005]  ">
             {post.sharedPostDetails ? (
               <Link href={ROUTES.postId.replace(":id", `/${post?.sharedPostDetails?.id || post?.sharedPostDetails?._id}`)} className="block" onClick={() => postClicked(post?.sharedPostDetails?.id || post?.sharedPostDetails?._id)}>
-                <PostDisplay {...(post?.sharedPostDetails as Post)} hideReaction isAuthorPost={false} />
+                <PostDisplay {...(post?.sharedPostDetails as Post)} shadow={false} hideReaction isAuthorPost={false} />
               </Link>
             ) : null}
           </div>

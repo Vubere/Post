@@ -8,125 +8,129 @@ import { useGetBookmarksQuery, useGetPostFromFollowingsQuery, useGetPostFromInte
 import { loadMoreItems } from "@/app/_lib/services";
 import { Post } from "@/app/_lib/type";
 import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
+import { ref } from "yup";
 
 
 export default function Feed() {
-  const { data, isLoading, isFetching, refetch } = useGetPostsFeedQuery({
+  const { data, isLoading, refetch } = useGetPostsFeedQuery({
     page: 1,
     limit: 10
   });
-  const [getPostsFeed, { isLoading: isFetchingFeed }] = useLazyGetPostsFeedQuery();
   const { data: popularData, isLoading: popularDataLoading, refetch: refetchPopular } = useGetPostsPopularQuery({});
-  const [getPostPopular, { isLoading: isFetchingPopular }] = useLazyGetPostsPopularQuery();
   const { data: followingsData, isLoading: followingsDataLoading, refetch: refetchFollowings } = useGetPostFromFollowingsQuery({})
-  const [getPostsFollowing, { isLoading: isFetchingFollowing }] = useLazyGetPostFromFollowingsQuery();
-  // const { data: interestData, isLoading: interestDataLoading } = useGetPostFromInterestQuery({});
-  // const [getPostInterest, { isLoading: isFetchingInterest }] = useLazyGetPostFromInterestQuery();
+
 
   const feed = data?.data || [];
   const popular = popularData?.data || [];
   const following = followingsData?.data || [];
-  // const interest = interestData?.data || [];
-  console.log(isLoading, isFetchingFeed)
+
   return (
-    <PageContainer>
+    <div>
       <Tab items={[
         {
           title: "Feed",
           content: (
-            <>
-
-              {feed.length > 0 && <InfiniteScroll
-                limit={10}
-                isLoading={isLoading || isFetchingFeed}
-                error={false}
-                storageKey={"feed"}
-                loadMore={(page) => loadMoreItems(page, getPostsFeed)}
-                initialData={feed}
-                hasMore={feed?.length === 10}
-                Element={PostDisplay}
-                componentExtraProps={{ validate: refetch }}
-              />}
-
-              {(!feed.length && !isLoading) ?
-                <div className={"w-full" + SECTION_CLASSNAME}>
-                  <Empty />
-                </div>
-                : null
-              }
-            </>
+            <FeedData initialDataLoading={isLoading} initialData={feed} refetch={refetch} />
           ),
           loading: isLoading
         },
         {
           title: "Following",
           content: (
-            <>
-
-              {following.length > 0 && <InfiniteScroll
-                limit={10}
-                isLoading={followingsDataLoading || isFetchingFollowing}
-                error={false}
-                storageKey={"following"}
-                loadMore={(page) => loadMoreItems(page, getPostsFollowing)}
-                initialData={following}
-                hasMore={data?.count < 10}
-                Element={PostDisplay}
-                componentExtraProps={{ validate: refetchFollowings }}
-              />}
-
-              {(!following.length && !isLoading) ?
-                <div className={"w-full" + SECTION_CLASSNAME}>
-                  <Empty />
-                </div>
-                : null
-              }
-            </>
+            <FollowingData initialDataLoading={followingsDataLoading} initialData={following} refetch={refetchFollowings} />
           ),
           loading: followingsDataLoading
         },
-        // {
-        //   title: "Interest",
-        //   content: (
-        //     <>
-        //       {interest.length > 0 && <InfiniteScroll
-        //         isLoading={interestDataLoading || isFetchingInterest}
-        //         error={false}
-        //         storageKey={"interest"}
-        //         loadMore={(page) => loadMoreItems(page, getPostInterest)}
-        //         initialData={interest}
-        //         hasMore={data?.count < 10}
-        //         Element={PostDisplay}
-        //       />}
-        //       {(!interest.length && !isLoading) ?
-        //         <div className={"w-full" + SECTION_CLASSNAME}> <Empty /></div>
-        //         : null}
-        //     </>
-        //   ),
-        //   loading: interestDataLoading
-        // },
         {
           title: "Top",
           content: (
-            <>{popular.length > 0 && <InfiniteScroll
-              isLoading={popularDataLoading || isFetchingPopular}
-              error={false}
-              storageKey={"popular"}
-              loadMore={(page) => loadMoreItems(page, getPostPopular)}
-              initialData={popular}
-              hasMore={data?.count < 10}
-              Element={PostDisplay}
-              componentExtraProps={{ validate: refetchPopular }}
-            />}
-              {(!popular.length && !isLoading) ?
-                <div className={"w-full" + SECTION_CLASSNAME}> <Empty /></div>
-                : null}
-            </>
+            <PopularData initialDataLoading={popularDataLoading} initialData={popular} refetch={refetchPopular} />
           ),
           loading: popularDataLoading
         },
       ]} loading={isLoading} />
 
-    </PageContainer >
+    </div>
+  )
+}
+
+function FeedData({ initialData, initialDataLoading, refetch }: { initialData: any[], initialDataLoading: boolean, refetch: () => any }) {
+  const [getPostsFeed, { isLoading: isLoadingFeed, isFetching: isFetchingFeed }] = useLazyGetPostsFeedQuery();
+  const feedLoading = isLoadingFeed || isFetchingFeed || initialDataLoading;
+  return (
+    <>
+      {
+        initialData.length > 0 && <InfiniteScroll
+          limit={10}
+          isLoading={feedLoading}
+          className="!gap-1"
+          error={false}
+          storageKey={"feed"}
+          loadMore={(page) => loadMoreItems(page, getPostsFeed)}
+          initialData={initialData}
+          hasMore={initialData?.length === 10}
+          Element={PostDisplay}
+          componentExtraProps={{ validate: refetch }}
+        />}
+
+      {(!initialData.length && !initialDataLoading) ?
+        <div className={"w-full" + SECTION_CLASSNAME}>
+          <Empty />
+        </div>
+        : null
+      }
+    </>
+  )
+}
+
+function PopularData({ initialData, initialDataLoading, refetch }: { initialData: any[], initialDataLoading: boolean, refetch: () => any }) {
+  const [getPostPopular, { isLoading: isLoadingPopular, isFetching: isFetchingPopular }] = useLazyGetPostsPopularQuery();
+  const popularLoading = isLoadingPopular || isFetchingPopular || initialDataLoading;
+  return (
+    <>
+      {
+        initialData.length > 0 && <InfiniteScroll
+          isLoading={popularLoading}
+          error={false}
+          storageKey={"initialData"}
+          loadMore={(page) => loadMoreItems(page, getPostPopular)}
+          initialData={initialData}
+          hasMore={initialData?.length === 10}
+          Element={PostDisplay}
+          componentExtraProps={{ validate: refetch }}
+        />}
+      {(!initialData.length && !initialDataLoading) ?
+        <div className={"w-full" + SECTION_CLASSNAME}> <Empty /></div>
+        : null}
+    </>
+  )
+}
+
+function FollowingData({ initialData, initialDataLoading, refetch }: { initialData: any[], initialDataLoading: boolean, refetch: () => any }) {
+  const [getPostsFollowing, { isLoading: isLoadingFollowing, isFetching: isFetchingFollowing }] = useLazyGetPostFromFollowingsQuery();
+  const followingLoading = isLoadingFollowing || isFetchingFollowing;
+
+  return (
+    <>
+      {
+        initialData.length > 0 && <InfiniteScroll
+          limit={10}
+          isLoading={followingLoading}
+          error={false}
+          storageKey={"following"}
+          loadMore={(page) => loadMoreItems(page, getPostsFollowing)}
+          initialData={initialData}
+          hasMore={initialData?.length === 10}
+          Element={PostDisplay}
+          componentExtraProps={{ validate: refetch }}
+        />}
+
+      {(!initialData.length && !initialDataLoading) ?
+        <div className={"w-full" + SECTION_CLASSNAME}>
+          <Empty />
+        </div>
+        : null
+      }
+    </>
   )
 }

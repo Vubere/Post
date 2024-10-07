@@ -145,13 +145,11 @@ function getComment(req, res) {
 }
 function deleteComment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.params.id === req.comment.id) {
-            yield comment_1.default.findByIdAndDelete(req.comment._id);
-            yield post_1.default.findByIdAndUpdate(req.comment.postId, {
-                $pull: { comments: req.comment.id },
-            });
-            res.status(204).json((0, utils_1.jsend)("success", undefined, "comment deleted!"));
-        }
+        yield comment_1.default.findByIdAndDelete(req.comment._id);
+        yield post_1.default.findByIdAndUpdate(req.comment.postId, {
+            $pull: { comments: req.comment.id },
+        });
+        res.status(204).json((0, utils_1.jsend)("success", undefined, "comment deleted!"));
     });
 }
 function validateUpdateRequestBody(body) {

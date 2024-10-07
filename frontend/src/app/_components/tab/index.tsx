@@ -24,16 +24,19 @@ export default function Tab({ items, className, loading }: Props) {
   }
 
   return (
-    <div className={"flex flex-col gap-2 " + className}>
-      <div className="flex flex-row gap-[1px] w-full max-w-[100%] overflow-x-auto">
+    <div className={"grid grid-rows-[40px_1fr] h-full max-h-[calc(100vh-80px)] w-full bg-[#37373aa] overflow-hidden " + className}>
+      <div className="flex flex-row gap-[1px] w-full max-w-[100%] overflow-x-auto text-[#777777]">
         {headers.map(title => (
-          <h5 key={title} className={`  font-medium text-[14px] sm:text-[16px] shadow-xl md:text-[18px] lg:text-[21px] p-1 px-2 bg-white min-w-[130px] cursor-pointer w-full text-center hover:border ${currentTab === title ? " border-b border-1 border-[#0003] text-[#777777]" : ""}`} role="link" onClick={() => onHeaderClick(title)}>{title}</h5>
+          <h5 key={title} className={`  font-medium text-[14px] sm:text-[16px] shadow-xl md:text-[18px] lg:text-[21px] p-1 px-2 bg-white min-w-[130px] cursor-pointer w-full text-center hover:border ${currentTab === title ? " border-b border-1 border-[#0003] text-black" : ""}`} role="link" onClick={() => onHeaderClick(title)}>{title}</h5>
         ))}
       </div>
-      <div className="p-2 sm:p-3 bg-[#37373aa]">
+      <div className="p-2 sm:p-3 bg-[#37373aa] h-full max-h-full overflow-y-auto !pb-[100px]">
         {currentDisplay !== undefined && !currentDisplay.loading ? (
           !isEmpty(currentDisplay.content) ?
-            currentDisplay.content :
+            <div>
+              {currentDisplay.content}
+            </div>
+            :
             <div className="flex w-full h-[300px] items-center justify-center">
               <div>
                 <Empty />
@@ -45,7 +48,6 @@ export default function Tab({ items, className, loading }: Props) {
             <Skeleton />
           </div>
         )}
-
       </div>
     </div>
   )
