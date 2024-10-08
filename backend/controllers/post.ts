@@ -26,6 +26,7 @@ const postApiFeaturesAggregation = (
     query.status !== undefined && !isNaN(+query.status)
       ? Number(query.status)
       : 1;
+  query.deleted = false;
   return new ApiFeaturesAggregation(
     [
       {
@@ -140,14 +141,12 @@ async function getPost(req: PostConfirmRequest, res: Response) {
     .json(jsend("success", post?.[0] || post, "post fetched successfully!"));
 }
 async function deletePost(req: PostConfirmRequest, res: Response) {
-  if (req.params.id === req.post.id) {
-    await Post.findByIdAndUpdate(
-      req.post._id,
-      { active: false },
-      { runValidators: true }
-    );
-    res.status(204).json(jsend("success", undefined, "post deleted!"));
-  }
+  await Post.findByIdAndUpdate(
+    req.params.id,
+    { deleted: true },
+    { runValidators: true }
+  );
+  res.status(204).json(jsend("success", undefined, "post deleted!"));
 }
 
 function validateUpdateRequestBody(body: Record<string, any>) {
@@ -167,6 +166,7 @@ async function updatePost(
   const post = await Post.findById(req.post._id);
   if (post !== null) {
     const { id, ...postDataToUpdate } = req.body;
+    const categories = postDataToUpdate?.categories;
     const validated = validateUpdateRequestBody(postDataToUpdate);
     if (typeof postDataToUpdate !== "object") {
       next(
@@ -198,6 +198,25 @@ async function updatePost(
     res
       .status(STATUS_CODES.success.OK)
       .json(jsend("success!", postDetails, "post updated successfully"));
+    if (categories) {
+      setImmediate(async () => {
+        try {
+          for (let category of categories) {
+            const categoryCheck = await Category.findOne({ name: category });
+            if (!categoryCheck) {
+              const newCategory = await Category.create({ name: category });
+              postDetails.categories.push(newCategory._id);
+            } else {
+              await Category.findByIdAndUpdate(categoryCheck._id, {
+                $inc: { usage: 1 },
+              });
+            }
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      });
+    }
     return;
   }
   next(new CustomError("post not found", STATUS_CODES.clientError.Not_Found));
@@ -413,6 +432,27 @@ async function addPaywall(
     .status(STATUS_CODES.success.OK)
     .json(jsend("success", undefined, "post paywall settings updated!"));
 }
+async function payPaywallFee(
+  req: PostConfirmRequest,
+  res: Response,
+  next: NextFunction
+) {
+  await Post.findByIdAndUpdate(
+    req.body.id,
+    {
+      $push: {
+        paywallPayedBy: req.requesterId,
+      },
+    },
+    {
+      runValidators: true,
+    }
+  );
+
+  res
+    .status(STATUS_CODES.success.OK)
+    .json(jsend("success", undefined, "paywall fee paid successfully!"));
+}
 async function getLikes(...args: [PostConfirmRequest, Response, NextFunction]) {
   const [req, , next] = args;
   req.query.praises = req.query.userId || req.requesterId;
@@ -498,6 +538,7 @@ const postExports = {
   readPost,
   getPostFromFollowings,
   getCategories,
+  payPaywallFee,
   getTopCategories,
 };
 

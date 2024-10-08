@@ -76,8 +76,8 @@ const postSchema = new mongoose_1.default.Schema({
         default: false,
     },
     paywallFee: {
-        type: Number,
-        default: 0,
+        type: String,
+        default: "0",
     },
     paywallPayedBy: {
         type: Object,
@@ -122,6 +122,10 @@ const postSchema = new mongoose_1.default.Schema({
     deleted: {
         type: Boolean,
         default: false,
+    },
+    theme: {
+        type: String,
+        default: "Default",
     },
 }, {
     toJSON: { virtuals: true },

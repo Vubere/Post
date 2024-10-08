@@ -11,6 +11,36 @@ import ImageUploader from "../general/image-uploader";
 import cancel from "@/assets/icons/cancel.png";
 import PostPage from "../post-page";
 import 'react-quill/dist/quill.snow.css';
+import { Familjen_Grotesk, Jacques_Francois, Merriweather as Mw, Roboto as Rb, Bree_Serif } from "next/font/google";
+import { User } from "@/app/_lib/type";
+
+const Default = Familjen_Grotesk({
+  weight: ["400", "400", "700"],
+  subsets: ["latin"]
+});
+const Jacques = Jacques_Francois({
+  weight: ["400"],
+  subsets: ["latin"]
+})
+const Roboto = Rb({
+  weight: ["400", "400", "500", "700"],
+  subsets: ["latin"]
+});
+const BreeSerif = Bree_Serif({
+  weight: ["400"],
+  subsets: ["latin"]
+});
+const Merriweather = Mw({
+  weight: ["400", "700", "900"],
+  subsets: ["latin"]
+});
+const themesConfig = {
+  Merriweather,
+  BreeSerif,
+  Roboto,
+  Jacques,
+  Default
+}
 
 const themes = ["Roboto", "BreeSerif", "Jacques", "Merriweather", "Default"] as const;
 
@@ -150,7 +180,7 @@ function Editor(props: EditorProps) {
             }} showIsDraggable />
           </div>
           <div className="w-full">
-            <NormalInput type="select" label="Theme" name="theme" onChange={handleThemChange} value={theme} options={themesOptions} defaultValue="Default" />
+            <NormalInput type="select" className={`select `} label="Theme" name="theme" onChange={handleThemChange} value={theme} options={themesOptions} defaultValue="Default" />
           </div>
           {/* insert heading */}
           <div className="w-full">
@@ -234,7 +264,7 @@ function Editor(props: EditorProps) {
                 </div>
               </Button>
             </div>
-            <PostPage content={post} authorDetails={info ?? undefined} title={heading} coverPhoto={coverLink} theme={theme ?? "Default"} />
+            <PostPage post={{ content: post, authorDetails: info ?? undefined, title: heading, coverPhoto: coverLink, theme: theme ?? "Default" }} user={info as User} />
           </div>
         )
       }

@@ -41,7 +41,7 @@ export const postApi = createApi({
       invalidatesTags: ["Token", "Feed"],
     }),
     updatePost: builder.mutation({
-      query: ({ id, ...data }: Post) => ({
+      query: ({ id, ...data }: Partial<Post>) => ({
         url: `/${id}`,
         method: "PATCH",
         body: { id, ...data },
@@ -188,6 +188,21 @@ export const postApi = createApi({
       query: () => "/top-categories",
       providesTags: ["Categories"],
     }),
+    payPaywallFee: builder.mutation({
+      query: (body: { id: string }) => ({
+        url: "/pay-paywall-fee",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: [
+        "Post",
+        "Feed",
+        "Following",
+        "Popular",
+        "Bookmarks",
+        "Interest",
+      ],
+    }),
   }),
 });
 
@@ -222,6 +237,7 @@ export const {
   useUnBookmarkPostMutation,
   useGetUserPostQuery,
   useLazyGetUserPostQuery,
+  usePayPaywallFeeMutation,
 } = postApi;
 export const {
   createPost,

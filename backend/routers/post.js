@@ -17,7 +17,7 @@ const post_1 = __importDefault(require("../controllers/post"));
 const post_2 = __importDefault(require("../models/post"));
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const utils_1 = require("../lib/utils");
-const { createPost, getAllPosts, updatePost, getPost, deletePost, praisePost, unpraisePost, getUserPost, addPaywall, getLikes, isRequestersPost, getBookmarks, addToBookmarks, removeFromBookmarks, getPostFromFollowings, viewPost, clickPost, readPost, getCategories, getTopCategories, } = post_1.default;
+const { createPost, getAllPosts, updatePost, getPost, deletePost, praisePost, unpraisePost, getUserPost, addPaywall, payPaywallFee, getLikes, isRequestersPost, getBookmarks, addToBookmarks, removeFromBookmarks, getPostFromFollowings, viewPost, clickPost, readPost, getCategories, getTopCategories, } = post_1.default;
 const router = express_1.default.Router();
 router.param("id", (req, res, next, value) => __awaiter(void 0, void 0, void 0, function* () {
     if (!value.match(/^[0-9a-fA-F]{24}$/)) {
@@ -68,6 +68,7 @@ router
 router.route("/following").get(getPostFromFollowings);
 router.route("/categories").get(getCategories);
 router.route("/top-categories").get(getTopCategories);
+router.route("/pay-paywall-fee").patch(payPaywallFee);
 router
     .route("/:id")
     .patch(isRequestersPost, updatePost)

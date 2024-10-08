@@ -37,6 +37,31 @@ async function getPost(id: string) {
     });
   }
 }
+async function getProfile() {
+  try {
+    const cookieStore = cookies();
+    const token = cookieStore.get("token")?.value;
+    if (token) {
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/profile`, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      }).then(res => res.json());
+      return { data: res?.data, status: "success" };
+    } else {
+      return ({
+        message: "no token ent",
+        status: "failed",
+      });
+    }
+  } catch (error) {
+    return ({
+      error,
+      status: "failed",
+    });
+  }
+}
 
 export async function generateMetadata({ params: { id } }: EditPost) {
   const post = await getPost(id);
@@ -50,14 +75,16 @@ export async function generateMetadata({ params: { id } }: EditPost) {
 
 export default async function Post({ params: { id } }: EditPost) {
   const postData = await getPost(id);
+  const currentUser = await getProfile();
   const post = postData?.data;
+  const user = currentUser?.data;
   if (postData?.status === "failed") {
     return <div>Error fetching post, reload page!</div>
   }
   return (
     <PageContainer>
       <div className="pt-4 px-2 sm:px-4 md:px-6 lg:px-8 max-w-[700px] mx-auto">
-        <PostPage {...post} />
+        <PostPage post={post} user={user} />
         {/* reaction */}
         <div className="mt-8">
           <PostReactions showReads showViews isPostPage {...post} />

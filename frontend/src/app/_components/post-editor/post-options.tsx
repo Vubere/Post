@@ -1,9 +1,11 @@
 import Button from "@/app/_components/general/button";
 import Input from "@/app/_components/input";
 import { useCreatePostMutation, useGetCategoriesQuery, useUpdatePostMutation } from "@/app/_lib/api/post";
+import { ROUTES } from "@/app/_lib/routes";
 import { Post, PostPayload } from "@/app/_lib/type";
 import { Modal } from "antd";
 import { isEmpty } from "lodash";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -22,7 +24,7 @@ type Props = {
 export default function PostOptions({ open, onCancel, postDetails, resetDetails, post }: Props) {
   const accessOptions = [{ label: "All", value: "subscribers,followers,public" }, { label: "Subscribers", value: "subscribers" }, { label: "Followers", value: "subscribers,followers" }];
   const paywallOptions = [{ label: "All(including subscribers)", value: "subscribers,followers,public" }, { label: "Followers", value: "followers,public" }, { label: "Public", value: "public" }];
-  const typeOptions = [{ label: "Post", value: "post" }, { label: "Essay", value: "Essay" }, { label: "Short Story", value: "short story" }];
+  const typeOptions = [{ label: "Post", value: "post" }, { label: "Article", value: "Article" }, { label: "Essay", value: "Essay" }, { label: "Short Story", value: "short story" }];
   const { register, formState, control, getValues, reset } = useForm();
   const [sendPost, {
     isLoading
@@ -32,10 +34,11 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails,
   }] = useUpdatePostMutation();
   const paywalled = !!useWatch({
     control,
-    name: "paywall"
+    name: "paywalledUsers"
   });
   const { data: categoriesData } = useGetCategoriesQuery({});
   const categories = useMemo(() => categoriesData?.data || [], [categoriesData]);
+  const router = useRouter();
 
   useEffect(() => {
     if (post) {
@@ -52,34 +55,38 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails,
   const onSubmit = (status: 0 | 1) => {
     const data = getValues();
     const payload = {
+      ...postDetails,
       ...data,
-      paywalledUsers: (data.paywall || "").split(","),
-      isPaywalled: !!data.paywall?.length,
+      paywalledUsers: (data.paywalledUsers || "").split(","),
+      isPaywalled: !!data.paywalledUsers?.length,
       userAccess: (data.userAccess || "").split(","),
       status,
-      ...postDetails
     }
     if (isEmpty(post)) {
 
       sendPost(payload as PostPayload).then((res) => {
-        if (res?.data?.data?.success === "success") {
-          toast.success(res?.data?.data?.message || "success");
+        if (res?.data?.status === "success") {
+          toast.success(res?.data?.message || "success");
           reset();
           resetDetails();
+          status === 1 ? router.push(ROUTES.dashboard) : router.push(
+            res?.data?.data?.id ? (
+              ROUTES.postId.replace(":id", res?.data?.data?.id))
+              : ROUTES.dashboard);
         }
       });
     } else {
       editPost({
-        id: post?.id,
+        id: post?.id || post?._id,
         ...postDetails,
-        ...data,
-        paywalledUsers: (data.paywall || "").split(","),
-        isPaywalled: !!data.paywall?.length,
-        userAccess: (data.userAccess || "").split(","),
-        status,
+        ...payload,
       } as Post).then((res) => {
         if (res?.data?.status === "success!") {
           toast.success(res?.data?.message || "success");
+          status === 1 ? router.push(ROUTES.dashboard) : router.push(
+            res?.data?.data?.id ? (
+              ROUTES.postId.replace(":id", res?.data?.data?.id))
+              : ROUTES.dashboard);
         }
       });
     }

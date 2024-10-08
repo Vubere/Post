@@ -111,7 +111,7 @@ export function SubscribeButton({ user }: { user: User }) {
             getProfile();
           }
         }),
-        title: `Subscribe to ${user?.username} for subscription fee of ${user.subscriptionFee}?`,
+        title: `Subscribe to ${user?.username} for subscription fee of ${user.subscriptionFee} collects?`,
         okText: "Subscribe"
       })
     }

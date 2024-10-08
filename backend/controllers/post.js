@@ -63,6 +63,7 @@ const postApiFeaturesAggregation = (query, authorQuery) => {
         query.status !== undefined && !isNaN(+query.status)
             ? Number(query.status)
             : 1;
+    query.deleted = false;
     return new api_features_1.ApiFeaturesAggregation([
         {
             from: "users",
@@ -161,10 +162,8 @@ function getPost(req, res) {
 }
 function deletePost(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.params.id === req.post.id) {
-            yield post_1.default.findByIdAndUpdate(req.post._id, { active: false }, { runValidators: true });
-            res.status(204).json((0, utils_1.jsend)("success", undefined, "post deleted!"));
-        }
+        yield post_1.default.findByIdAndUpdate(req.params.id, { deleted: true }, { runValidators: true });
+        res.status(204).json((0, utils_1.jsend)("success", undefined, "post deleted!"));
     });
 }
 function validateUpdateRequestBody(body) {
@@ -181,6 +180,7 @@ function updatePost(req, res, next) {
         const post = yield post_1.default.findById(req.post._id);
         if (post !== null) {
             const _a = req.body, { id } = _a, postDataToUpdate = __rest(_a, ["id"]);
+            const categories = postDataToUpdate === null || postDataToUpdate === void 0 ? void 0 : postDataToUpdate.categories;
             const validated = validateUpdateRequestBody(postDataToUpdate);
             if (typeof postDataToUpdate !== "object") {
                 next(new custom_error_1.default("invalid post body sent!", utils_1.STATUS_CODES.clientError.Bad_Request));
@@ -196,6 +196,27 @@ function updatePost(req, res, next) {
             res
                 .status(utils_1.STATUS_CODES.success.OK)
                 .json((0, utils_1.jsend)("success!", postDetails, "post updated successfully"));
+            if (categories) {
+                setImmediate(() => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        for (let category of categories) {
+                            const categoryCheck = yield category_1.default.findOne({ name: category });
+                            if (!categoryCheck) {
+                                const newCategory = yield category_1.default.create({ name: category });
+                                postDetails.categories.push(newCategory._id);
+                            }
+                            else {
+                                yield category_1.default.findByIdAndUpdate(categoryCheck._id, {
+                                    $inc: { usage: 1 },
+                                });
+                            }
+                        }
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
+                }));
+            }
             return;
         }
         next(new custom_error_1.default("post not found", utils_1.STATUS_CODES.clientError.Not_Found));
@@ -359,6 +380,20 @@ function addPaywall(req, res, next) {
             .json((0, utils_1.jsend)("success", undefined, "post paywall settings updated!"));
     });
 }
+function payPaywallFee(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield post_1.default.findByIdAndUpdate(req.body.id, {
+            $push: {
+                paywallPayedBy: req.requesterId,
+            },
+        }, {
+            runValidators: true,
+        });
+        res
+            .status(utils_1.STATUS_CODES.success.OK)
+            .json((0, utils_1.jsend)("success", undefined, "paywall fee paid successfully!"));
+    });
+}
 function getLikes(...args) {
     return __awaiter(this, void 0, void 0, function* () {
         const [req, , next] = args;
@@ -436,6 +471,7 @@ const postExports = {
     readPost,
     getPostFromFollowings,
     getCategories,
+    payPaywallFee,
     getTopCategories,
 };
 exports.default = (0, aynsc_error_handler_1.wrapModuleFunctionsInAsyncErrorHandler)(postExports);

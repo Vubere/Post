@@ -1,3 +1,5 @@
+import { Post, User } from "../type";
+
 export async function saveTokenAsCookie(token: string) {
   try {
     const response = await fetch("/api/set-cookie", {
@@ -34,4 +36,34 @@ export const loadMoreItems = async (
   } catch (err) {
     return [];
   }
+};
+export const paywallCheck = ({ user, post }: { user: User; post: Post }) => {
+  const { isPaywalled, paywalledUsers, authorDetails, paywallPayedBy } = post;
+  const authorId = authorDetails?.id || authorDetails?._id;
+  const userId = (user?.id || user?._id) as string;
+
+  if (
+    !isPaywalled ||
+    paywallPayedBy?.includes((user?._id || user?.id) as string) ||
+    authorId === userId ||
+    paywalledUsers?.length === 0
+  )
+    return false;
+  const restrictionLevel = paywalledUsers?.includes("subscribers")
+    ? "subscribers"
+    : paywalledUsers?.includes("followers")
+    ? "followers"
+    : "public";
+  if (
+    restrictionLevel !== "subscribers" &&
+    authorDetails?.subscribers?.includes(userId)
+  )
+    return false;
+  if (
+    restrictionLevel !== "followers" &&
+    authorDetails?.followers?.includes(userId)
+  )
+    return false;
+
+  return true;
 };

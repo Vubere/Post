@@ -110,8 +110,8 @@ const postSchema = new mongoose.Schema<IPost>(
       default: false,
     },
     paywallFee: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: "0",
     },
     paywallPayedBy: {
       type: Object,
@@ -156,6 +156,10 @@ const postSchema = new mongoose.Schema<IPost>(
     deleted: {
       type: Boolean,
       default: false,
+    },
+    theme: {
+      type: String,
+      default: "Default",
     },
   },
   {

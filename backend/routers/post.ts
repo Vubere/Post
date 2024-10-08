@@ -16,6 +16,7 @@ const {
   unpraisePost,
   getUserPost,
   addPaywall,
+  payPaywallFee,
   getLikes,
   isRequestersPost,
   getBookmarks,
@@ -93,6 +94,7 @@ router
 router.route("/following").get(getPostFromFollowings);
 router.route("/categories").get(getCategories);
 router.route("/top-categories").get(getTopCategories);
+router.route("/pay-paywall-fee").patch(payPaywallFee);
 
 router
   .route("/:id")
