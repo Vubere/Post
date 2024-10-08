@@ -50,7 +50,6 @@ router
     .route("/feed")
     .get(function (...args) {
     const [req, , next] = args;
-    console.log(next);
     if (next)
         next();
 }, getAllPosts);

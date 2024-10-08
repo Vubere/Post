@@ -30,6 +30,7 @@ const {
   getSubscriptions,
   subscribe,
   unsubscribe,
+  setSubscriptionFee,
 } = userControllers;
 const router = express.Router();
 
@@ -89,6 +90,7 @@ router.route("/unfollow/:id").post(unfollowUser);
 
 router.route("/subscribe/:id").post(subscribe);
 router.route("/unsubscribe/:id").post(unsubscribe);
+router.route("/subscription-fee").patch(setSubscriptionFee);
 
 router
   .route("/:id")

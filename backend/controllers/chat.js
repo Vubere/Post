@@ -185,10 +185,8 @@ function deleteChat(chatId, userId) {
 }
 const socketManager = (socket) => {
     socket.on("view_chat_list", (userId) => {
-        console.log("view_chat_list", userId);
         getLatestMessages(userId)
             .then((res) => {
-            console.log("success", res);
             socket.emit("chat_list", res);
         })
             .catch((err) => {
@@ -219,7 +217,6 @@ const socketManager = (socket) => {
         var { chatId } = _a, data = __rest(_a, ["chatId"]);
         sendChat(data)
             .then((res) => {
-            console.log(res);
             socket.to(chatId).emit("receive_message", res);
             socket.emit("receive_message", res);
         })

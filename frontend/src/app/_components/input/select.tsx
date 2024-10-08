@@ -22,6 +22,7 @@ export default function Select(props: Omit<InputProps, "state"> & { onHookChange
 
     } else {
       onChange?.(val, o);
+      onHookChange?.({ target: { value: val, name } });
     }
     extraDisplayRef.current && extraDisplayRef.current.classList.add("hidden");
   };
@@ -86,7 +87,6 @@ export default function Select(props: Omit<InputProps, "state"> & { onHookChange
     if (defaultValue) {
       handleSetValue(defaultValue);
     }
-
   }, [defaultValue])
 
   useEffect(() => {

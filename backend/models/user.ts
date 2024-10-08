@@ -27,6 +27,7 @@ interface IUser extends Document {
   notificationAccess?: Array<"all" | "followers" | "mutuals" | "subscribers">;
   subscribers?: Array<ObjectId>;
   subscriptions?: Array<ObjectId>;
+  subscriptionFee?: string;
   followers?: Array<ObjectId>;
   following?: Array<ObjectId>;
   viewedProfiles?: Array<ObjectId>;
@@ -119,6 +120,10 @@ const userSchema = new mongoose.Schema<IUser>(
     subscribers: {
       type: Array,
       default: [],
+    },
+    subscriptionFee: {
+      type: String,
+      default: "0",
     },
     subscriptions: {
       type: Array,

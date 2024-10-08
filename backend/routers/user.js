@@ -19,7 +19,7 @@ const aynsc_error_handler_1 = require("../lib/utils/aynsc-error-handler");
 const user_2 = __importDefault(require("../models/user"));
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const utils_1 = require("../lib/utils");
-const { getAllUsers, getUser, updateUser, getProfile, deleteUser, updateUserPassword, followUser, unfollowUser, blockUser, unblockUser, updatePrivacySettings, getBlockedUsers, getFollowers, getFollowing, updateInterest, updateSections, viewProfile, getUserAnalytics, getSubscribers, getSubscriptions, subscribe, unsubscribe, } = user_1.default;
+const { getAllUsers, getUser, updateUser, getProfile, deleteUser, updateUserPassword, followUser, unfollowUser, blockUser, unblockUser, updatePrivacySettings, getBlockedUsers, getFollowers, getFollowing, updateInterest, updateSections, viewProfile, getUserAnalytics, getSubscribers, getSubscriptions, subscribe, unsubscribe, setSubscriptionFee, } = user_1.default;
 const router = express_1.default.Router();
 router
     .route("/")
@@ -60,6 +60,7 @@ router.route("/following").get(getFollowing, getAllUsers);
 router.route("/unfollow/:id").post(unfollowUser);
 router.route("/subscribe/:id").post(subscribe);
 router.route("/unsubscribe/:id").post(unsubscribe);
+router.route("/subscription-fee").patch(setSubscriptionFee);
 router
     .route("/:id")
     .patch(updateUser)

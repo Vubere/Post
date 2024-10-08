@@ -258,6 +258,20 @@ async function unsubscribe(
     );
   }
 }
+async function setSubscriptionFee(
+  req: UserConfirmRequest,
+  res: Response,
+  next: NextFunction
+) {
+  const requesterId = req.requesterId;
+  await User.findByIdAndUpdate(requesterId, {
+    subscriptionFee: req.body.subscriptionFee,
+  });
+
+  res
+    .status(STATUS_CODES.success.OK)
+    .json(jsend("success", undefined, "subscription fee updated!"));
+}
 async function followUser(
   req: UserConfirmRequest,
   res: Response,
@@ -579,5 +593,6 @@ const userExports = {
   getSubscriptions,
   subscribe,
   unsubscribe,
+  setSubscriptionFee,
 };
 export default wrapModuleFunctionsInAsyncErrorHandler(userExports);

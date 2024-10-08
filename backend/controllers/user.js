@@ -200,6 +200,17 @@ function unsubscribe(req, res, next) {
         }
     });
 }
+function setSubscriptionFee(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const requesterId = req.requesterId;
+        yield user_1.default.findByIdAndUpdate(requesterId, {
+            subscriptionFee: req.body.subscriptionFee,
+        });
+        res
+            .status(utils_1.STATUS_CODES.success.OK)
+            .json((0, utils_1.jsend)("success", undefined, "subscription fee updated!"));
+    });
+}
 function followUser(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = req.user;
@@ -462,5 +473,6 @@ const userExports = {
     getSubscriptions,
     subscribe,
     unsubscribe,
+    setSubscriptionFee,
 };
 exports.default = (0, aynsc_error_handler_1.wrapModuleFunctionsInAsyncErrorHandler)(userExports);

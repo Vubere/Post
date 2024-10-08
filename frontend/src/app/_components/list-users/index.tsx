@@ -4,7 +4,7 @@ import Image from "next/image";
 import avatar from "@/assets/icons/avatar.png";
 
 import PageContainer from "@/app/_components/general/page-container";
-import FollowButton from "@/app/_components/follow-button";
+import { FollowButton } from "@/app/_components/general/button";
 import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
 import { useAppSelector } from "@/app/_lib/store/hooks";

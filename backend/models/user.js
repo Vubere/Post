@@ -89,6 +89,10 @@ const userSchema = new mongoose_1.default.Schema({
         type: Array,
         default: [],
     },
+    subscriptionFee: {
+        type: String,
+        default: "0",
+    },
     subscriptions: {
         type: Array,
         default: [],

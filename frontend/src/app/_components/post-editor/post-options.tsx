@@ -1,10 +1,10 @@
 import Button from "@/app/_components/general/button";
 import Input from "@/app/_components/input";
-import { useCreatePostMutation, useUpdatePostMutation } from "@/app/_lib/api/post";
+import { useCreatePostMutation, useGetCategoriesQuery, useUpdatePostMutation } from "@/app/_lib/api/post";
 import { Post, PostPayload } from "@/app/_lib/type";
 import { Modal } from "antd";
 import { isEmpty } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -34,6 +34,8 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails,
     control,
     name: "paywall"
   });
+  const { data: categoriesData } = useGetCategoriesQuery({});
+  const categories = useMemo(() => categoriesData?.data || [], [categoriesData]);
 
   useEffect(() => {
     if (post) {
@@ -118,7 +120,7 @@ export default function PostOptions({ open, onCancel, postDetails, resetDetails,
               getValues
             }}
             twHeight="h-auto"
-            multiTextOptions={[]}
+            multiTextOptions={categories}
           />
           <Input
             type="select"

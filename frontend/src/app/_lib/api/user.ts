@@ -144,14 +144,14 @@ export const userApi = createApi({
       query: () => ({ url: "/blocked-users" }),
       providesTags: ["Blocked"],
     }),
-    blockUser: builder.mutation<"Blocked", string>({
+    blockUser: builder.mutation({
       query: (id: string) => ({
         url: `/block/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Blocked", "Followers", "Subscribers"],
     }),
-    unblockUser: builder.mutation<"Blocked", string>({
+    unblockUser: builder.mutation({
       query: (id: string) => ({
         url: `/unblock/${id}`,
         method: "POST",
@@ -166,14 +166,14 @@ export const userApi = createApi({
       query: () => ({ url: "/following" }),
       providesTags: ["Following"],
     }),
-    followUser: builder.mutation<"Following", string>({
+    followUser: builder.mutation({
       query: (id: string) => ({
         url: `/follow/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Following"],
     }),
-    unfollowUser: builder.mutation<"Profile", string>({
+    unfollowUser: builder.mutation({
       query: (id: string) => ({
         url: `/unfollow/${id}`,
         method: "POST",
@@ -188,19 +188,26 @@ export const userApi = createApi({
       query: () => ({ url: "/subscriptions" }),
       providesTags: ["Subscriptions"],
     }),
-    subscribe: builder.mutation<"Subscriptions", string>({
+    subscribe: builder.mutation({
       query: (id: string) => ({
         url: `/subscribe/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Subscriptions"],
     }),
-    unsubscribe: builder.mutation<"Subscriptions", string>({
+    unsubscribe: builder.mutation({
       query: (id: string) => ({
         url: `/unsubscribe/${id}`,
         method: "POST",
       }),
       invalidatesTags: ["Subscriptions"],
+    }),
+    subscriptionFee: builder.mutation({
+      query: (body: { subscriptionFee: number }) => ({
+        url: "/subscription-fee",
+        body,
+        method: "PATCH",
+      }),
     }),
   }),
 });
@@ -234,6 +241,7 @@ export const {
   useGetProfileQuery,
   useLazyGetProfileQuery,
   useLazyGetUserQuery,
+  useSubscriptionFeeMutation,
   util: { getRunningQueriesThunk },
 } = userApi;
 

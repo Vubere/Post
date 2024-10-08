@@ -26,6 +26,7 @@ interface User {
 
   subscribers?: Array<string>;
   subscriptions?: Array<string>;
+  subscriptionFee?: string;
   followers?: Array<string>;
   following?: Array<string>;
   viewedProfiles?: Array<string>;

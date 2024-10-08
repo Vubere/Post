@@ -416,7 +416,6 @@ async function addPaywall(
 async function getLikes(...args: [PostConfirmRequest, Response, NextFunction]) {
   const [req, , next] = args;
   req.query.praises = req.query.userId || req.requesterId;
-  console.log(req.query.praises);
   next();
 }
 async function getUserPost(

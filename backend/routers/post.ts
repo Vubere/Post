@@ -76,7 +76,6 @@ router
   .route("/feed")
   .get(function (...args: [PostConfirmRequest, Response, NextFunction]) {
     const [req, , next] = args;
-    console.log(next);
     if (next) next();
   }, getAllPosts);
 router

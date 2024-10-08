@@ -172,10 +172,8 @@ export const socketManager = (
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) => {
   socket.on("view_chat_list", (userId: string) => {
-    console.log("view_chat_list", userId);
     getLatestMessages(userId)
       .then((res) => {
-        console.log("success", res);
         socket.emit("chat_list", res);
       })
       .catch((err) => {
@@ -223,7 +221,6 @@ export const socketManager = (
     }) => {
       sendChat(data)
         .then((res) => {
-          console.log(res);
           socket.to(chatId).emit("receive_message", res);
           socket.emit("receive_message", res);
         })

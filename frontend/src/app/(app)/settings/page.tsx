@@ -3,18 +3,19 @@ import PageContainer from "@/app/_components/general/page-container";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/hooks";
 import { RootState } from "@/app/_lib/store";
 import Tab from "@/app/_components/tab";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Form, Skeleton } from "antd";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Input from "@/app/_components/input";
 import Button from "@/app/_components/general/button";
-import { useUpdatePrivacySettingsMutation, useUpdateUserPasswordMutation } from "@/app/_lib/api/user";
+import { useSubscriptionFeeMutation, useUpdatePrivacySettingsMutation, useUpdateUserPasswordMutation } from "@/app/_lib/api/user";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { User } from "@/app/_lib/type";
 import { toast } from "react-toastify";
 import { updateToken } from "@/app/_lib/store/user";
 import { LS_TOKEN_NAME, SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
+import useGetAndUpdateProfile from "@/app/_lib/hooks/use-get-and-update-profile";
 
 
 export default function Settings() {
@@ -24,12 +25,14 @@ export default function Settings() {
 
   const NotificationComponent = useMemo(() => <Notification className={sectionsClassName} userInfo={info} />, [info]);
   const PrivacyComponent = useMemo(() => <Privacy className={sectionsClassName} userInfo={info} />, [info]);
+  const SubscriptionComponent = useMemo(() => <Subscription className={sectionsClassName} userInfo={info} />, [info]);
   const PasswordComponent = useMemo(() => <Password className={sectionsClassName} userInfo={info} />, [info]);
 
 
   const Items = [
     { content: NotificationComponent, title: "Notification", loading: false },
     { content: PrivacyComponent, title: "Privacy", loading: false },
+    { content: SubscriptionComponent, title: "Subcription", loading: false },
     ...(info?.signUpMethod !== "google-auth" ? [{ content: PasswordComponent, title: "Password", loading: false }] : []),
   ]
 
@@ -51,10 +54,12 @@ type Props = {
 
 const Notification = ({ className, userInfo }: Props) => {
   const id = userInfo?._id;
+  const notificationAccess = userInfo?.notificationAccess;
   const [updateNotifications, { isLoading }] = useUpdatePrivacySettingsMutation();
+  const { getProfile } = useGetAndUpdateProfile();
 
   const { handleSubmit, reset, ...rest } = useForm();
-  console.log(id)
+
   if (!id) {
     return (
       <Skeleton />
@@ -67,11 +72,17 @@ const Notification = ({ className, userInfo }: Props) => {
       .then((res) => {
         if (["success", "success!"].includes(res?.data?.status)) {
           toast.success(res?.data?.message || "success");
+          getProfile();
           return;
         }
         toast.error("failed to change password!");
       });
   }
+  useEffect(() => {
+    if (notificationAccess) {
+      reset({ notificationAccess: notificationAccess.join(",") });
+    }
+  }, [notificationAccess])
 
   return (
     <section className={`${className} !py-[40px]`}>
@@ -89,9 +100,11 @@ const Notification = ({ className, userInfo }: Props) => {
 const Privacy = ({ className, userInfo }: Props) => {
   const id = userInfo?._id;
   const [updateNotifications, { isLoading }] = useUpdatePrivacySettingsMutation();
+  const { getProfile } = useGetAndUpdateProfile();
+  const messageAccess = userInfo?.messageAccess;
 
   const { handleSubmit, reset, ...rest } = useForm();
-  console.log(id)
+
   if (!id) {
     return (
       <Skeleton />
@@ -103,11 +116,18 @@ const Privacy = ({ className, userInfo }: Props) => {
       .then((res) => {
         if (["success", "success!"].includes(res?.data?.status)) {
           toast.success(res?.data?.message || "success");
+          getProfile();
           return;
         }
         toast.error("failed to change password!");
       });
   }
+
+  useEffect(() => {
+    if (messageAccess) {
+      reset({ messageAccess: messageAccess.join(",") });
+    }
+  }, [messageAccess]);
 
   return (
     <section className={`${className} !py-[40px]`}>
@@ -117,6 +137,52 @@ const Privacy = ({ className, userInfo }: Props) => {
       <Form onFinish={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] max-w-[400px] w-full ">
         <Input label="Get Messages From" type="select" placeholder="Get Messages From" name="messageAccess" state={rest} required options={[{ label: "All(public)", value: "subscribers,followers,subscribers,all" }, { label: "Subscribers", value: "subscribers" }, { label: "Followers", value: "subscribers,followers" }]} twHeight="h-auto" />
 
+        <Button type="submit" loading={isLoading} disabled={isLoading}>Update</Button>
+      </Form>
+    </section>
+  )
+}
+const Subscription = ({ className, userInfo }: Props) => {
+  const id = userInfo?._id;
+  const subscriptionFee = userInfo?.subscriptionFee
+  const [updateSubscription, { isLoading }] = useSubscriptionFeeMutation();
+  const { getProfile } = useGetAndUpdateProfile();
+
+  const { handleSubmit, reset, ...rest } = useForm();
+
+  if (!id) {
+    return (
+      <Skeleton />
+    )
+  }
+
+  const onSubmit = (vals: FieldValues) => {
+    updateSubscription({
+      subscriptionFee: vals?.subscriptionFee,
+    })
+      .then((res) => {
+        if (["success", "success!"].includes(res?.data?.status)) {
+          toast.success(res?.data?.message || "success");
+          getProfile();
+          return;
+        }
+        toast.error("failed to set subscription fee!");
+      });
+  }
+  useEffect(() => {
+    if (subscriptionFee) {
+      reset({ subscriptionFee });
+    }
+  }, [subscriptionFee])
+
+  return (
+    <section className={`${className} !py-[40px]`}>
+      <div className="mb-4 w-full max-w-[400px]">
+        <p className="text-black font-medium leading-[110%] text-sm mx-auto">Update Subscription Settings.</p>
+        <p className="!font-thin text-sm">Set subscription fee to zero(0) to remove subscriptions.</p>
+      </div>
+      <Form onFinish={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] max-w-[400px] w-full ">
+        <Input label="Subscription Fee" type="number" placeholder="Subscription Fee" name="subscriptionFee" state={rest} required />
         <Button type="submit" loading={isLoading} disabled={isLoading}>Update</Button>
       </Form>
     </section>

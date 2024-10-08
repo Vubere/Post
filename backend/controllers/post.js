@@ -363,7 +363,6 @@ function getLikes(...args) {
     return __awaiter(this, void 0, void 0, function* () {
         const [req, , next] = args;
         req.query.praises = req.query.userId || req.requesterId;
-        console.log(req.query.praises);
         next();
     });
 }

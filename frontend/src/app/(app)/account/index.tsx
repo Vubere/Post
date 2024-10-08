@@ -5,7 +5,7 @@ import PageContainer from "@/app/_components/general/page-container";
 import { useAppSelector } from "@/app/_lib/store/hooks";
 import Image from "next/image";
 import { RootState } from "@/app/_lib/store";
-import Button from "@/app/_components/general/button";
+import Button, { SubscribeButton, FollowButton } from "@/app/_components/general/button";
 import Tab from "@/app/_components/tab";
 import { useGetAllPostsQuery, useGetPraiseQuery, useGetUserPostQuery, useLazyGetPraiseQuery, useLazyGetUserPostQuery } from "@/app/_lib/api/post";
 import { useMemo } from "react";
@@ -14,7 +14,6 @@ import { Post, User } from "@/app/_lib/type";
 import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
 import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
-import FollowButton from "@/app/_components/follow-button";
 import InfiniteScroll from "@/app/_components/infinite-scroll";
 import { loadMoreItems } from "@/app/_lib/services";
 import Empty from "@/app/_components/empty";
@@ -31,6 +30,7 @@ export default function Account({ userInfo }: { userInfo: User }) {
   const { data: praisedPost, isLoading: praisedPostLoading, refetch: refetchPraise } = useGetPraiseQuery({
     userId: userInfo._id || userInfo.id
   });
+  const subscriptionFeeSet = Number(userInfo?.subscriptionFee) > 0;
 
   const userPostArray = userPost?.data || [];
   const praisedPostArray = praisedPost?.data || [];
@@ -73,11 +73,13 @@ export default function Account({ userInfo }: { userInfo: User }) {
                 <Image src={editIcon} alt="edit" objectFit="cover" objectPosition="center" fill />
               </Link>
             </div>) : (<div className="absolute right-0 xs:right-2 top-4 xs:top-6 sm:top-8 z-[4]" >
+
               <div className="w-full flex gap-2 justify-end">
                 <Link className="block relative w-[25px] h-[25px]" href={ROUTES.chatId.replace(":id", (userInfo._id || userInfo.id) as string)} title="chat">
                   <Image
                     src={chatIcon} fill objectFit="contain" objectPosition="center" alt="chat" />
                 </Link>
+                {subscriptionFeeSet && <SubscribeButton user={userInfo} />}
                 <FollowButton user={userInfo} />
               </div>
 
