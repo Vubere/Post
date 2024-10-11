@@ -28,10 +28,11 @@ import PostDisplay from ".";
 interface PostReactionProp extends Partial<Post> {
   showViews?: boolean,
   showReads?: boolean,
-  isPostPage?: boolean
+  isPostPage?: boolean,
+  disabled?: boolean,
 }
 
-export default function PostReactions({ showViews, showReads, isPostPage, ...post }: PostReactionProp) {
+export default function PostReactions({ showViews, showReads, isPostPage, disabled, ...post }: PostReactionProp) {
   const { info } = useAppSelector((state: RootState) => state.user);
   const router = useRouter();
   const authorId = info?._id || info?.id || "";
@@ -93,6 +94,13 @@ export default function PostReactions({ showViews, showReads, isPostPage, ...pos
           setShowReshareModal(false);
         }
       });
+  }
+  const disabledClick = (cb?: () => void, text?: string) => {
+    if (!cb) return;
+    if (disabled) {
+      toast.error(`sign in to be able to ${text}`)
+    }
+    cb?.();
   }
 
   return (
@@ -197,7 +205,7 @@ export default function PostReactions({ showViews, showReads, isPostPage, ...pos
             tooltip: praiseBool ? "unpraise" : "praise"
           },
         ].map(({ icon, number, onClick, tooltip }) => (<li className="flex flex-col items-center">
-          <div className="relative cursor-pointer w-[20px] h-[20px]" onClick={onClick} title={tooltip} aria-disabled={tooltip === "reads"}>
+          <div className="relative cursor-pointer w-[20px] h-[20px]" onClick={() => disabledClick(onClick, tooltip)} title={tooltip} aria-disabled={tooltip === "reads"}>
             <Image src={icon} alt="" fill objectFit="contain" objectPosition="center" />
           </div>
           <span className="text-[12px] text-[#373737]">{number}</span>

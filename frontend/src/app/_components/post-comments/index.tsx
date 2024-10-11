@@ -18,9 +18,13 @@ import editIcon from "@/assets/icons/dot-menu.png";
 import avatar from "@/assets/icons/avatar.png";
 import CommentReaction from "./post-comments";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
+interface PostCommentsProps extends Post {
+  disabled: boolean
+}
 
-export default function PostComments({ _id, ...post }: Post) {
+export default function PostComments({ _id, disabled, ...post }: PostCommentsProps) {
   const { info } = useAppSelector((state: RootState) => state.user)
   const { data, isLoading, refetch } = useGetPostCommentsQuery({
     postId: _id || post?.id || ""
@@ -35,7 +39,7 @@ export default function PostComments({ _id, ...post }: Post) {
   return (
     <section className="mt-12 sm:mt-20">
       <div>
-        <CommentForm postId={(_id || post.id) as string} authorId={(info?.id || info?._id) as string} ownerId={post.authorDetails?._id || post?.author} validate={refetch} />
+        <CommentForm postId={(_id || post.id) as string} authorId={(info?.id || info?._id) as string} ownerId={post.authorDetails?._id || post?.author} validate={refetch} disabled={disabled} />
         {!comments.length ? (
           <div className="my-4">
             <Empty text="No comments" />
@@ -46,7 +50,7 @@ export default function PostComments({ _id, ...post }: Post) {
             </h4>
             <div>
               {comments.map((comment, i) => (
-                <CommentDisplay validate={refetch} isAuthorComment={info?._id === comment.authorId} key={comment._id || i} {...comment} />
+                <CommentDisplay validate={refetch} isAuthorComment={info?._id === comment.authorId} key={comment._id || i} {...comment} disabled={disabled} />
               ))}
             </div>
           </div>
@@ -60,7 +64,7 @@ const schema = yup.object({
   content: yup.string().required("come on bro??? you have to write a text to comment!").trim()
 })
 
-function CommentForm({ postId, ownerId, authorId, validate }: { postId: string, authorId: string, validate: any, ownerId?: string }) {
+function CommentForm({ postId, ownerId, authorId, validate, disabled }: { postId: string, authorId: string, validate: any, ownerId?: string, disabled?: boolean }) {
   const [comment, { isLoading: isCommenting }] = useCreateCommentMutation();
   const { handleSubmit, reset, ...state } = useForm({
     resolver: yupResolver(schema),
@@ -68,6 +72,10 @@ function CommentForm({ postId, ownerId, authorId, validate }: { postId: string, 
   });
 
   const onSubmit: SubmitHandler<{ content: string }> = (val) => {
+    if (disabled) {
+      toast.error("sign in to comment");
+      return
+    }
     comment({
       ...val,
       postId,
@@ -90,9 +98,10 @@ interface CommentDisplay extends Comments {
   className?: string,
   validate?: () => void;
   hideReactions?: boolean;
+  disabled?: boolean;
 }
 
-export function CommentDisplay({ isAuthorComment, hideReactions, className, validate, ...comment }: CommentDisplay) {
+export function CommentDisplay({ isAuthorComment, hideReactions, className, disabled, validate, ...comment }: CommentDisplay) {
   const [deleteComment, { isLoading }] = useDeleteCommentMutation();
   const [deleted, setDeleted] = useState(false);
 
@@ -147,7 +156,7 @@ export function CommentDisplay({ isAuthorComment, hideReactions, className, vali
       <div className="flex flex-col gap-1">
         <p className="text-[12px] xs:text-[14px] sm:text-[16px] md:text-[18px] text-[#373737aa]">{comment?.content}</p>
       </div>
-      {!hideReactions && <CommentReaction {...comment} validate={validate} />}
+      {!hideReactions && <CommentReaction {...comment} validate={validate} disabled={disabled} />}
     </article>
   )
 }

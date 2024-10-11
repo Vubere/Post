@@ -40,11 +40,14 @@ const themes = {
 
 
 
-export default function PostPage({ post, user }: { post: Post, user: Partial<User> }) {
+export default function PostPage({ post, user }: { post: Post, user?: Partial<User> }) {
   const { content, coverPhoto, authorDetails, author, type, title, theme, reads, id, _id } = post;
   const au = (authorDetails?.firstName ? authorDetails : author) as unknown as User;
   const ref = useRef<HTMLDivElement | null>(null)
-  const shouldPaywall = useMemo(() => paywallCheck({ user: user as User, post }), [user, post]);
+  const shouldPaywall = useMemo(() => {
+    if (user === undefined) return false;
+    paywallCheck({ user: user as User, post })
+  }, [user, post]);
   const themeClassName = theme && themes[theme] ? themes[theme].className : themes["Default"].className;
 
   return (

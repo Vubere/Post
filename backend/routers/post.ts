@@ -22,12 +22,13 @@ const {
   getBookmarks,
   addToBookmarks,
   removeFromBookmarks,
-  getPostFromFollowings,
   viewPost,
   clickPost,
   readPost,
   getCategories,
   getTopCategories,
+  getPostsPopular,
+  getFollowingPost,
 } = postControllers;
 const router = express.Router();
 
@@ -85,13 +86,8 @@ router
     const [req, , next] = args;
     next();
   }, getAllPosts);
-router
-  .route("/popular")
-  .get(function (...args: [PostConfirmRequest, Response, NextFunction]) {
-    const [req, , next] = args;
-    next();
-  }, getAllPosts);
-router.route("/following").get(getPostFromFollowings);
+router.route("/popular").get(getPostsPopular);
+router.route("/following").get(getFollowingPost);
 router.route("/categories").get(getCategories);
 router.route("/top-categories").get(getTopCategories);
 router.route("/pay-paywall-fee").patch(payPaywallFee);

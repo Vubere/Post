@@ -5,6 +5,7 @@ import morgan from "morgan";
 import userRouter from "./routers/user";
 import authRouter from "./routers/auth";
 import postRouter from "./routers/post";
+import openRouter from "./routers/open";
 import commentRouter from "./routers/comment";
 import notificationRoter from "./routers/notifications";
 import authController from "./controllers/auth";
@@ -46,7 +47,8 @@ const baseRootUsers = "/api/users";
 const baseRootPosts = "/api/posts";
 const baseRootComments = "/api/comments";
 const baseRootNotification = "/api/notifications";
-app.post(baseRootUsers + "/login", authController.Login);
+
+app.use("/api/open", openRouter);
 app.use(baseRootUsers, authRouter);
 app.use(baseRootUsers, authController.ProtectRoutes, userRouter);
 app.use(baseRootPosts, authController.ProtectRoutes, postRouter);

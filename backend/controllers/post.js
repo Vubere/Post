@@ -46,6 +46,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.postApiFeaturesAggregation = void 0;
 const post_1 = __importDefault(require("../models/post"));
 const api_features_1 = __importStar(require("../lib/utils/api-features"));
 const mongoose_1 = require("mongoose");
@@ -85,6 +86,7 @@ const postApiFeaturesAggregation = (query, authorQuery) => {
         },
     ], authorQuery);
 };
+exports.postApiFeaturesAggregation = postApiFeaturesAggregation;
 function createPost(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -129,31 +131,17 @@ function createPost(req, res, next) {
 }
 function getAllPosts(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const postQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
+        const postQuery = (0, exports.postApiFeaturesAggregation)(req.query, {}).aggregate();
         const post = yield postQuery;
         res.status(utils_1.STATUS_CODES.success.OK).json((0, utils_1.jsend)("success!", post, "successfully fetched posts!", {
             count: post === null || post === void 0 ? void 0 : post.length,
         }));
     });
 }
-function getPostFromFollowings(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const postQuery = postApiFeaturesAggregation(req.query, {
-            $or: [
-                { "authorDetails.followers": req.requesterId },
-                { "authorDetails._id": req.requesterId },
-            ],
-        }).aggregate();
-        const post = yield postQuery;
-        res.status(utils_1.STATUS_CODES.success.OK).json((0, utils_1.jsend)("success!", post, "successfully fetched posts!", {
-            count: post.length,
-        }));
-    });
-}
 function getPost(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         req.query._id = new mongoose_1.Types.ObjectId(req.post.id);
-        const postQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
+        const postQuery = (0, exports.postApiFeaturesAggregation)(req.query, {}).aggregate();
         const post = yield postQuery;
         res
             .status(utils_1.STATUS_CODES.success.OK)
@@ -451,6 +439,109 @@ function getTopCategories(req, res, next) {
             .json((0, utils_1.jsend)("success", categories, "categories fetched successfully!"));
     });
 }
+const getFollowingPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.query;
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 10);
+    const skip = (page - 1) * limit;
+    const following = yield post_1.default.aggregate([
+        {
+            $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "authorDetails",
+            },
+        },
+        {
+            $lookup: {
+                from: "posts",
+                localField: "postReshared",
+                foreignField: "_id",
+                as: "sharedPostDetails",
+            },
+        },
+        {
+            $match: {
+                $or: [
+                    { "authorDetails.followers": userId },
+                    { "authorDetails._id": userId },
+                ],
+                deleted: { $ne: true },
+            },
+        },
+        { $sort: { createdAt: -1 } },
+        {
+            $skip: skip,
+        },
+        {
+            $limit: limit,
+        },
+        { $unwind: { path: "$authorDetails", preserveNullAndEmptyArrays: true } },
+        {
+            $unwind: { path: "$sharedPostDetails", preserveNullAndEmptyArrays: true },
+        },
+    ]);
+    res
+        .status(utils_1.STATUS_CODES.success.OK)
+        .json((0, utils_1.jsend)("success", following, "following posts fetched successfully!"));
+});
+function getPostsPopular(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const page = Number(req.query.page || 1);
+        const limit = Number(req.query.limit || 10);
+        const skip = (page - 1) * limit;
+        const popularPosts = yield post_1.default.aggregate([
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "author",
+                    foreignField: "_id",
+                    as: "authorDetails",
+                },
+            },
+            {
+                $lookup: {
+                    from: "posts",
+                    localField: "postReshared",
+                    foreignField: "_id",
+                    as: "sharedPostDetails",
+                },
+            },
+            { $unwind: { path: "$authorDetails" } },
+            {
+                $unwind: {
+                    path: "$sharedPostDetails",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    popularityScore: {
+                        $add: [
+                            { $multiply: [{ $size: "$praises" }, 4] },
+                            { $multiply: [{ $size: "$views" }, 2] },
+                            { $multiply: [{ $size: "$clicks" }, 1] },
+                            { $multiply: [{ $size: "$reads" }, 5] },
+                            { $multiply: [{ $size: "$comments" }, 3] },
+                            { $multiply: [{ $size: "$bookmarkedBy" }, 4] },
+                            { $multiply: [{ $size: "$resharedBy" }, 4] },
+                        ],
+                    },
+                },
+            },
+            {
+                $match: {
+                    deleted: { $ne: true },
+                },
+            },
+            { $sort: { popularityScore: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+        ]);
+        res.status(200).json({ success: true, data: popularPosts });
+    });
+}
 const postExports = {
     createPost,
     getAllPosts,
@@ -469,9 +560,10 @@ const postExports = {
     viewPost,
     clickPost,
     readPost,
-    getPostFromFollowings,
     getCategories,
     payPaywallFee,
     getTopCategories,
+    getPostsPopular,
+    getFollowingPost,
 };
 exports.default = (0, aynsc_error_handler_1.wrapModuleFunctionsInAsyncErrorHandler)(postExports);

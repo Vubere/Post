@@ -23,9 +23,10 @@ interface CommentReactionProps extends Partial<Comments> {
   validate?: () => void,
   showReads?: boolean,
   isPostPage?: boolean,
+  disabled?: boolean;
 }
 
-export default function CommentReaction({ showViews, showReads, isPostPage, validate, ...comment }: CommentReactionProps) {
+export default function CommentReaction({ showViews, showReads, isPostPage, validate, disabled, ...comment }: CommentReactionProps) {
   const { info } = useAppSelector((state: RootState) => state.user);
   const authorId = info?._id || info?.id || "";
 
@@ -62,6 +63,14 @@ export default function CommentReaction({ showViews, showReads, isPostPage, vali
           validate?.();
         }
       })
+  }
+  const disableOnClick = (cb?: () => void, text?: string) => {
+    if (!cb) return;
+    if (disabled) {
+      toast.error(`sign in to be able to ${text}`);
+      return
+    }
+    cb?.();
   }
   return (
     <>
@@ -122,7 +131,7 @@ export default function CommentReaction({ showViews, showReads, isPostPage, vali
             tooltip: praiseBool ? "unpraise" : "praise"
           },
         ].map(({ icon, number, onClick, tooltip }, i) => (<li className="flex flex-col items-center" key={i}>
-          <div className="relative cursor-pointer w-[20px] h-[20px]" onClick={onClick} title={tooltip} aria-disabled={tooltip === "reads"}>
+          <div className="relative cursor-pointer w-[20px] h-[20px]" onClick={() => disableOnClick(onClick, tooltip)} title={tooltip} aria-disabled={tooltip === "reads"}>
             <Image src={icon} alt="" fill objectFit="contain" objectPosition="center" />
           </div>
           <span className="text-[12px] text-[#373737]">{number}</span>
@@ -137,7 +146,7 @@ export default function CommentReaction({ showViews, showReads, isPostPage, vali
 
       {
         showReplies ? (
-          <CommentReplies {...comment} />
+          <CommentReplies {...comment} disabled={disabled} />
         ) : null
       }
       {
@@ -163,7 +172,7 @@ export default function CommentReaction({ showViews, showReads, isPostPage, vali
 }
 
 
-function CommentReplies({ id, _id }: Partial<Comments>) {
+function CommentReplies({ id, _id, disabled }: Partial<Comments> & { disabled?: boolean }) {
   const { data, isLoading, refetch } = useGetCommentRepliesQuery({
     commentRepliedTo: (id || _id) as string
   });
@@ -180,7 +189,7 @@ function CommentReplies({ id, _id }: Partial<Comments>) {
     <div className="border-l-4 border-[#0004] pl-3">
       {
         comments.map((comment, i) =>
-          <CommentDisplay key={comment._id || i} isAuthorComment={comment.authorId === info?._id} {...comment} validate={refetch} />)
+          <CommentDisplay key={comment._id || i} isAuthorComment={comment.authorId === info?._id} {...comment} validate={refetch} disabled={disabled} />)
       }
     </div>
   )

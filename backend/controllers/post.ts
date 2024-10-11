@@ -18,7 +18,7 @@ import Category from "../models/category";
 const postApiFeatures = (query: Record<any, any>) => {
   return new ApiFeatures(Post.find(), query);
 };
-const postApiFeaturesAggregation = (
+export const postApiFeaturesAggregation = (
   query: Record<any, any>,
   authorQuery?: Record<string, any>
 ) => {
@@ -112,25 +112,7 @@ async function getAllPosts(
     })
   );
 }
-async function getPostFromFollowings(
-  req: PostConfirmRequest,
-  res: Response,
-  next: NextFunction
-) {
-  const postQuery = postApiFeaturesAggregation(req.query, {
-    $or: [
-      { "authorDetails.followers": req.requesterId },
-      { "authorDetails._id": req.requesterId },
-    ],
-  }).aggregate();
 
-  const post = await postQuery;
-  res.status(STATUS_CODES.success.OK).json(
-    jsend("success!", post, "successfully fetched posts!", {
-      count: post.length,
-    })
-  );
-}
 async function getPost(req: PostConfirmRequest, res: Response) {
   req.query._id = new Types.ObjectId(req.post.id) as any;
   const postQuery = postApiFeaturesAggregation(req.query, {}).aggregate();
@@ -518,6 +500,112 @@ async function getTopCategories(
     .json(jsend("success", categories, "categories fetched successfully!"));
 }
 
+const getFollowingPost = async (req: PostConfirmRequest, res: Response) => {
+  const { userId } = req.query;
+  const page = Number(req.query.page || 1);
+  const limit = Number(req.query.limit || 10);
+  const skip = (page - 1) * limit;
+  const following = await Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "posts",
+        localField: "postReshared",
+        foreignField: "_id",
+        as: "sharedPostDetails",
+      },
+    },
+    {
+      $match: {
+        $or: [
+          { "authorDetails.followers": userId },
+          { "authorDetails._id": userId },
+        ],
+        deleted: { $ne: true },
+      },
+    },
+    { $sort: { createdAt: -1 } },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit,
+    },
+    { $unwind: { path: "$authorDetails", preserveNullAndEmptyArrays: true } },
+    {
+      $unwind: { path: "$sharedPostDetails", preserveNullAndEmptyArrays: true },
+    },
+  ]);
+
+  res
+    .status(STATUS_CODES.success.OK)
+    .json(jsend("success", following, "following posts fetched successfully!"));
+};
+
+async function getPostsPopular(req: PostConfirmRequest, res: Response) {
+  const page = Number(req.query.page || 1);
+  const limit = Number(req.query.limit || 10);
+  const skip = (page - 1) * limit;
+
+  const popularPosts = await Post.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "author",
+        foreignField: "_id",
+        as: "authorDetails",
+      },
+    },
+    {
+      $lookup: {
+        from: "posts",
+        localField: "postReshared",
+        foreignField: "_id",
+        as: "sharedPostDetails",
+      },
+    },
+    { $unwind: { path: "$authorDetails" } },
+    {
+      $unwind: {
+        path: "$sharedPostDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        popularityScore: {
+          $add: [
+            { $multiply: [{ $size: "$praises" }, 4] },
+            { $multiply: [{ $size: "$views" }, 2] },
+            { $multiply: [{ $size: "$clicks" }, 1] },
+            { $multiply: [{ $size: "$reads" }, 5] },
+            { $multiply: [{ $size: "$comments" }, 3] },
+            { $multiply: [{ $size: "$bookmarkedBy" }, 4] },
+            { $multiply: [{ $size: "$resharedBy" }, 4] },
+          ],
+        },
+      },
+    },
+    {
+      $match: {
+        deleted: { $ne: true },
+      },
+    },
+    { $sort: { popularityScore: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+  ]);
+
+  res.status(200).json({ success: true, data: popularPosts });
+}
+
 const postExports = {
   createPost,
   getAllPosts,
@@ -536,10 +624,11 @@ const postExports = {
   viewPost,
   clickPost,
   readPost,
-  getPostFromFollowings,
   getCategories,
   payPaywallFee,
   getTopCategories,
+  getPostsPopular,
+  getFollowingPost,
 };
 
 export default wrapModuleFunctionsInAsyncErrorHandler(postExports);

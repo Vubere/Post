@@ -7,6 +7,7 @@ import { userApi } from "@/app/_lib/api/user";
 import { postApi } from "@/app/_lib/api/post";
 import { commentApi } from "../api/comment";
 import { notificationApi } from "../api/notification";
+import { openApi } from "../api/open";
 
 const persistConfig = {
   key: "collections-root",
@@ -20,20 +21,23 @@ const rootReducer = combineReducers({
   [userApi.reducerPath]: userApi.reducer,
   [commentApi.reducerPath]: commentApi.reducer,
   [notificationApi.reducerPath]: notificationApi.reducer,
+  [openApi.reducerPath]: openApi.reducer,
 });
-
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 //@ts-ignore
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
   //@ts-ignore
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       userApi.middleware,
       postApi.middleware,
       commentApi.middleware,
-      notificationApi.middleware
+      notificationApi.middleware,
+      openApi.middleware
     ),
 });
+export const persistor = persistStore(store);
 setupListeners(store.dispatch);
 export const getState = store.getState;
 //@ts-ignore

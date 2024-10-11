@@ -1,5 +1,5 @@
 "use client";
-import { store } from "@/app/_lib/store";
+import { persistor, store } from "@/app/_lib/store";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -32,14 +32,14 @@ export default function RootLayout({
         theme="light"
       />
       <Provider store={store}>
-
-        <AntdRegistry>
-          <CheckLoginStatus />
-          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
-            {children}
-          </GoogleOAuthProvider>
-        </AntdRegistry>
-
+        <PersistGate loading={<div className="flex items-center justify-center h-screen text-gray-500 text-xl animate-ping font-bold">...</div>} persistor={persistor}>
+          <AntdRegistry>
+            <CheckLoginStatus />
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
+              {children}
+            </GoogleOAuthProvider>
+          </AntdRegistry>
+        </PersistGate>
       </Provider>
     </>
   );
