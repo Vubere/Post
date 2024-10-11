@@ -64,6 +64,7 @@ function getPostsPopular(req, res) {
             {
                 $match: {
                     deleted: { $ne: true },
+                    isPaywalled: { $ne: true },
                 },
             },
             { $sort: { popularityScore: -1 } },

@@ -55,6 +55,7 @@ async function getPostsPopular(req: PostConfirmRequest, res: Response) {
     {
       $match: {
         deleted: { $ne: true },
+        isPaywalled: { $ne: true },
       },
     },
     { $sort: { popularityScore: -1 } },
