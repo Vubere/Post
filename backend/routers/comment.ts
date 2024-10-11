@@ -74,10 +74,6 @@ router
   .route("/:id")
   .patch(isRequestersComment, updateComment)
   .get(getComment)
-  .delete(
-    authControllers.AuthenticatePassword,
-    isRequestersComment,
-    deleteComment
-  );
+  .delete(isRequestersComment, deleteComment);
 
 export default router;

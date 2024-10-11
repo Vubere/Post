@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { signToken, verifyToken } from "../lib/utils/token";
 import { UserConfirmRequest } from "../lib/types";
 import { hashPassword } from "../lib/helpers";
+import nodemailer from "nodemailer";
 //import fetch from "node-fetch";
 
 interface payload extends jwt.JwtPayload {
@@ -145,7 +146,49 @@ async function AuthenticatePassword(
     new CustomError("unauthorized", STATUS_CODES.clientError.Bad_Request)
   );
 }
+async function resetPassword(req: UserConfirmRequest, res: Response) {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
 
+  if (user) {
+    //send email using nodemailer
+    const token = signToken(user._id);
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: true,
+      auth: {
+        user: process.env.DEFAULT_EMAIL,
+        pass: process.env.DEFAULT_EMAIL_PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.DEFAULT_EMAIL,
+      to: email,
+      subject: "Password Reset",
+      text: "Password Reset Email!",
+      html: ` <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>NodeMailer Email Template</title>
+        </head>
+        <body>
+      <div style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;display:flex;flex-direction:column;align-items:center;">
+      <p>Click on this link to reset your password. Please login with your new password. Ignore if you did not request a password reset.</p>
+      <a style="text-decoration: none; color: blue;" href="${process.env.WEBSITE_BASE_URL}/reset-password/${token}">Reset Password</a>
+      </div>
+      </body>
+    </html>
+      `,
+    };
+    await transporter.sendMail(mailOptions);
+
+    res
+      .status(STATUS_CODES.success.OK)
+      .json(jsend("success", undefined, "password reset email sent!"));
+  }
+}
 async function ProtectRoutes(
   req: UserConfirmRequest,
   res: Response,

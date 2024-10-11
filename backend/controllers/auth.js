@@ -29,6 +29,7 @@ const aynsc_error_handler_1 = require("../lib/utils/aynsc-error-handler");
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const token_1 = require("../lib/utils/token");
 const helpers_1 = require("../lib/helpers");
+const nodemailer_1 = __importDefault(require("nodemailer"));
 function validateRequestBody(body, arrayOfValues) {
     const bodyKeys = Object.keys(body);
     const arr = [];
@@ -121,6 +122,48 @@ function AuthenticatePassword(req, res, next) {
             return next();
         }
         return next(new custom_error_1.default("unauthorized", utils_1.STATUS_CODES.clientError.Bad_Request));
+    });
+}
+function resetPassword(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { email } = req.body;
+        const user = yield user_1.default.findOne({ email });
+        if (user) {
+            const token = (0, token_1.signToken)(user._id);
+            const transporter = nodemailer_1.default.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: true,
+                auth: {
+                    user: process.env.DEFAULT_EMAIL,
+                    pass: process.env.DEFAULT_EMAIL_PASSWORD,
+                },
+            });
+            const mailOptions = {
+                from: process.env.DEFAULT_EMAIL,
+                to: email,
+                subject: "Password Reset",
+                text: "Password Reset Email!",
+                html: ` <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>NodeMailer Email Template</title>
+        </head>
+        <body>
+      <div style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;display:flex;flex-direction:column;align-items:center;">
+      <p>Click on this link to reset your password. Please login with your new password. Ignore if you did not request a password reset.</p>
+      <a style="text-decoration: none; color: blue;" href="${process.env.WEBSITE_BASE_URL}/reset-password/${token}">Reset Password</a>
+      </div>
+      </body>
+    </html>
+      `,
+            };
+            yield transporter.sendMail(mailOptions);
+            res
+                .status(utils_1.STATUS_CODES.success.OK)
+                .json((0, utils_1.jsend)("success", undefined, "password reset email sent!"));
+        }
     });
 }
 function ProtectRoutes(req, res, next) {

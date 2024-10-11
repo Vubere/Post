@@ -23,12 +23,12 @@ async function getPost(id: string) {
           authorization: `Bearer ${token}`
         }
       }).then(res => res.json());
-      return { data: res?.data, status: "success" };
+      if (res?.data) {
+        return { data: res?.data, status: "success" };
+      }
+      throw new Error("failed to fetch post");
     } else {
-      return ({
-        message: "no token or post id sent",
-        status: "failed",
-      });
+      throw new Error("no token or post id sent");
     }
   } catch (error) {
     return ({
@@ -48,12 +48,12 @@ async function getProfile() {
           authorization: `Bearer ${token}`
         }
       }).then(res => res.json());
-      return { data: res?.data, status: "success" };
+      if (res?.data) {
+        return { data: res?.data, status: "success" };
+      }
+      throw new Error("failed to fetch profile");
     } else {
-      return ({
-        message: "no token ent",
-        status: "failed",
-      });
+      throw new Error("no token ent");
     }
   } catch (error) {
     return ({

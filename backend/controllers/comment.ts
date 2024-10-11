@@ -137,9 +137,16 @@ async function getComment(req: CommentConfirmRequest, res: Response) {
 }
 async function deleteComment(req: CommentConfirmRequest, res: Response) {
   await Comment.findByIdAndDelete(req.comment._id);
-  await Post.findByIdAndUpdate(req.comment.postId, {
-    $pull: { comments: req.comment.id },
-  });
+  if (req.comment.commentRepliedTo)
+    await Comment.findByIdAndDelete(req.comment.commentRepliedTo, {
+      $pull: {
+        replies: req.comment?._id || req.comment?.id,
+      },
+    });
+  else
+    await Post.findByIdAndUpdate(req.comment.postId, {
+      $pull: { comments: req.comment.id },
+    });
 
   res.status(204).json(jsend("success", undefined, "comment deleted!"));
 }
@@ -399,9 +406,9 @@ async function isRequestersComment(
   ...args: [CommentConfirmRequest, Response, NextFunction]
 ) {
   const [req, , next] = args;
-  const postId = req.body.id || req.params.id;
-  const comment = await Comment.findById(postId).select("authorId");
-  if (comment?.authorId !== req.requesterId) {
+  const commentId = req.params.id || req.body.id;
+  const comment = await Comment.findById(commentId);
+  if (comment?.authorId?.toString() !== req.requesterId) {
     next(
       new CustomError(
         "cannot query another users comment!",
@@ -410,6 +417,7 @@ async function isRequestersComment(
     );
     return;
   }
+  req.comment = comment;
   next();
 }
 

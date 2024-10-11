@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const comment_1 = __importDefault(require("../controllers/comment"));
-const auth_1 = __importDefault(require("../controllers/auth"));
 const comment_2 = __importDefault(require("../models/comment"));
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const utils_1 = require("../lib/utils");
@@ -51,5 +50,5 @@ router
     .route("/:id")
     .patch(isRequestersComment, updateComment)
     .get(getComment)
-    .delete(auth_1.default.AuthenticatePassword, isRequestersComment, deleteComment);
+    .delete(isRequestersComment, deleteComment);
 exports.default = router;

@@ -145,10 +145,18 @@ function getComment(req, res) {
 }
 function deleteComment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
         yield comment_1.default.findByIdAndDelete(req.comment._id);
-        yield post_1.default.findByIdAndUpdate(req.comment.postId, {
-            $pull: { comments: req.comment.id },
-        });
+        if (req.comment.commentRepliedTo)
+            yield comment_1.default.findByIdAndDelete(req.comment.commentRepliedTo, {
+                $pull: {
+                    replies: ((_a = req.comment) === null || _a === void 0 ? void 0 : _a._id) || ((_b = req.comment) === null || _b === void 0 ? void 0 : _b.id),
+                },
+            });
+        else
+            yield post_1.default.findByIdAndUpdate(req.comment.postId, {
+                $pull: { comments: req.comment.id },
+            });
         res.status(204).json((0, utils_1.jsend)("success", undefined, "comment deleted!"));
     });
 }
@@ -337,13 +345,15 @@ function getBookmarks(...args) {
 }
 function isRequestersComment(...args) {
     return __awaiter(this, void 0, void 0, function* () {
+        var _a;
         const [req, , next] = args;
-        const postId = req.body.id || req.params.id;
-        const comment = yield comment_1.default.findById(postId).select("authorId");
-        if ((comment === null || comment === void 0 ? void 0 : comment.authorId) !== req.requesterId) {
+        const commentId = req.params.id || req.body.id;
+        const comment = yield comment_1.default.findById(commentId);
+        if (((_a = comment === null || comment === void 0 ? void 0 : comment.authorId) === null || _a === void 0 ? void 0 : _a.toString()) !== req.requesterId) {
             next(new custom_error_1.default("cannot query another users comment!", utils_1.STATUS_CODES.clientError.Bad_Request));
             return;
         }
+        req.comment = comment;
         next();
     });
 }

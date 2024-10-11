@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import avatar from "@/assets/icons/avatar.png";
 import dayjs from "dayjs";
+import { Skeleton } from "antd";
 
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL).connect();
 
@@ -20,15 +21,12 @@ export default function Chat() {
   const [messagesList, setMessagesList] = useState<any[]>([]);
 
   const { data: followingsData, isLoading: followingsDataLoading } = useGetFollowingQuery({});
-  const [getFollowing, { isLoading: isFetchingFollowing }] = useLazyGetFollowingQuery();
 
 
   useEffect(() => {
-    console.log(info)
     if (info) {
       socket.emit("view_chat_list", info?._id || "");
       socket.on("chat_list", (data) => {
-        console.log(data);
         setLoading(false);
         if (Array.isArray(data) && data.length > 0)
           setMessagesList(data)
@@ -45,7 +43,10 @@ export default function Chat() {
                 <h3 className="text-[#000a]">No existing chat</h3>
                 <p className="mb-4 text-center text-gray-400 italic font-light">Start chats with accounts you are connected to:</p>
                 <div className="xs:min-w-[300px]">
-                  {followingsData?.data?.length > 0 ? <div className="flex flex-col gap-4">
+                  {followingsDataLoading?<div className="mt-4">
+                    <Skeleton />
+                    </div>:(
+                  followingsData?.data?.length > 0 ? <div className="flex flex-col gap-4">
                     <ListUsers users={followingsData?.data || []} query={{
                       following: info?._id
                     }} showChat={true} showFollow={false} />
@@ -54,7 +55,7 @@ export default function Chat() {
                       <h4>No accounts to chat with</h4>
                       <Link href={ROUTES.connect} className="underline font-medium text-[#22bb99]">Connect with accounts</Link>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
             </div>

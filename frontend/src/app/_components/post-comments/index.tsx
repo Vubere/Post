@@ -1,8 +1,8 @@
 "use client";
 
-import { useCreateCommentMutation, useGetPostCommentsQuery } from "@/app/_lib/api/comment";
+import { useCreateCommentMutation, useDeleteCommentMutation, useGetPostCommentsQuery } from "@/app/_lib/api/comment";
 import { Comments, Post } from "@/app/_lib/type";
-import { Form, Popover, Skeleton } from "antd";
+import { Form, Modal, Popover, Skeleton } from "antd";
 import Empty from "../empty";
 import Input from "../input";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -17,6 +17,7 @@ import { ROUTES } from "@/app/_lib/routes";
 import editIcon from "@/assets/icons/dot-menu.png";
 import avatar from "@/assets/icons/avatar.png";
 import CommentReaction from "./post-comments";
+import { useState } from "react";
 
 
 export default function PostComments({ _id, ...post }: Post) {
@@ -92,7 +93,24 @@ interface CommentDisplay extends Comments {
 }
 
 export function CommentDisplay({ isAuthorComment, hideReactions, className, validate, ...comment }: CommentDisplay) {
+  const [deleteComment, { isLoading }] = useDeleteCommentMutation();
+  const [deleted, setDeleted] = useState(false);
 
+  const handleDelete = () => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this comment?",
+      okText: "Delete",
+      cancelText: "Cancel",
+      onOk: () => {
+        deleteComment((comment._id || comment.id) as string).then(res => {
+          if (res?.data?.status === "success") {
+            setDeleted(true);
+          }
+        });
+      },
+    });
+  }
+  if (deleted) return null;
 
   return (
     <article className={className}>
@@ -113,7 +131,7 @@ export function CommentDisplay({ isAuthorComment, hideReactions, className, vali
             content={
               <ul>
                 <li><Link className="text-[12px] xs:text-[14px] sm:text-[16px]" href={ROUTES.scribeId.replace(":id", comment._id || "")}>Edit</Link></li>
-                <li><Link className="text-[12px] xs:text-[14px] sm:text-[16px] hover:text-red-400" href={ROUTES.scribeId.replace(":id", comment._id || "")}>Delete</Link></li>
+                <li><button className="text-[12px] xs:text-[14px] sm:text-[16px] hover:text-red-400" onClick={handleDelete} disabled={isLoading}>Delete</button></li>
               </ul>
             }
 

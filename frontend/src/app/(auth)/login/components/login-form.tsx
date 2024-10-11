@@ -105,7 +105,7 @@ export default function LoginForm() {
       </div>
       <GoogleAuth onSuccess={onGoogleSuccess} onError={onGoogleError} className="mb-1 max-w-[400px]" loading={isLoading || googleLoading} />
       <div className="mt-4 w-full max-w-[400px]">
-        <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Forgot password?  <Link className="hover:underline hover:text-blue-300" href={ROUTES.forgotPassword}>Recover.</Link></p>
+        {/* <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Forgot password?  <Link className="hover:underline hover:text-blue-300" href={ROUTES.forgotPassword}>Recover.</Link></p> */}
         <p className="text-gray-400 text-[11px] text-center leading-[110%] text-sm">Don't have an account? <Link className="hover:underline hover:text-blue-300" href={ROUTES.signup}>Sign up</Link></p>
       </div>
     </section>
