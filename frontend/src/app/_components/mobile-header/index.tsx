@@ -60,7 +60,7 @@ export default function MobileHeader() {
   }, [menuRef.current, hamburgerRef.current])
 
   return (
-    <header className="flex py-[20px] px-[20px] h-[90px] justify-between items-center fixed top-0 left-0 w-full  z-[1] sm:hidden">
+    <header className="flex pt-[13px] py-[20px] px-[20px] h-[90px] justify-between items-center fixed top-0 left-0 w-full  z-[5] sm:hidden">
       <h1 className="font-bold italic text-[21px] ">Collections</h1>
       <button ref={hamburgerRef} className="relative z-[4] " data-menu-button>
         <div className="flex flex-col bg:transparent justify-between w-[40px] h-[16px] [&_span]:h-[3px] [&_span]:w-full [&_span]:bg-white [&:span]:block [&_span]:rounded-full " data-menu-button ref={hamburgerShowRef}>

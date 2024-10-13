@@ -40,11 +40,14 @@ const themes = {
 
 
 
-export default function PostPage({ post, user }: { post: Post, user?: Partial<User> }) {
+export default function PostPage({ post, user, disabled }: { post: Post, user?: Partial<User>, disabled?: boolean }) {
   const { content, coverPhoto, authorDetails, author, type, title, theme, reads, id, _id } = post;
+
   const au = (authorDetails?.firstName ? authorDetails : author) as unknown as User;
-  const ref = useRef<HTMLDivElement | null>(null)
+  const ref = useRef<HTMLDivElement | null>(null);
+
   const shouldPaywall = useMemo(() => {
+    if (!disabled) return false;
     if (user === undefined) return false;
     paywallCheck({ user: user as User, post })
   }, [user, post]);
@@ -74,13 +77,13 @@ export default function PostPage({ post, user }: { post: Post, user?: Partial<Us
                 <PayPaywall id={(post._id || post.id) as string} paywallFee={post?.paywallFee as string} />
               </div>
             ) : <div className="[&_p]:text-grey-400 [&_p]:text-[12px] xs:[&_p]:text-[14px] sm:[&_p]:text-[16px] [&_a]:text-[#44f] [&_a]:underline" dangerouslySetInnerHTML={{ __html: (content ?? "").replace(/&lt;/g, "<") }} />}
-            {!shouldPaywall && <ReadDetect reads={reads as string[]} id={(id || _id) as string} />}
+            {!shouldPaywall && <ReadDetect reads={reads as string[]} id={(id || _id) as string} disabled={disabled} />}
 
           </div>) : (
           <div ref={ref}>
 
             <PostDisplay isAuthorPost={false} hideReaction shadow={false} {...(post as Post)} />
-            <ReadDetect reads={reads as string[]} id={(id || _id) as string} />
+            <ReadDetect reads={reads as string[]} id={(id || _id) as string} disabled={disabled} />
           </div>
         )}
     </>

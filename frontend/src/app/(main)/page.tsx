@@ -135,7 +135,7 @@ function Hero() {
           <p className="text-[16px] sm:text-[18px] md:text-[21px] lg:text-[24px]  font-[500] leading-[120%] text-[#fffa] w-[70%]">
             This is a platform for free speech and artistic articulation of words. Built out of boredom of the creator and made with love. Sign up and write the best or the worst think piece you can muster.
           </p>
-          <Link href={"/sign-in"} className="mt-8 block w-[157px]">
+          <Link href={ROUTES.signup} className="mt-8 block w-[157px]">
             <BlueButton>
               Get started
             </BlueButton>

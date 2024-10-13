@@ -31,5 +31,5 @@ router.param(
 
 router.route("/top-post").get(getPostsPopular);
 router.route("/top-users").get(getTopUsers);
-router.route("/:id").get(getPost);
+router.route("/posts/:id").get(getPost);
 export default router;

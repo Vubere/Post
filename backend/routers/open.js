@@ -32,5 +32,5 @@ router.param("id", (req, res, next, value) => __awaiter(void 0, void 0, void 0, 
 }));
 router.route("/top-post").get(getPostsPopular);
 router.route("/top-users").get(getTopUsers);
-router.route("/:id").get(getPost);
+router.route("/posts/:id").get(getPost);
 exports.default = router;

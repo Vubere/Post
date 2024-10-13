@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ROUTES } from "@/app/_lib/routes";
 import dynamic from "next/dynamic";
+import HeaderBgBlur from "../_components/header-bg-blur";
 
 const MobileHeader = dynamic(() => import("@/app/_components/mobile-header"), {
   ssr: false
@@ -33,6 +34,7 @@ export default function RootLayout({
             </ul>
           </header>
           <MobileHeader />
+          <HeaderBgBlur />
           <main className="h-auto min-h-screen ">
             {children}
           </main>

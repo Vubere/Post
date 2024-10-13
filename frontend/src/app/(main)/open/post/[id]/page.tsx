@@ -15,7 +15,7 @@ export const revalidate = 1;
 async function getPost(id: string) {
   try {
     if (id) {
-      const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL?.replace("api", "open") + `/posts/${id}`).then(res => res.json());
+      const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/open/posts/${id}`).then(res => res.json());
       if (res?.data) {
         return { data: res?.data, status: "success" };
       }
@@ -49,14 +49,11 @@ export default async function Post({ params: { id } }: EditPost) {
   }
   return (
     <PageContainer>
-      <div className="pt-4 px-2 sm:px-4 md:px-6 lg:px-8 max-w-[700px] mx-auto">
-        <PostPage post={post} />
+      <div className="pt-[80px] px-2 sm:px-4 md:px-6 lg:px-8 max-w-[700px] mx-auto">
+        <PostPage post={post} disabled />
         {/* reaction */}
-        <div className="mt-8">
-          <PostReactions disabled showReads showViews isPostPage {...post} />
-        </div>
+
         {/* comments */}
-        <PostComments {...post} disabled />
       </div>
     </PageContainer>
   );
