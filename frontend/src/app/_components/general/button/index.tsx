@@ -116,9 +116,6 @@ export function SubscribeButton({ user }: { user: User }) {
       })
     }
   }
-  const confirm = () => {
-
-  }
 
   return (
     <>
@@ -128,3 +125,15 @@ export function SubscribeButton({ user }: { user: User }) {
     </>
   )
 }
+
+export function BlueButton({ children, className = '', onClick, type = 'button', disabled = false }: any) {
+
+  const buttonClass = "w-[120px] h-[44px] sm:w-[130px] sm:h-[50px] md:w-[157px] md:h-[56px] rounded-[8px] text-white text-center bg-[#543ee0] nmd:text-[14px] " + className
+
+  return (
+    <button onClick={onClick} className={buttonClass} type={type} disabled={disabled}>
+      {children}
+    </button>
+  )
+}
+

@@ -17,7 +17,7 @@ const open_1 = __importDefault(require("../controllers/open"));
 const custom_error_1 = __importDefault(require("../lib/utils/custom-error"));
 const utils_1 = require("../lib/utils");
 const post_1 = __importDefault(require("../models/post"));
-const { getPostsPopular, getPost } = open_1.default;
+const { getPostsPopular, getPost, getTopUsers } = open_1.default;
 const router = express_1.default.Router();
 router.param("id", (req, res, next, value) => __awaiter(void 0, void 0, void 0, function* () {
     if (!value.match(/^[0-9a-fA-F]{24}$/)) {
@@ -31,5 +31,6 @@ router.param("id", (req, res, next, value) => __awaiter(void 0, void 0, void 0, 
     next();
 }));
 router.route("/top-post").get(getPostsPopular);
+router.route("/top-users").get(getTopUsers);
 router.route("/:id").get(getPost);
 exports.default = router;

@@ -113,6 +113,7 @@ class ApiFeaturesAggregation {
           this.queryItem?.sortDirection || -1,
       },
     });
+
     const filters = this.filter();
     if (!isEmpty(filters)) {
       aggregateArray.push({
@@ -139,13 +140,20 @@ class ApiFeaturesAggregation {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => {
       return `$${match}`;
     });
-
+    const search = this.queryItem?.search
+      ? {
+          $text: {
+            $search: this.queryItem?.search,
+          },
+        }
+      : {};
     const queryObj = omit(this.queryItem, [
       "sort",
       "fields",
       "page",
       "limit",
       "userId",
+      "search",
     ]);
 
     /* queryObj.status =
@@ -153,7 +161,7 @@ class ApiFeaturesAggregation {
         ? Number(queryObj.status)
         : 1; */
 
-    return queryObj;
+    return { ...queryObj, ...search };
   }
   limitFields() {
     if (this.queryItem?.fields) {

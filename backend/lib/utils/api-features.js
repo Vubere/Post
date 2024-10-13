@@ -128,18 +128,27 @@ class ApiFeaturesAggregation {
         return this.model.aggregate(aggregateArray);
     }
     filter() {
+        var _a, _b;
         let queryStr = JSON.stringify(this.queryItem);
         queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => {
             return `$${match}`;
         });
+        const search = ((_a = this.queryItem) === null || _a === void 0 ? void 0 : _a.search)
+            ? {
+                $text: {
+                    $search: (_b = this.queryItem) === null || _b === void 0 ? void 0 : _b.search,
+                },
+            }
+            : {};
         const queryObj = (0, lodash_1.omit)(this.queryItem, [
             "sort",
             "fields",
             "page",
             "limit",
             "userId",
+            "search",
         ]);
-        return queryObj;
+        return Object.assign(Object.assign({}, queryObj), search);
     }
     limitFields() {
         var _a;

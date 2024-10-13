@@ -5,7 +5,7 @@ import { CommentConfirmRequest } from "../lib/types";
 import { STATUS_CODES } from "../lib/utils";
 import Post from "../models/post";
 
-const { getPostsPopular, getPost } = openController;
+const { getPostsPopular, getPost, getTopUsers } = openController;
 const router = express.Router();
 
 //this is a param middleware used to target param(:id) values and this would only execute for the id param, can be used to check for presence of a user before resolving a get,post,delete or patch request
@@ -30,5 +30,6 @@ router.param(
 );
 
 router.route("/top-post").get(getPostsPopular);
+router.route("/top-users").get(getTopUsers);
 router.route("/:id").get(getPost);
 export default router;

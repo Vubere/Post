@@ -65,6 +65,7 @@ function getPostsPopular(req, res) {
                 $match: {
                     deleted: { $ne: true },
                     isPaywalled: { $ne: true },
+                    postType: { $ne: "reshare" },
                 },
             },
             { $sort: { popularityScore: -1 } },
@@ -84,8 +85,82 @@ function getPost(req, res) {
             .json((0, utils_1.jsend)("success", (post === null || post === void 0 ? void 0 : post[0]) || post, "post fetched successfully!"));
     });
 }
+function getTopUsers(...args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const [req, res] = args;
+        const page = Number(req.query.page || 1);
+        const limit = Number(req.query.limit || 5);
+        const skip = (page - 1) * limit;
+        const topUsers = yield post_1.default.aggregate([
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "author",
+                    foreignField: "_id",
+                    as: "authorDetails",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$authorDetails",
+                },
+            },
+            {
+                $project: {
+                    author: "$author",
+                    authorDetails: 1,
+                    praisesCount: { $size: "$praises" },
+                    viewsCount: { $size: "$views" },
+                    clicksCount: { $size: "$clicks" },
+                    readsCount: { $size: "$reads" },
+                    commentCount: { $size: "$comments" },
+                    resharesCount: { $size: "$resharedBy" },
+                    bookmarksCount: { $size: "$bookmarkedBy" },
+                },
+            },
+            {
+                $addFields: {
+                    engagement: {
+                        $add: [
+                            { $multiply: ["$praisesCount", 4] },
+                            { $multiply: ["$viewsCount", 2] },
+                            { $multiply: ["$clicksCount", 1] },
+                            { $multiply: ["$readsCount", 5] },
+                            { $multiply: ["$commentsCount", 3] },
+                            { $multiply: ["$bookmarksCount", 4] },
+                            { $multiply: ["$resharesCount", 4] },
+                        ],
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: "$author",
+                    authorDetails: { $first: "$authorDetails" },
+                    posts: { $sum: 1 },
+                    engagement: { $sum: "$engagement" },
+                },
+            },
+            {
+                $sort: {
+                    engagement: -1,
+                },
+            },
+            {
+                $skip: skip,
+            },
+            {
+                $limit: limit,
+            },
+        ]);
+        res
+            .status(utils_1.STATUS_CODES.success.OK)
+            .json((0, utils_1.jsend)("success", topUsers, "top users fetched successfully!"));
+    });
+}
 const openExports = {
     getPostsPopular,
     getPost,
+    getTopUsers,
 };
 exports.default = (0, aynsc_error_handler_1.wrapModuleFunctionsInAsyncErrorHandler)(openExports);

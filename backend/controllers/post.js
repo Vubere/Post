@@ -491,6 +491,14 @@ function getPostsPopular(req, res) {
         const page = Number(req.query.page || 1);
         const limit = Number(req.query.limit || 10);
         const skip = (page - 1) * limit;
+        const query = req.query;
+        const search = req.query.search
+            ? {
+                $text: {
+                    $search: req.query.search,
+                },
+            }
+            : {};
         const popularPosts = yield post_1.default.aggregate([
             {
                 $lookup: {
@@ -531,9 +539,7 @@ function getPostsPopular(req, res) {
                 },
             },
             {
-                $match: {
-                    deleted: { $ne: true },
-                },
+                $match: Object.assign({ deleted: { $ne: true }, postType: { $ne: "reshare" } }, search),
             },
             { $sort: { popularityScore: -1 } },
             { $skip: skip },

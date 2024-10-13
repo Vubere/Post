@@ -25,6 +25,10 @@ export const openApi = createApi({
     getPost: builder.query({
       query: (id) => ({ url: `/${id}` }),
     }),
+    getTopUsers: builder.query({
+      query: () => ({ url: "/top-users" }),
+      providesTags: ["OpenPopular"],
+    }),
   }),
 });
 
@@ -33,4 +37,6 @@ export const {
   useLazyGetTopPostQuery,
   useGetPostQuery,
   useLazyGetPostQuery,
+  useGetTopUsersQuery,
+  useLazyGetTopUsersQuery,
 } = openApi;

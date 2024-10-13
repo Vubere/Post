@@ -75,7 +75,7 @@ export default function MobileHeader() {
       <ul className="flex flex-col p-[20px] gap-[25px] fixed top-0 pt-[140px] flex w-[70%] min-w-[280px] bg-[#0007]  right-0 h-screen z-[3] backdrop-blur-[6px] hidden 8ruewf0haf_1!" ref={menuRef}>
         <div className="absolute min-w-full min-h-full left-0 top-0 blur-[4px]"></div>
 
-        <li><Link href={ROUTES.about} className="cursor-pointer block w-full text-center hover:underline font-medium">About</Link></li>
+        <li><Link href={ROUTES.topPost} className="cursor-pointer block w-full text-center hover:underline font-medium">Top Posts</Link></li>
         <div className="flex flex-col gap-[10px]">
           <span className="flex  bg-[#fff]  justify-center items-center rounded-full cursor-pointer relative ">
             <li><Link href={ROUTES.signup} className="block min-h-full text-black font-medium w-full max-w-[100px]  rounded-full px-2 py-2 ">Sign Up</Link></li>

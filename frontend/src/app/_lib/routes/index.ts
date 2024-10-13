@@ -2,7 +2,7 @@ export enum ROUTES {
   login = "/login",
   signup = "/sign-up",
   home = "/",
-  about = "#about",
+  topPost = "#top-post",
   forgotPassword = "/forgot-password",
   resetPassword = "/reset-password",
   setup = "/set-up",
@@ -15,6 +15,7 @@ export enum ROUTES {
   account = "/account",
   accountEdit = ROUTES.account + "/edit",
   accountId = ROUTES.account + "/:id",
+  about = "#about",
   scribe = "/scribe",
   scribeId = ROUTES.scribe + "/:id",
   post = "/post",
@@ -25,4 +26,6 @@ export enum ROUTES {
   followers = "/followers/:id",
   chat = "/chat",
   chatId = ROUTES.chat + "/:id",
+  open = "/open",
+  openPost = ROUTES.open + ROUTES.postId,
 }

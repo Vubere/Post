@@ -64,7 +64,7 @@ export default function PostEditor({ className, editorTitle, ...post }: PostEdit
       <div className="">
 
         <Editor theme={theme} setTheme={setTheme} post={content} postOnChange={setContent} heading={title} headerOnChange={setTitle} coverLink={coverPhoto} coverLinkOnChange={setCoverPhoto} synopsis={synopsis} synopsisOnChange={setSynopsis} />
-        <div className="flex justify-end mt-[40px]">
+        <div className="flex justify-end mt-[20px] md:mt-[30px]">
           <Button className="!w-[100px]" text="Done" onClick={onDone} />
         </div>
       </div>
