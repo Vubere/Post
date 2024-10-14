@@ -19,7 +19,7 @@ export const openApi = createApi({
   tagTypes: ["OpenPost", "OpenPopular"],
   endpoints: (builder) => ({
     getTopPost: builder.query({
-      query: () => ({ url: "/top-post" }),
+      query: (params?: Record<string, any>) => ({ url: "/top-post", params }),
       providesTags: ["OpenPost"],
     }),
     getPost: builder.query({

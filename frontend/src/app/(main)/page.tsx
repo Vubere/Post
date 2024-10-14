@@ -133,7 +133,7 @@ function Hero() {
             Welcome to Collections: A Haven for Text-Based Content
           </h2>
           <p className="text-[16px] sm:text-[18px] md:text-[21px] lg:text-[24px]  font-[500] leading-[120%] text-[#fffa] w-[70%]">
-            This is a platform for free speech and artistic articulation of words. Built out of boredom of the creator and made with love. Sign up and write the best or the worst think piece you can muster.
+            This is a platform for free speech and artistic articulation of words. Built out of boredom of the creator. Sign up and write the best or the worst think piece you can muster.
           </p>
           <Link href={ROUTES.signup} className="mt-8 block w-[157px]">
             <BlueButton>
@@ -204,7 +204,7 @@ function Reviews() {
       <div className="w-[92%] mx-auto flex nsm:items-center nsm:flex-col gap-12">
         <Image src={avatar} alt="avatar" className="w-[270px] h-[270px] md:w-[300px] md:h-[300px] rounded-full" />
         <article className="">
-          <p className="text-[14px] sm:text-[16px] sm:text-[18px] leading-[130%] text-[111] mb-8 sm:mb-12 md:mb-14">&quot;Collections was a project I made in my spare time. To showcase my technical skills. I was very happy with the results and I am very thankful to be the creator of this platform.&quot;</p>
+          <p className="text-[14px] sm:text-[16px] sm:text-[18px] leading-[130%] text-[111] mb-8 sm:mb-12 md:mb-14">&quot;Collections was a project I made in my spare time. It is what it is. Words words and words.&quot;</p>
 
           <div className="mb-4 sm:mb-7 md:mb-10 flex flex-col">
             <h4 className="font-[500] leading-[130%] text-[21px] sm:text-[24px] md:text-[28px] lg:text-[32px]">Victor Ubere, </h4>
