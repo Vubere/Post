@@ -49,7 +49,7 @@ export default function PostPage({ post, user, disabled }: { post: Post, user?: 
   const shouldPaywall = useMemo(() => {
     if (!disabled) return false;
     if (user === undefined) return false;
-    paywallCheck({ user: user as User, post })
+    return paywallCheck({ user: user as User, post })
   }, [user, post]);
   const themeClassName = theme && themes[theme] ? themes[theme].className : themes["Default"].className;
 
@@ -77,7 +77,7 @@ export default function PostPage({ post, user, disabled }: { post: Post, user?: 
                 <PayPaywall id={(post._id || post.id) as string} paywallFee={post?.paywallFee as string} />
               </div>
             ) : <div className="[&_p]:text-grey-400 [&_p]:text-[12px] xs:[&_p]:text-[14px] sm:[&_p]:text-[16px] [&_a]:text-[#44f] [&_a]:underline" dangerouslySetInnerHTML={{ __html: (content ?? "").replace(/&lt;/g, "<") }} />}
-            {!shouldPaywall && <ReadDetect reads={reads as string[]} id={(id || _id) as string} disabled={disabled} />}
+            {!shouldPaywall && !disabled && <ReadDetect reads={reads as string[]} id={(id || _id) as string} disabled={disabled} />}
 
           </div>) : (
           <div ref={ref}>

@@ -148,7 +148,7 @@ function Hero() {
 
 function About() {
   return (
-    <article className="mx-auto mt-16 gap-16 w-[90%] grid grid-cols-1 md:grid-cols-2 mb-20 text-black">
+    <article className="mx-auto mt-16 gap-16 w-[90%] grid grid-cols-1 md:grid-cols-2 mb-20 text-black" id="about">
       <div className="flex flex-col gap-2 sm:gap-3 md:gap-5 lg:gap-7 ">
         <h3 className="font-[700] text-[32px] xs:text-[36px] sm:text-[40px] mg:text-[44px] lg:text-[48px] leading-[130%] w-full">About Collections</h3>
         <p className="text-[14px] sm:text-[16px] md:text-[18px] leading-[120%] w-full">Collections is a multi-functional platform where authors and readers can have access to their own content. It aims to be a traditional bookworm&sbquo;s heaven and a blog to get access to more text based content. Our vision is to foster an inclusive and vibrant community where diversity is celebrated. We encourage open-mindedness and respect for all individuals, regardless of their backgrounds or beliefs. By promoting dialogue and understanding, we strive </p>
@@ -164,7 +164,7 @@ function WhyJoin() {
       <h3 className="font-[700] text-[28px] sm:text-[36px] md:text-[40px] lg:text-[48px] leading-[122%] pb-6">Why you should join collections</h3>
       <p className="text-[14px] sm:text-[16px] md:text-[18px] leading-[120%]">Our goal is to make writers and readers see our platform as their next heaven for blogging, ensuring ease in interactions, connecting with like-minded peers, have access to favorite content based on interests and able to communicate your great ideas with people</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6 gap-4 items-center place-items-center">
-        <section className="w-[30%] border border-[#d0d0d088] max-w-[306px] min-w-[270px] h-[324px] rounded-[6px] p-4">
+        <section className="border border-[#d0d0d088] w-[100%] max-w-[306px]  h-[324px] rounded-[6px] p-4">
           <div className="w-[92px] h-[88px] rounded-full bg-[#d6d1f8] flex items-center justify-center mb-2">
             <Image src={analysisIcon} alt="graph" className="w-[32px] h-[32px]" />
           </div>
@@ -174,7 +174,7 @@ function WhyJoin() {
           </p>
         </section>
 
-        <section className="w-[30%] border border-[#d0d0d088] w-[90vw] max-w-[306px] min-w-[270px] h-[324px] rounded-[6px] p-4">
+        <section className=" border border-[#d0d0d088] w-[100%] max-w-[306px]  h-[324px] rounded-[6px] p-4">
           <div className="w-[92px] h-[88px] rounded-full bg-[#d6d1f8] flex items-center justify-center mb-2">
             <Image src={peopleIcon} alt="graph" />
           </div>
@@ -183,7 +183,7 @@ function WhyJoin() {
             Users on the platform can interact with posts they like, comment and engage in discussions
           </p>
         </section>
-        <section className="w-[30%] border border-[#d0d0d088] max-w-[306px] min-w-[270px] h-[324px] rounded-[6px] p-4">
+        <section className=" border border-[#d0d0d088] w-[100%] max-w-[306px]  h-[324px] rounded-[6px] p-4">
           <div className="w-[92px] h-[88px] rounded-full bg-[#d6d1f8] flex items-center justify-center mb-2">
             <Image src={documentIcon} alt="graph" />
           </div>

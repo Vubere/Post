@@ -16,7 +16,7 @@ export default function CheckLoginStatus() {
   const [getUser] = useLazyGetProfileQuery();
   const router = useRouter();
   const pathname = usePathname() as ROUTES;
-  const publicRoutes = [ROUTES.login, ROUTES.signup, ROUTES.forgotPassword, ROUTES.resetPassword, ROUTES.home, ROUTES.about, "/", ""];
+  const publicRoutes = [ROUTES.login, ROUTES.signup, ROUTES.forgotPassword, ROUTES.resetPassword, ROUTES.home, ROUTES.about, ROUTES.openPost.replace(":id", ""), "/", ""];
   useEffect(() => {
     const token = localStorage.getItem(LS_TOKEN_NAME);
     if (token) {
@@ -40,7 +40,8 @@ export default function CheckLoginStatus() {
         localStorage.clear();
       })
     } else {
-      if (!publicRoutes.includes(pathname)) {
+      const t = publicRoutes.filter(item => pathname.includes(item));
+      if (t.length === 0) {
         router.push(ROUTES.home);
       }
     }

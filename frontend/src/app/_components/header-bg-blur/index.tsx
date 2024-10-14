@@ -8,7 +8,6 @@ export default function HeaderBgBlur() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset;
-      console.log(scrollTop);
       if (scrollTop > 400) {
         setShow(true);
       } else {
