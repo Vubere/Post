@@ -23,8 +23,10 @@ export default function RootLayout({
       <body className={"inter w-full !p-0 !m-0 overflow-x-hidden bg-white"} style={{ backgroundColor: "white" }}>
         <div className=" w-full h-full relative bg-white z-[0]">
           <header className="flex py-[20px] px-[20px] md:px-[5%] h-[90px] justify-between items-center fixed top-0 left-0 w-full  nsm:hidden z-[5]">
+            <Link href={ROUTES.home}>
             <h1 className="font-bold italic text-[28px] xs:text-[34px] sm:text-[40px] md:text-[44px] lg:text-[56px]">Collections</h1>
-            <ul className="flex items-center gap-[20px]">
+            </Link>
+<ul className="flex items-center gap-[20px]">
               <li><Link href={ROUTES.about} className="cursor-pointer text-sm hover:underline sm:text-[18px] md:text-[21px] lg:text-[24px]">About</Link></li>
               <span className=" bg-[#fff2]  grid grid-cols-2 rounded-full cursor-pointer relative [&:hover_span]:hidden w-[200px] h-[30px]">
                 <span className="absolute left-0 top-0 h-full w-[50%] bg-white text-black rounded-full text-black text-sm px-2 py-1 text-[14px] sm:text-[16px] md:text-[18px]  flex items-center justify-center">Sign Up</span>

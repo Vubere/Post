@@ -48,7 +48,7 @@ export default async function Post({ params: { id } }: EditPost) {
     return <div>Error fetching post, reload page!</div>
   }
   return (
-    <div className="text-black">
+    <div className="text-black pb-10">
       <div className="h-[80px] min-h-[80px] px-2 sm:px-4 md:px-6 lg:px-8  mx-auto bg-[#334433]">
       </div>
 
