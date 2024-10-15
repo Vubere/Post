@@ -62,9 +62,9 @@ export default function MobileHeader() {
   return (
     <header className="flex pt-[13px] py-[20px] px-[20px] h-[90px] justify-between items-center fixed top-0 left-0 w-full  z-[5] sm:hidden">
       <Link href={ROUTES.home}>
-      <h1 className="font-bold italic text-[21px] ">Collections</h1>
+        <h1 className="font-bold italic text-[21px] ">Collections</h1>
       </Link>
-<button ref={hamburgerRef} className="relative z-[4] " data-menu-button>
+      <button ref={hamburgerRef} className="relative z-[4] " data-menu-button>
         <div className="flex flex-col bg:transparent justify-between w-[40px] h-[16px] [&_span]:h-[3px] [&_span]:w-full [&_span]:bg-white [&:span]:block [&_span]:rounded-full " data-menu-button ref={hamburgerShowRef}>
           <span id="h-top" data-menu-button></span>
           <span id="h-bottom" data-menu-button></span>
@@ -76,8 +76,8 @@ export default function MobileHeader() {
       </button>
       <ul className="flex flex-col p-[20px] gap-[25px] fixed top-0 pt-[140px] flex w-[70%] min-w-[280px] bg-[#0007]  right-0 h-screen z-[3] backdrop-blur-[6px] hidden 8ruewf0haf_1!" ref={menuRef}>
         <div className="absolute min-w-full min-h-full left-0 top-0 blur-[4px]"></div>
-
-        <li><Link href={ROUTES.about} className="cursor-pointer block w-full text-center hover:underline font-medium">About</Link></li>
+        {/* 
+        <li><Link href={ROUTES.about} className="cursor-pointer block w-full text-center hover:underline font-medium">About</Link></li> */}
         <div className="flex flex-col gap-[10px]">
           <span className="flex  bg-[#fff]  justify-center items-center rounded-full cursor-pointer relative ">
             <li><Link href={ROUTES.signup} className="block min-h-full text-black font-medium w-full max-w-[100px]  rounded-full px-2 py-2 ">Sign Up</Link></li>
