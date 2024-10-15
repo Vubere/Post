@@ -141,13 +141,13 @@ export default function PostDisplay({ hideReaction, className, shadow = true, sh
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 relative">
-          <div className="relative w-[40px] h-[40px]  rounded-full overflow-hidden">
+          <Link href={ROUTES.accountId.replace(":id", fetchedAuthor?._id || fetchedAuthor?.id || "")}>
             <Image src={fetchedAuthor?.profilePhoto || avatar} alt="" objectFit="cover" objectPosition="center" fill />
-          </div>
-          <div>
+          </Link>
+          <Link href={ROUTES.accountId.replace(":id", fetchedAuthor?._id || fetchedAuthor?.id || "")}>
             <p className="font-medium text-[14px] sm:text-[16px]"> {fetchedAuthor?.firstName} {fetchedAuthor?.lastName}</p>
             <p className="text-[8px] sm:text-[11px] text-[#373737aa] italic">@{fetchedAuthor?.username}</p>
-          </div>
+          </Link>
           {(post?.type && post.postType !== "reshare") && <div className={`font-light rounded-full px-2 text-[11px] sm:text-[14px] ${TYPE_CLASSNAME[startCase(post.type || "") as keyof typeof TYPE_CLASSNAME]}`}>
             {startCase(post?.type || "")}
           </div>}
