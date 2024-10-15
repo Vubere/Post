@@ -21,7 +21,7 @@ export default function PageContainer({ title, loading, children, className }: P
   }
 
   return (
-    <div className={`text-black px-4 pt-[20px] pb-[60px] ${className}`}>
+    <div className={`text-black px-4 pt-[60px] sm:pt-[70px] pb-[60px] ${className}`}>
       {title && <h1 className="font-bold text-[16px] xs:text-[18px] sm:text-[21px] md:text-[24px] mb-4 sm:mb-8">{title}</h1>}
       {children}
     </div>
