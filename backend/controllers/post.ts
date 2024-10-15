@@ -501,7 +501,7 @@ async function getTopCategories(
 }
 
 const getFollowingPost = async (req: PostConfirmRequest, res: Response) => {
-  const { userId } = req.query;
+  const userId = new Types.ObjectId(req.requesterId);
   const page = Number(req.query.page || 1);
   const limit = Number(req.query.limit || 10);
   const skip = (page - 1) * limit;
@@ -525,7 +525,7 @@ const getFollowingPost = async (req: PostConfirmRequest, res: Response) => {
     {
       $match: {
         $or: [
-          { "authorDetails.followers": userId },
+          { "authorDetails.followers": userId.toString() },
           { "authorDetails._id": userId },
         ],
         deleted: { $ne: true },

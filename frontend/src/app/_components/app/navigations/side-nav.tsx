@@ -152,7 +152,7 @@ export default function SideNav() {
 
   return (
     <>
-      <div className="text-black w-[100%] max-w-[285px] flex flex-col items-center overflow-y-auto pt-[80px]  bg-[#fff] shadow-xl  h-[100vh] w-full nsm:w-[85%] hidden sm:block shadow-xl pb-[10vh]  left-0 top-0 z-[8]" ref={sideNavRef} >
+      <div className="text-black w-[100%] max-w-[285px] flex flex-col items-center overflow-y-auto pt-[20px]  bg-[#fff] shadow-xl  h-[100vh] max-h-[calc(100vh-70px)] w-full nsm:w-[85%] hidden sm:block shadow-xl pb-[10vh]  left-0 top-0 z-[8]" ref={sideNavRef} >
         <nav className="flex flex-col px-[20px] sm:px-[30px] items-center min-w-full">
           <section className="flex flex-col gap-4 w-[80%] mb-6">
             <h3 className={headingClass}>Overview</h3>
