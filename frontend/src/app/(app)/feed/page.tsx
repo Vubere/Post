@@ -25,7 +25,7 @@ export default function Feed() {
   const following = followingsData?.data || [];
 
   return (
-    <div className="text-black pt-[40px] pb-[60px]">
+    <div className="text-black pt-[5px] pb-[60px]">
       <Tab items={[
         {
           title: "Feed",
