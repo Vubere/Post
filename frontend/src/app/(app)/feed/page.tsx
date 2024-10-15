@@ -4,7 +4,7 @@ import PageContainer from "@/app/_components/general/page-container";
 import InfiniteScroll from "@/app/_components/infinite-scroll";
 import PostDisplay from "@/app/_components/post-display";
 import Tab from "@/app/_components/tab";
-import { useGetBookmarksQuery, useGetPostFromFollowingsQuery, useGetPostFromInterestQuery, useGetPostsFeedQuery, useGetPostsPopularQuery, useLazyGetPostFromFollowingsQuery, useLazyGetPostFromInterestQuery, useLazyGetPostsFeedQuery, useLazyGetPostsPopularQuery } from "@/app/_lib/api/post";
+import { useGetPostFromFollowingsQuery, useGetPostFromInterestQuery, useGetPostsFeedQuery, useGetPostsPopularQuery, useLazyGetPostFromFollowingsQuery, useLazyGetPostFromInterestQuery, useLazyGetPostsFeedQuery, useLazyGetPostsPopularQuery } from "@/app/_lib/api/post";
 import { loadMoreItems } from "@/app/_lib/services";
 import { Post } from "@/app/_lib/type";
 import { SECTION_CLASSNAME } from "@/app/_lib/utils/constants";
@@ -25,7 +25,7 @@ export default function Feed() {
   const following = followingsData?.data || [];
 
   return (
-    <div className="text-black">
+    <div className="text-black pt-[40px] pb-[60px]">
       <Tab items={[
         {
           title: "Feed",

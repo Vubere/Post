@@ -87,7 +87,7 @@ const Notification = ({ className, userInfo }: Props) => {
   return (
     <section className={`${className} !py-[40px]`}>
       <div className="mb-4 w-full max-w-[400px]">
-        <p className="text-black font-medium leading-[110%] text-sm mx-auto">Update what users' event can send you notifications.</p>
+        <p className="text-black font-medium leading-[110%] mx-auto">Update what users' event can send you notifications.</p>
       </div>
       <Form onFinish={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] max-w-[400px] w-full ">
         <Input label="Get Notifications When" type="select" placeholder="Get Notifications When" name="notificationAccess" state={rest} required options={[{ label: "All(public)", value: "subscribers,followers,subscribers,all" }, { label: "Subscribers", value: "subscribers" }, { label: "Followers", value: "subscribers,followers" }]} twHeight="h-auto" />
@@ -132,7 +132,7 @@ const Privacy = ({ className, userInfo }: Props) => {
   return (
     <section className={`${className} !py-[40px]`}>
       <div className="mb-4 w-full max-w-[400px]">
-        <p className="text-black font-medium leading-[110%] text-sm mx-auto">Update privacy.</p>
+        <p className="text-black font-medium leading-[110%] mx-auto">Update privacy.</p>
       </div>
       <Form onFinish={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] max-w-[400px] w-full ">
         <Input label="Get Messages From" type="select" placeholder="Get Messages From" name="messageAccess" state={rest} required options={[{ label: "All(public)", value: "subscribers,followers,subscribers,all" }, { label: "Subscribers", value: "subscribers" }, { label: "Followers", value: "subscribers,followers" }]} twHeight="h-auto" />
@@ -178,7 +178,7 @@ const Subscription = ({ className, userInfo }: Props) => {
   return (
     <section className={`${className} !py-[40px]`}>
       <div className="mb-4 w-full max-w-[400px]">
-        <p className="text-black font-medium leading-[110%] text-sm mx-auto">Update Subscription Settings.</p>
+        <p className="text-black font-medium leading-[110%] mx-auto">Update Subscription Settings.</p>
         <p className="!font-thin text-sm">Set subscription fee to zero(0) to remove subscriptions.</p>
       </div>
       <Form onFinish={handleSubmit(onSubmit)} className="flex flex-col gap-[20px] max-w-[400px] w-full ">
