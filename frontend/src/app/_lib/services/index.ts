@@ -55,12 +55,12 @@ export const paywallCheck = ({ user, post }: { user: User; post: Post }) => {
     ? "followers"
     : "public";
   if (
-    restrictionLevel !== "subscribers" &&
+    restrictionLevel === "subscribers" &&
     authorDetails?.subscribers?.includes(userId)
   )
     return false;
   if (
-    restrictionLevel !== "followers" &&
+    restrictionLevel === "followers" &&
     authorDetails?.followers?.includes(userId)
   )
     return false;

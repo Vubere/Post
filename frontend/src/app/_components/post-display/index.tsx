@@ -161,8 +161,8 @@ export default function PostDisplay({ hideReaction, className, shadow = true, sh
           <Popover
             content={
               <ul>
-                {post?.postType !== "reshare" ? (<li><Link className="text-[12px] xs:text-[14px] sm:text-[16px]" href={ROUTES.scribeId.replace(":id", post._id || "")}>Edit</Link></li>) : (
-                  <li><EditReshare post={post} className="text-[12px] xs:text-[14px] sm:text-[16px] hover:text-green-300" updateContent={updateContentFromEdit} /></li>
+                {post?.postType !== "reshare" ? (<li><Link className="text-[14px] sm:text-[16px]" href={ROUTES.scribeId.replace(":id", post._id || "")}>Edit</Link></li>) : (
+                  <li><EditReshare post={post} className="text-[14px] sm:text-[16px] hover:text-green-300" updateContent={updateContentFromEdit} /></li>
                 )}
                 <li>
                   <button className="text-[12px] xs:text-[14px] sm:text-[16px]" onClick={confirmDelete}>

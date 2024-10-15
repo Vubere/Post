@@ -61,10 +61,9 @@ export default function PostEditor({ className, editorTitle, ...post }: PostEdit
     <div className={"text-black px-4 pb-[60px] " + className}>
       <h1 className="font-bold text-[16px] xs:text-[18px] sm:text-[21px] md:text-[24px] mb-8">{editorTitle ?? "Create Post"}</h1>
       <PostOptions open={open} onCancel={onCancel} postDetails={postDetails} resetDetails={resetDetails} post={post} />
-      <div className="">
-
+      <div className="pb-[80px]">
         <Editor theme={theme} setTheme={setTheme} post={content} postOnChange={setContent} heading={title} headerOnChange={setTitle} coverLink={coverPhoto} coverLinkOnChange={setCoverPhoto} synopsis={synopsis} synopsisOnChange={setSynopsis} />
-        <div className="flex justify-end mt-[20px] md:mt-[30px]">
+        <div className="flex justify-end  mt-[20px] md:mt-[30px]">
           <Button className="!w-[100px]" text="Done" onClick={onDone} />
         </div>
       </div>
