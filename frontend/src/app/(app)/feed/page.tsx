@@ -92,6 +92,7 @@ function PopularData({ initialData, initialDataLoading, refetch }: { initialData
         initialData.length > 0 && <InfiniteScroll
           isLoading={popularLoading}
           error={false}
+          className="!gap-1"
           storageKey={"initialData"}
           loadMore={(page) => loadMoreItems(page, getPostPopular)}
           initialData={initialData}
@@ -117,6 +118,7 @@ function FollowingData({ initialData, initialDataLoading, refetch }: { initialDa
           limit={10}
           isLoading={followingLoading}
           error={false}
+          className="!gap-1"
           storageKey={"following"}
           loadMore={(page) => loadMoreItems(page, getPostsFollowing)}
           initialData={initialData}
