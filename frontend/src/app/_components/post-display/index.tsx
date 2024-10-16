@@ -142,7 +142,9 @@ export default function PostDisplay({ hideReaction, className, shadow = true, sh
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 relative">
           <Link href={ROUTES.accountId.replace(":id", fetchedAuthor?._id || fetchedAuthor?.id || "")}>
-            <Image src={fetchedAuthor?.profilePhoto || avatar} alt="" objectFit="cover" objectPosition="center" fill />
+            <div className="relative h-[40px] w-[40px] rounded-full overflow-hidden">
+              <Image src={fetchedAuthor?.profilePhoto || avatar} alt="" objectFit="cover" objectPosition="center" fill />
+            </div>
           </Link>
           <Link href={ROUTES.accountId.replace(":id", fetchedAuthor?._id || fetchedAuthor?.id || "")}>
             <p className="font-medium text-[14px] sm:text-[16px]"> {fetchedAuthor?.firstName} {fetchedAuthor?.lastName}</p>
