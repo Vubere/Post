@@ -213,9 +213,9 @@ export default function PostReactions({ showViews, showReads, isPostPage, disabl
       </ul>
       {
         showReshareModal ?
-          <Modal open={showReshareModal} close={() => setShowReshareModal(false)} className="px-6 py-2 bg-white bg-opacity-40 backdrop-blur-[10px] max-w-[95%] h-[500px] w-[400px] shadow-xl py-10 pt-[40px] ">
+          <Modal open={showReshareModal} close={() => setShowReshareModal(false)} className="px-6 py-2 bg-black bg-opacity-40 backdrop-blur-[10px] max-w-[95%] h-[500px] w-[400px] shadow-xl py-10 pt-[40px] text-white">
             <div>
-              <p className="text-[#000] text-[14px] ">
+              <p className="text-[#fff] text-[14px] ">
                 Share {post.authorDetails?.username || (post.author as unknown as User)?.username}'s post:
               </p>
               <PostDisplay isAuthorPost={false} hideReaction {...(post as Post)} />

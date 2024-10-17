@@ -60,21 +60,21 @@ export default function Account({ userInfo }: { userInfo: User }) {
           <div className="flex justify-between items-end relative">
 
             <div className="flex items-center gap-2 relative mb-2 px-2">
-              <div className="relative w-[80px] h-[80px]  rounded-full overflow-hidden">
+              <div className="relative w-[80px] h-[80px] min-w-[80px]  rounded-full overflow-hidden">
                 <Image src={userInfo?.profilePhoto || avatar} alt="" objectFit="cover" objectPosition="center" fill />
               </div>
               <div>
                 <p className="font-medium text-[14px] sm:text-[16px]">{userInfo?.firstName} {userInfo?.lastName}</p>
-                <p className="text-[8px] sm:text-[11px] text-[#373737aa] italic">@{userInfo?.username}</p>
+                <p className="text-[12px] sm:text-[14px] text-[#373737aa] italic">@{userInfo?.username}</p>
               </div>
             </div>
-            {isUserAccount ? (<div className="absolute right-0 xs:right-2 top-2 xs:top-3 sm:top-4 z-[4]" title="edit">
+            {isUserAccount ? (<div className="absolute right-2 top-2 xs:top-3 sm:top-4 z-[4]" title="edit">
               <Link href={ROUTES.accountEdit} className="relative block rounded-full !w-[20px] !h-[20px] !border-none !bg-transparent cursor-pointer" >
                 <Image src={editIcon} alt="edit" objectFit="cover" objectPosition="center" fill />
               </Link>
-            </div>) : (<div className="absolute right-0 xs:right-2 top-4 xs:top-6 sm:top-8 z-[4]" >
+            </div>) : (<div className="absolute right-2 top-4 xs:top-6 sm:top-8 z-[4]" >
 
-              <div className="w-full flex gap-2 justify-end">
+              <div className="w-full flex gap-2 justify-end ">
                 <Link className="block relative w-[25px] h-[25px]" href={ROUTES.chatId.replace(":id", (userInfo._id || userInfo.id) as string)} title="chat">
                   <Image
                     src={chatIcon} fill objectFit="contain" objectPosition="center" alt="chat" />
@@ -84,19 +84,19 @@ export default function Account({ userInfo }: { userInfo: User }) {
               </div>
 
             </div>)}
-            <ul className="gap-2 flex flex text-[12px] italics sm:text-[14px]">
-              <li>
-                <Link href={ROUTES.followers.replace(":id", userInfo._id as string)}>
-                  {userInfo.followers?.length}&nbsp;Followers
-                </Link>
-              </li>
-              <li>
-                <Link href={ROUTES.following.replace(":id", userInfo._id as string)}>
-                  {userInfo.following?.length}&nbsp;Following
-                </Link>
-              </li>
-            </ul>
           </div>
+          <ul className="gap-1 flex pr-2 justify-end flex text-[12px] italics sm:text-[14px]">
+            <li>
+              <Link href={ROUTES.followers.replace(":id", userInfo._id as string)}>
+                {userInfo.followers?.length}&nbsp;Followers
+              </Link>
+            </li>
+            <li>
+              <Link href={ROUTES.following.replace(":id", userInfo._id as string)}>
+                {userInfo.following?.length}&nbsp;Following
+              </Link>
+            </li>
+          </ul>
           {userInfo?.biography && (
             <p className=" text-[#373737aa] px-2">{userInfo?.biography}</p>
           )}

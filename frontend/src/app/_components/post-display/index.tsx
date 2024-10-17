@@ -148,7 +148,7 @@ export default function PostDisplay({ hideReaction, className, shadow = true, sh
           </Link>
           <Link href={ROUTES.accountId.replace(":id", fetchedAuthor?._id || fetchedAuthor?.id || "")}>
             <p className="font-medium text-[14px] sm:text-[16px]"> {fetchedAuthor?.firstName} {fetchedAuthor?.lastName}</p>
-            <p className="text-[8px] sm:text-[11px] text-[#373737aa] italic">@{fetchedAuthor?.username}</p>
+            <p className="text-[12px] sm:text-[14px] text-[#373737aa] italic">@{fetchedAuthor?.username}</p>
           </Link>
           {(post?.type && post.postType !== "reshare") && <div className={`font-light rounded-full px-2 text-[11px] sm:text-[14px] ${TYPE_CLASSNAME[startCase(post.type || "") as keyof typeof TYPE_CLASSNAME]}`}>
             {startCase(post?.type || "")}
@@ -249,9 +249,9 @@ const EditReshare: React.FC<{ post: Post, className: string, updateContent: (con
       <button className={`${className}`} onClick={() => setShowEdit(true)}>
         Edit
       </button>
-      <Modal open={showEdit} close={() => setShowEdit(false)} className="px-6 py-2 bg-white bg-opacity-40 backdrop-blur-[10px] max-w-[95%] h-[200px] w-[400px] shadow-xl py-10 pt-[40px] " twHeight="h-[500px]" twWidth="w-[90%] max-w-[400px]">
+      <Modal open={showEdit} close={() => setShowEdit(false)} className="px-6 py-2 bg-black bg-opacity-40 backdrop-blur-[10px] max-w-[95%] h-[200px] w-[400px] shadow-xl py-10 pt-[40px] text-white" twHeight="h-[500px]" twWidth="w-[90%] max-w-[400px]">
         <div>
-          <p className="text-[#000] font-bold">
+          <p className="text-[#fff] font-bold">
             Edit Reshare:
             <PostDisplay {...post} />
           </p>
