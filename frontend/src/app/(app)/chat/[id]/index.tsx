@@ -77,8 +77,8 @@ export default function Chat() {
     )
   }
   return (
-    <div className=" relative overflow-hidden text-black">
-      <div className="h-[calc(100vh-150px)] overflow-y-auto w-full overflow-y-auto pb-[60px] max-h-[calc(100%-150px)] pt-[100px] sm:pt-[110px] xs:px-[5px] sm:px-[10px]">
+    <div className="relative text-black overflow-hidden h-[100%] min-h-[100%]">
+      <div className="h-[calc(100vh-140px)] overflow-y-auto w-full overflow-y-auto pb-[10px] max-h-[calc(100vh-140px)] pt-[40px] sm:pt-[70px] xs:px-[5px] sm:px-[10px]">
         <Link href={ROUTES.accountId.replace(":id", otherUserInfo?._id || "")} className="mb-4">
           <div className="flex flex-col gap-2 justify-center items-center">
             <div className="relative w-[40px] h-[40px]  rounded-full overflow-hidden">

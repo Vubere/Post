@@ -30,7 +30,7 @@ export default function AppHeader() {
   }
 
   return (
-    <header className="flex h-[60px] sm:h-[70px] px-[18px] relative shadow-xl xs:px-[20px] sm:px-[30px] justify-between items-center min-w-full z-[10] bg-white">
+    <header className="flex min-h-[60px] h-[60px] sm:min-h-[70px] sm:h-[70px] px-[18px] relative shadow-xl xs:px-[20px] sm:px-[30px] justify-between items-center min-w-full z-[10] bg-white">
       <h1 className={`font-bold  text-[21px] xs:text-[24px] sm:text-[28px] md:text-[32px] lg:text-[36px] text-black bg-white ${Jacques.className}`}>Collections</h1>
       <Popover
         className="w-[100px] h-[30px] relative"

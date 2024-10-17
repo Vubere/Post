@@ -25,9 +25,9 @@ export default function RootLayout({
 
         <AppHeader />
         <PostButton />
-        <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[268px_1fr] h-[100vh] max-h-[100vh] overflow-y-hidden bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] md:grid-cols-[268px_1fr] h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] sm:h-[calc(100vh-70px)] sm:max-h-[calc(100vh-70px)] overflow-y-hidden bg-white">
           <SideNav />
-          <main className="h-[100vh] max-h-[100vh] overflow-y-auto">
+          <main className="h-[100%] max-h-[100%] min-h-[100%] overflow-y-auto">
             {children}
           </main>
         </div>
