@@ -65,7 +65,7 @@ export default function Account({ userInfo }: { userInfo: User }) {
               </div>
               <div>
                 <p className="font-medium text-[14px] sm:text-[16px]">{userInfo?.firstName} {userInfo?.lastName}</p>
-                <p className="text-[12px] sm:text-[14px] text-[#373737aa] italic">@{userInfo?.username}</p>
+                <p className="text-[12px] sm:text-[14px] text-[#373737aa] leading-[110%] break-all italic">@{userInfo?.username}</p>
               </div>
             </div>
             {isUserAccount ? (<div className="absolute right-2 top-2 xs:top-3 sm:top-4 z-[4]" title="edit">
