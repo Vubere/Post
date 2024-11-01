@@ -77,8 +77,8 @@ export default function Chat() {
     )
   }
   return (
-    <div className="relative text-black overflow-hidden h-[100%] min-h-[100%]">
-      <div className="h-[calc(100vh-140px)] overflow-y-auto w-full overflow-y-auto pb-[10px] max-h-[calc(100vh-140px)] pt-[40px] sm:pt-[70px] xs:px-[5px] sm:px-[10px]">
+    <div className="relative text-black h-[100%] min-h-[99%] max-h-[100%] overflow-hidden">
+      <div className="h-[calc(100vh-140px)] w-full overflow-y-auto pb-[10px] max-h-[calc(100vh-140px)] pt-[40px] sm:pt-[70px] xs:px-[5px] sm:px-[10px]">
         <Link href={ROUTES.accountId.replace(":id", otherUserInfo?._id || "")} className="mb-4">
           <div className="flex flex-col gap-2 justify-center items-center">
             <div className="relative w-[40px] h-[40px]  rounded-full overflow-hidden">
@@ -93,7 +93,7 @@ export default function Chat() {
         </Link>
         {
           messagesList.length === 0 ? (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center max-h-[200px]">
               <h3 className="text-[#000a]">No existing chat</h3>
               <p className="mb-4 text-center text-gray-400 italic font-light">Send a message to start chat with {otherUserInfo?.username}</p>
 
